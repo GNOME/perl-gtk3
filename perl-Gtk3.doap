@@ -5,7 +5,7 @@
          xmlns="http://usefulinc.com/ns/doap#">
 
   <name xml:lang="en">Gtk3</name>
-  <shortdesc xml:lang="en">Perl interface to the 2.x series of the Gimp Toolkit library</shortdesc>
+  <shortdesc xml:lang="en">Perl interface to the 3.x series of the Gimp Toolkit library</shortdesc>
   <homepage rdf:resource="http://gtk2-perl.sourceforge.net/" />
   <mailing-list rdf:resource="http://mail.gnome.org/mailman/listinfo/gtk-perl-list" />
 
