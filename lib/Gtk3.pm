@@ -19,6 +19,10 @@ my @_GTK_HANDLE_SENTINEL_BOOLEAN_FOR = qw/
   Gtk3::TreeSelection::get_selected
 /;
 
+my $_GDK_BASENAME = 'Gdk';
+my $_GDK_VERSION = '3.0';
+my $_GDK_PACKAGE = 'Gtk3::Gdk';
+
 sub import {
   my $class = shift;
 
@@ -28,6 +32,11 @@ sub import {
     package => $_GTK_PACKAGE,
     flatten_array_ref_return_for => \@_GTK_FLATTEN_ARRAY_REF_RETURN_FOR,
     handle_sentinel_boolean_for => \@_GTK_HANDLE_SENTINEL_BOOLEAN_FOR);
+
+  Glib::Object::Introspection->setup (
+    basename => $_GDK_BASENAME,
+    version => $_GDK_VERSION,
+    package => $_GDK_PACKAGE);
 
   my $init = 0;
   my @unknown_args = ($class);
