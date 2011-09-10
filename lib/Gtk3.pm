@@ -10,6 +10,13 @@ our @ISA = qw(Exporter);
 my $_GTK_BASENAME = 'Gtk';
 my $_GTK_VERSION = '3.0';
 my $_GTK_PACKAGE = 'Gtk3';
+my @_GTK_FLATTEN_ARRAY_REF_RETURN_FOR = qw/
+  Gtk3::Window::list_toplevels
+/;
+my @_GTK_HANDLE_SENTINEL_BOOLEAN_FOR = qw/
+  Gtk3::TreeModel::get_iter_first
+  Gtk3::TreeSelection::get_selected
+/;
 
 sub import {
   my $class = shift;
@@ -17,7 +24,9 @@ sub import {
   Glib::Object::Introspection->setup (
     basename => $_GTK_BASENAME,
     version => $_GTK_VERSION,
-    package => $_GTK_PACKAGE);
+    package => $_GTK_PACKAGE,
+    flatten_array_ref_return_for => \@_GTK_FLATTEN_ARRAY_REF_RETURN_FOR,
+    handle_sentinel_boolean_for => \@_GTK_HANDLE_SENTINEL_BOOLEAN_FOR);
 
   my $init = 0;
   my @unknown_args = ($class);
@@ -66,6 +75,16 @@ sub Gtk3::main_quit {
   Glib::Object::Introspection->invoke ($_GTK_BASENAME, undef, 'main_quit');
 }
 
+sub Gtk3::Button::new {
+  my ($class, $label) = @_;
+  if (defined $label) {
+    return $class->new_with_mnemonic ($label);
+  } else {
+    return Glib::Object::Introspection->invoke (
+      $_GTK_BASENAME, 'Button', 'new', @_);
+  }
+}
+
 sub Gtk3::ListStore::new {
   my ($class, @types) = @_;
   local $@;
@@ -75,6 +94,11 @@ sub Gtk3::ListStore::new {
   return Glib::Object::Introspection->invoke (
     $_GTK_BASENAME, 'ListStore', 'new',
     $class, $real_types);
+}
+
+# Reroute 'get' to Gtk3::ListStore instead of Glib::Object.
+sub Gtk3::ListStore::get {
+  return Gtk3::TreeModel::get (@_);
 }
 
 sub Gtk3::ListStore::set {
@@ -101,6 +125,33 @@ sub Gtk3::ListStore::set {
   Glib::Object::Introspection->invoke (
     $_GTK_BASENAME, 'ListStore', 'set',
     $model, $iter, \@columns, \@wrapped_values);
+}
+
+sub Gtk3::MessageDialog::new {
+  my ($class, $parent, $flags, $type, $buttons, $format, @args) = @_;
+  my $dialog = Glib::Object::new ($class, message_type => $type,
+                                          buttons => $buttons);
+  if (defined $format) {
+    # sprintf can handle empty @args
+    my $msg = sprintf $format, @args;
+    $dialog->set (text => $msg);
+  }
+  if (defined $parent) {
+    $dialog->set_transient_for ($parent);
+  }
+  if ($flags & 'modal') {
+    $dialog->set_modal (Glib::TRUE);
+  }
+  if ($flags & 'destroy-with-parent') {
+    $dialog->set_destroy_with_parent (Glib::TRUE);
+  }
+  return $dialog;
+}
+
+sub Gtk3::TreeModel::get {
+  my ($model, $iter, @columns) = @_;
+  my @values = map { $model->get_value ($iter, $_) } @columns;
+  return @values[0..$#values];
 }
 
 sub Gtk3::TreePath::new {
