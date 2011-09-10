@@ -2,6 +2,7 @@ package Gtk3;
 
 use strict;
 use warnings;
+use Carp qw/croak/;
 use Glib::Object::Introspection;
 use Exporter;
 
@@ -113,7 +114,8 @@ sub Gtk3::ListStore::set {
     @columns = keys %cols_to_vals;
     @values = values %cols_to_vals;
   } else {
-    # FIXME
+    croak ('Usage: Gtk3::ListStore::set ($store, \@columns, \@values)',
+           ' -or-: Gtk3::ListStore::set ($store, $column1 => $value1, ...)');
   }
   my @wrapped_values = ();
   foreach my $i (0..$#columns) {
