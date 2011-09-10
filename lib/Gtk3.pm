@@ -68,6 +68,7 @@ sub Gtk3::main_quit {
 
 sub Gtk3::ListStore::new {
   my ($class, @types) = @_;
+  local $@;
   my $real_types = (@types == 1 && eval { @{$types[0]} })
                  ? $types[0]
                  : \@types;
@@ -79,6 +80,7 @@ sub Gtk3::ListStore::new {
 sub Gtk3::ListStore::set {
   my ($model, $iter, @columns_and_values) = @_;
   my (@columns, @values);
+  local $@;
   if (@columns_and_values == 2 && eval { @{$columns_and_values[0]} }) {
     @columns = @{$columns_and_values[0]};
     @values = @{$columns_and_values[1]};
