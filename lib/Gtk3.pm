@@ -7,17 +7,17 @@ use Exporter;
 
 our @ISA = qw(Exporter);
 
-my $_BASENAME = 'Gtk';
-my $_VERSION = '3.0';
-my $_PACKAGE = 'Gtk3';
+my $_GTK_BASENAME = 'Gtk';
+my $_GTK_VERSION = '3.0';
+my $_GTK_PACKAGE = 'Gtk3';
 
 sub import {
   my $class = shift;
 
   Glib::Object::Introspection->setup (
-    basename => $_BASENAME,
-    version => $_VERSION,
-    package => $_PACKAGE);
+    basename => $_GTK_BASENAME,
+    version => $_GTK_VERSION,
+    package => $_GTK_PACKAGE);
 
   my $init = 0;
   my @unknown_args = ($class);
@@ -41,16 +41,16 @@ sub import {
 # - Overrides --------------------------------------------------------------- #
 
 sub Gtk3::init {
-  my $rest = Glib::Object::Introspection->_invoke (
-               $_BASENAME, undef, 'init',
+  my $rest = Glib::Object::Introspection->invoke (
+               $_GTK_BASENAME, undef, 'init',
                [$0, @ARGV]);
   @ARGV = @{$rest}[1 .. $#$rest]; # remove $0
   return;
 }
 
 sub Gtk3::init_check {
-  my ($success, $rest) = Glib::Object::Introspection->_invoke (
-                           $_BASENAME, undef, 'init_check',
+  my ($success, $rest) = Glib::Object::Introspection->invoke (
+                           $_GTK_BASENAME, undef, 'init_check',
                            [$0, @ARGV]);
   @ARGV = @{$rest}[1 .. $#$rest]; # remove $0
   return $success;
@@ -58,12 +58,12 @@ sub Gtk3::init_check {
 
 sub Gtk3::main {
   # Ignore any arguments passed in.
-  Glib::Object::Introspection->_invoke ($_BASENAME, undef, 'main');
+  Glib::Object::Introspection->invoke ($_GTK_BASENAME, undef, 'main');
 }
 
 sub Gtk3::main_quit {
   # Ignore any arguments passed in.
-  Glib::Object::Introspection->_invoke ($_BASENAME, undef, 'main_quit');
+  Glib::Object::Introspection->invoke ($_GTK_BASENAME, undef, 'main_quit');
 }
 
 sub Gtk3::ListStore::new {
@@ -71,8 +71,8 @@ sub Gtk3::ListStore::new {
   my $real_types = (@types == 1 && eval { @{$types[0]} })
                  ? $types[0]
                  : \@types;
-  return Glib::Object::Introspection->_invoke (
-    $_BASENAME, 'ListStore', 'new',
+  return Glib::Object::Introspection->invoke (
+    $_GTK_BASENAME, 'ListStore', 'new',
     $class, $real_types);
 }
 
@@ -96,23 +96,23 @@ sub Gtk3::ListStore::set {
          Glib::Object::Introspection::GValueWrapper->new (
            $column_type, $values[$i]);
   }
-  Glib::Object::Introspection->_invoke (
-    $_BASENAME, 'ListStore', 'set',
+  Glib::Object::Introspection->invoke (
+    $_GTK_BASENAME, 'ListStore', 'set',
     $model, $iter, \@columns, \@wrapped_values);
 }
 
 sub Gtk3::TreePath::new {
   my ($class, @args) = @_;
   my $method = (@args == 1) ? 'new_from_string' : 'new';
-  Glib::Object::Introspection->_invoke (
-    $_BASENAME, 'TreePath', $method, @_);
+  Glib::Object::Introspection->invoke (
+    $_GTK_BASENAME, 'TreePath', $method, @_);
 }
 
 sub Gtk3::TreeView::new {
   my ($class, @args) = @_;
   my $method = (@args == 1) ? 'new_with_model' : 'new';
-  Glib::Object::Introspection->_invoke (
-    $_BASENAME, 'TreeView', $method, @_);
+  Glib::Object::Introspection->invoke (
+    $_GTK_BASENAME, 'TreeView', $method, @_);
 }
 
 sub Gtk3::TreeViewColumn::new_with_attributes {
