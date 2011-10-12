@@ -12,6 +12,8 @@ my $_GTK_BASENAME = 'Gtk';
 my $_GTK_VERSION = '3.0';
 my $_GTK_PACKAGE = 'Gtk3';
 my @_GTK_FLATTEN_ARRAY_REF_RETURN_FOR = qw/
+  Gtk3::CellLayout::get_cells
+  Gtk3::TreePath::get_indices
   Gtk3::Window::list_toplevels
 /;
 my @_GTK_HANDLE_SENTINEL_BOOLEAN_FOR = qw/
@@ -188,6 +190,13 @@ sub Gtk3::TreeViewColumn::new_with_attributes {
     $object->add_attribute ($cell, $attr, $attr_to_column{$attr});
   }
   return $object;
+}
+
+sub Gtk3::Window::new {
+  my ($class, $type) = @_;
+  $type = 'toplevel' unless defined $type;
+  return Glib::Object::Introspection->invoke (
+    $_GTK_BASENAME, 'Window', 'new', $class, $type);
 }
 
 1;
