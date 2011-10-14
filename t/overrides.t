@@ -5,7 +5,22 @@ BEGIN { require './t/inc/setup.pl' };
 use strict;
 use warnings;
 
-plan tests => 21;
+plan tests => 29;
+
+# Gtk3::CHECK_VERSION and check_version
+{
+  my ($x, $y, $z) = (Gtk3::MAJOR_VERSION, Gtk3::MINOR_VERSION, Gtk3::MICRO_VERSION);
+  ok (Gtk3::CHECK_VERSION ($x, $y, $z));
+  ok (Gtk3->CHECK_VERSION ($x, $y, $z));
+  ok (not defined Gtk3::check_version ($x, $y, $z));
+  ok (not defined Gtk3->check_version ($x, $y, $z));
+
+  $z++;
+  ok (!Gtk3::CHECK_VERSION ($x, $y, $z));
+  ok (!Gtk3->CHECK_VERSION ($x, $y, $z));
+  ok (defined Gtk3::check_version ($x, $y, $z));
+  ok (defined Gtk3->check_version ($x, $y, $z));
+}
 
 # Gtk3::CellLayout::get_cells
 {

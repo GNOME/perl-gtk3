@@ -71,6 +71,15 @@ sub import {
 
 # - Overrides --------------------------------------------------------------- #
 
+sub Gtk3::CHECK_VERSION {
+  return not defined Gtk3::check_version(@_ == 4 ? @_[1..3] : @_);
+}
+
+sub Gtk3::check_version {
+  Glib::Object::Introspection->invoke ($_GTK_BASENAME, undef, 'check_version',
+                                       @_ == 4 ? @_[1..3] : @_);
+}
+
 sub Gtk3::init {
   my $rest = Glib::Object::Introspection->invoke (
                $_GTK_BASENAME, undef, 'init',
