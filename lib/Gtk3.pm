@@ -249,29 +249,60 @@ __END__
 
 =head1 NAME
 
-Gtk3 - Perl interface to the 2.x series of the Gimp Toolkit library
+Gtk3 - Perl interface to the 3.x series of the gtk+ toolkit
 
 =head1 SYNOPSIS
 
-  XXX
+  use Gtk3 -init;
+  my $window = Gtk3::Window->new ('toplevel');
+  my $button = Gtk3::Button->new ('Quit');
+  $button->signal_connect (clicked => sub { Gtk3::main_quit });
+  $window->add ($button);
+  $window->show_all;
+  Gtk3::main;
 
 =head1 ABSTRACT
 
-XXX
+Perl bindings to the 3.x series of the gtk+ toolkit.  This module allows you to
+write graphical user interfaces in a Perlish and object-oriented way, freeing
+you from the casting and memory management in C, yet remaining very close in
+spirit to original API.
 
 =head1 DESCRIPTION
 
-XXX
+The Gtk3 module allows a Perl developer to use the gtk+ graphical user
+interface library.  Find out more about gtk+ at L<http://www.gtk.org>.
+
+The gtk+ reference manual is also a handy companion when writing Gtk3 programs
+in Perl: L<http://developer.gnome.org/gtk3/stable/>.  The Perl bindings follow
+the C API very closely, and the C reference documentation should be considered
+the canonical source.
+
+To discuss Gtk3 and ask questions join gtk-perl-list@gnome.org at
+L<http://mail.gnome.org/mailman/listinfo/gtk-perl-list>.
+
+Also have a look at the gtk2-perl website and sourceforge project page,
+L<http://gtk2-perl.sourceforge.net>.
 
 =head1 SEE ALSO
 
-XXX
+=over
+
+=item L<Glib>
+
+=item L<Glib::Object::Introspection>
+
+=back
 
 =head1 AUTHORS
 
 =encoding utf8
 
-XXX
+=over
+
+=item Torsten Schönfeld <kaffeetisch@gmx.de>
+
+=back
 
 =head1 COPYRIGHT AND LICENSE
 
