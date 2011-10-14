@@ -5,7 +5,7 @@ BEGIN { require './t/inc/setup.pl' };
 use strict;
 use warnings;
 
-plan tests => 14;
+plan tests => 21;
 
 # Gtk3::CellLayout::get_cells
 {
@@ -18,7 +18,7 @@ plan tests => 14;
   is_deeply([$cell->get_cells], [$one, $two]);
 }
 
-# Gtk3::ListStore->new, set and get
+# Gtk3::ListStore::new, set and get
 {
   my $model = Gtk3::ListStore->new ([qw/Glib::String Glib::Int/]);
   my $iter = $model->append;
@@ -36,22 +36,25 @@ plan tests => 14;
   like ($@, qr/Usage/);
 }
 
-# Gtk3::TreeModel->get_iter_first
+# Gtk3::TreeModel::get_iter and get_iter_first
 {
   my $model = Gtk3::ListStore->new ('Glib::String');
+  my $path = Gtk3::TreePath->new_from_string ('0');
+  is ($model->get_iter ($path), undef);
   is ($model->get_iter_first, undef);
   my $iter = $model->append;
+  isa_ok ($model->get_iter ($path), 'Gtk3::TreeIter');
   isa_ok ($model->get_iter_first, 'Gtk3::TreeIter');
 }
 
-# Gtk3::TreePath->get_indices
+# Gtk3::TreePath::get_indices
 {
   # my $path = Gtk3::TreePath->new_from_indices ([1, 2, 3]); # FIXME
   my $path = Gtk3::TreePath->new_from_string ('1:2:3');
   is_deeply ([$path->get_indices], [1, 2, 3]);
 }
 
-# Gtk3::TreeSelection->get_selected
+# Gtk3::TreeSelection::get_selected
 {
   my $model = Gtk3::ListStore->new ('Glib::String');
   my $view = Gtk3::TreeView->new ($model);
@@ -61,6 +64,24 @@ plan tests => 14;
   my ($sel_model, $sel_iter) = $selection->get_selected;
   is ($sel_model, $model);
   isa_ok ($sel_iter, 'Gtk3::TreeIter');
+}
+
+# Gtk3::TreeStore::new, set and get
+{
+  my $model = Gtk3::TreeStore->new ([qw/Glib::String Glib::Int/]);
+  my $iter = $model->append (undef);
+  $model->set ($iter, [0, 1], ['Foo', 23]);
+  is_deeply ([$model->get ($iter, 0,1)], ['Foo', 23]);
+  is (scalar $model->get ($iter, 0,1), 23);
+
+  $iter = $model->append (undef);
+  $model->set ($iter, 0 => 'Bar', 1 => 42);
+  is_deeply ([$model->get ($iter, 0,1)], ['Bar', 42]);
+  is (scalar $model->get ($iter, 0,1), 42);
+
+  local $@;
+  eval { $model->set ($iter, 0) };
+  like ($@, qr/Usage/);
 }
 
 # Gtk3::Window::new and list_toplevels

@@ -17,6 +17,7 @@ my @_GTK_FLATTEN_ARRAY_REF_RETURN_FOR = qw/
   Gtk3::Window::list_toplevels
 /;
 my @_GTK_HANDLE_SENTINEL_BOOLEAN_FOR = qw/
+  Gtk3::TreeModel::get_iter
   Gtk3::TreeModel::get_iter_first
   Gtk3::TreeSelection::get_selected
 /;
@@ -98,46 +99,16 @@ sub Gtk3::Button::new {
 }
 
 sub Gtk3::ListStore::new {
-  my ($class, @types) = @_;
-  local $@;
-  my $real_types = (@types == 1 && eval { @{$types[0]} })
-                 ? $types[0]
-                 : \@types;
-  return Glib::Object::Introspection->invoke (
-    $_GTK_BASENAME, 'ListStore', 'new',
-    $class, $real_types);
+  return _common_tree_model_new ('ListStore', @_);
 }
 
-# Reroute 'get' to Gtk3::ListStore instead of Glib::Object.
+# Reroute 'get' to Gtk3::TreeModel instead of Glib::Object.
 sub Gtk3::ListStore::get {
   return Gtk3::TreeModel::get (@_);
 }
 
 sub Gtk3::ListStore::set {
-  my ($model, $iter, @columns_and_values) = @_;
-  my (@columns, @values);
-  local $@;
-  if (@columns_and_values == 2 && eval { @{$columns_and_values[0]} }) {
-    @columns = @{$columns_and_values[0]};
-    @values = @{$columns_and_values[1]};
-  } elsif (@columns_and_values % 2 == 0) {
-    my %cols_to_vals = @columns_and_values;
-    @columns = keys %cols_to_vals;
-    @values = values %cols_to_vals;
-  } else {
-    croak ('Usage: Gtk3::ListStore::set ($store, \@columns, \@values)',
-           ' -or-: Gtk3::ListStore::set ($store, $column1 => $value1, ...)');
-  }
-  my @wrapped_values = ();
-  foreach my $i (0..$#columns) {
-    my $column_type = $model->get_column_type ($columns[$i]);
-    push @wrapped_values,
-         Glib::Object::Introspection::GValueWrapper->new (
-           $column_type, $values[$i]);
-  }
-  Glib::Object::Introspection->invoke (
-    $_GTK_BASENAME, 'ListStore', 'set',
-    $model, $iter, \@columns, \@wrapped_values);
+  return _common_tree_model_set ('ListStore', @_);
 }
 
 sub Gtk3::MessageDialog::new {
@@ -174,6 +145,19 @@ sub Gtk3::TreePath::new {
     $_GTK_BASENAME, 'TreePath', $method, @_);
 }
 
+sub Gtk3::TreeStore::new {
+  return _common_tree_model_new ('TreeStore', @_);
+}
+
+# Reroute 'get' to Gtk3::TreeModel instead of Glib::Object.
+sub Gtk3::TreeStore::get {
+  return Gtk3::TreeModel::get (@_);
+}
+
+sub Gtk3::TreeStore::set {
+  return _common_tree_model_set ('TreeStore', @_);
+}
+
 sub Gtk3::TreeView::new {
   my ($class, @args) = @_;
   my $method = (@args == 1) ? 'new_with_model' : 'new';
@@ -199,11 +183,51 @@ sub Gtk3::Window::new {
     $_GTK_BASENAME, 'Window', 'new', $class, $type);
 }
 
+# - Helpers ----------------------------------------------------------------- #
+
+sub _common_tree_model_new {
+  my ($package, $class, @types) = @_;
+  local $@;
+  my $real_types = (@types == 1 && eval { @{$types[0]} })
+                 ? $types[0]
+                 : \@types;
+  return Glib::Object::Introspection->invoke (
+    $_GTK_BASENAME, $package, 'new',
+    $class, $real_types);
+}
+
+sub _common_tree_model_set {
+  my ($package, $model, $iter, @columns_and_values) = @_;
+  my (@columns, @values);
+  local $@;
+  if (@columns_and_values == 2 && eval { @{$columns_and_values[0]} }) {
+    @columns = @{$columns_and_values[0]};
+    @values = @{$columns_and_values[1]};
+  } elsif (@columns_and_values % 2 == 0) {
+    my %cols_to_vals = @columns_and_values;
+    @columns = keys %cols_to_vals;
+    @values = values %cols_to_vals;
+  } else {
+    croak ('Usage: Gtk3::${package}::set ($store, \@columns, \@values)',
+           ' -or-: Gtk3::${package}::set ($store, $column1 => $value1, ...)');
+  }
+  my @wrapped_values = ();
+  foreach my $i (0..$#columns) {
+    my $column_type = $model->get_column_type ($columns[$i]);
+    push @wrapped_values,
+         Glib::Object::Introspection::GValueWrapper->new (
+           $column_type, $values[$i]);
+  }
+  Glib::Object::Introspection->invoke (
+    $_GTK_BASENAME, $package, 'set',
+    $model, $iter, \@columns, \@wrapped_values);
+}
+
 1;
 
 __END__
 
-# - Docs --------------------------------------------------------------- #
+# - Docs -------------------------------------------------------------------- #
 
 =head1 NAME
 
