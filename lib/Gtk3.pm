@@ -26,6 +26,10 @@ my $_GDK_BASENAME = 'Gdk';
 my $_GDK_VERSION = '3.0';
 my $_GDK_PACKAGE = 'Gtk3::Gdk';
 
+my $_PANGO_BASENAME = 'Pango';
+my $_PANGO_VERSION = '1.0';
+my $_PANGO_PACKAGE = 'Pango';
+
 sub import {
   my $class = shift;
 
@@ -40,6 +44,11 @@ sub import {
     basename => $_GDK_BASENAME,
     version => $_GDK_VERSION,
     package => $_GDK_PACKAGE);
+
+  Glib::Object::Introspection->setup (
+    basename => $_PANGO_BASENAME,
+    version => $_PANGO_VERSION,
+    package => $_PANGO_PACKAGE);
 
   my $init = 0;
   my @unknown_args = ($class);
