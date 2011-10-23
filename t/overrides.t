@@ -5,7 +5,7 @@ BEGIN { require './t/inc/setup.pl' };
 use strict;
 use warnings;
 
-plan tests => 29;
+plan tests => 46;
 
 # Gtk3::CHECK_VERSION and check_version
 {
@@ -51,36 +51,6 @@ plan tests => 29;
   like ($@, qr/Usage/);
 }
 
-# Gtk3::TreeModel::get_iter and get_iter_first
-{
-  my $model = Gtk3::ListStore->new ('Glib::String');
-  my $path = Gtk3::TreePath->new_from_string ('0');
-  is ($model->get_iter ($path), undef);
-  is ($model->get_iter_first, undef);
-  my $iter = $model->append;
-  isa_ok ($model->get_iter ($path), 'Gtk3::TreeIter');
-  isa_ok ($model->get_iter_first, 'Gtk3::TreeIter');
-}
-
-# Gtk3::TreePath::get_indices
-{
-  # my $path = Gtk3::TreePath->new_from_indices ([1, 2, 3]); # FIXME
-  my $path = Gtk3::TreePath->new_from_string ('1:2:3');
-  is_deeply ([$path->get_indices], [1, 2, 3]);
-}
-
-# Gtk3::TreeSelection::get_selected
-{
-  my $model = Gtk3::ListStore->new ('Glib::String');
-  my $view = Gtk3::TreeView->new ($model);
-  my $selection = $view->get_selection;
-  my $iter = $model->append;
-  $selection->select_iter ($iter);
-  my ($sel_model, $sel_iter) = $selection->get_selected;
-  is ($sel_model, $model);
-  isa_ok ($sel_iter, 'Gtk3::TreeIter');
-}
-
 # Gtk3::TreeStore::new, set and get
 {
   my $model = Gtk3::TreeStore->new ([qw/Glib::String Glib::Int/]);
@@ -97,6 +67,80 @@ plan tests => 29;
   local $@;
   eval { $model->set ($iter, 0) };
   like ($@, qr/Usage/);
+}
+
+# Gtk3::TreePath::new, new_from_string, new_from_indices, get_indices
+{
+  my $path = Gtk3::TreePath->new;
+  isa_ok ($path, 'Gtk3::TreePath');
+  $path = Gtk3::TreePath->new ('1:2:3');
+  is_deeply ([$path->get_indices], [1, 2, 3]);
+  $path = Gtk3::TreePath->new_from_string ('1:2:3');
+  is_deeply ([$path->get_indices], [1, 2, 3]);
+  $path = Gtk3::TreePath->new_from_indices (1, 2, 3);
+  is_deeply ([$path->get_indices], [1, 2, 3]);
+}
+
+# Gtk3::TreeModel::get_iter, get_iter_first, get_iter_from_string
+{
+  my $model = Gtk3::ListStore->new ('Glib::String');
+  my $path = Gtk3::TreePath->new_from_string ('0');
+  is ($model->get_iter ($path), undef);
+  is ($model->get_iter_first, undef);
+  is ($model->get_iter_from_string ('0'), undef);
+  my $iter = $model->append;
+  isa_ok ($model->get_iter ($path), 'Gtk3::TreeIter');
+  isa_ok ($model->get_iter_first, 'Gtk3::TreeIter');
+  isa_ok ($model->get_iter_from_string ('0'), 'Gtk3::TreeIter');
+}
+
+# Gtk3::TreeModel::iter_children, iter_nth_child, iter_parent
+{
+  my $model = Gtk3::TreeStore->new ([qw/Glib::String/]);
+  my $parent_iter = $model->append (undef);
+  is ($model->iter_children ($parent_iter), undef);
+  is ($model->iter_nth_child ($parent_iter, 0), undef);
+  is ($model->iter_parent ($parent_iter), undef);
+  my $child_iter = $model->append ($parent_iter);
+  isa_ok ($model->iter_children ($parent_iter), 'Gtk3::TreeIter');
+  isa_ok ($model->iter_nth_child ($parent_iter, 0), 'Gtk3::TreeIter');
+  isa_ok ($model->iter_parent ($child_iter), 'Gtk3::TreeIter');
+}
+
+# Gtk3::TreeModelFilter
+{
+  my $child_model = Gtk3::TreeStore->new ([qw/Glib::String/]);
+  my $child_iter = $child_model->append (undef);
+  $child_model->set ($child_iter, 0 => 'Bla');
+  my $model = Gtk3::TreeModelFilter->new ($child_model);
+  isa_ok ($model, 'Gtk3::TreeModelFilter');
+  my $iter = $model->convert_child_iter_to_iter ($child_iter);
+  isa_ok ($iter, 'Gtk3::TreeIter');
+  is ($model->get ($iter, 0), 'Bla');
+}
+
+# Gtk3::TreeModelSort
+{
+  my $child_model = Gtk3::TreeStore->new ([qw/Glib::String/]);
+  my $child_iter = $child_model->append (undef);
+  $child_model->set ($child_iter, 0 => 'Bla');
+  my $model = Gtk3::TreeModelSort->new_with_model ($child_model);
+  isa_ok ($model, 'Gtk3::TreeModelSort');
+  my $iter = $model->convert_child_iter_to_iter ($child_iter);
+  isa_ok ($iter, 'Gtk3::TreeIter');
+  is ($model->get ($iter, 0), 'Bla');
+}
+
+# Gtk3::TreeSelection::get_selected
+{
+  my $model = Gtk3::ListStore->new ('Glib::String');
+  my $view = Gtk3::TreeView->new ($model);
+  my $selection = $view->get_selection;
+  my $iter = $model->append;
+  $selection->select_iter ($iter);
+  my ($sel_model, $sel_iter) = $selection->get_selected;
+  is ($sel_model, $model);
+  isa_ok ($sel_iter, 'Gtk3::TreeIter');
 }
 
 # Gtk3::Window::new and list_toplevels

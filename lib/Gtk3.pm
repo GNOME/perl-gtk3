@@ -19,6 +19,12 @@ my @_GTK_FLATTEN_ARRAY_REF_RETURN_FOR = qw/
 my @_GTK_HANDLE_SENTINEL_BOOLEAN_FOR = qw/
   Gtk3::TreeModel::get_iter
   Gtk3::TreeModel::get_iter_first
+  Gtk3::TreeModel::get_iter_from_string
+  Gtk3::TreeModel::iter_children
+  Gtk3::TreeModel::iter_nth_child
+  Gtk3::TreeModel::iter_parent
+  Gtk3::TreeModelFilter::convert_child_iter_to_iter
+  Gtk3::TreeModelSort::convert_child_iter_to_iter
   Gtk3::TreeSelection::get_selected
 /;
 
@@ -156,11 +162,46 @@ sub Gtk3::TreeModel::get {
   return @values[0..$#values];
 }
 
+# Not needed anymore once <https://bugzilla.gnome.org/show_bug.cgi?id=646742>
+# is fixed.
+sub Gtk3::TreeModelFilter::new {
+  my ($class, $child_model, $root) = @_;
+  Glib::Object::Introspection->invoke (
+    $_GTK_BASENAME, 'TreeModel', 'filter_new', $child_model, $root);
+}
+
+# Reroute 'get' to Gtk3::TreeModel instead of Glib::Object.
+sub Gtk3::TreeModelFilter::get {
+  return Gtk3::TreeModel::get (@_);
+}
+
+# Not needed anymore once <https://bugzilla.gnome.org/show_bug.cgi?id=646742>
+# is fixed.
+sub Gtk3::TreeModelSort::new_with_model {
+  my ($class, $child_model) = @_;
+  Glib::Object::Introspection->invoke (
+    $_GTK_BASENAME, 'TreeModel', 'sort_new_with_model', $child_model);
+}
+
+# Reroute 'get' to Gtk3::TreeModel instead of Glib::Object.
+sub Gtk3::TreeModelSort::get {
+  return Gtk3::TreeModel::get (@_);
+}
+
 sub Gtk3::TreePath::new {
   my ($class, @args) = @_;
   my $method = (@args == 1) ? 'new_from_string' : 'new';
   Glib::Object::Introspection->invoke (
     $_GTK_BASENAME, 'TreePath', $method, @_);
+}
+
+sub Gtk3::TreePath::new_from_indices {
+  my ($class, @indices) = @_;
+  my $path = Gtk3::TreePath->new;
+  foreach (@indices) {
+    $path->append_index ($_);
+  }
+  return $path;
 }
 
 sub Gtk3::TreeStore::new {
