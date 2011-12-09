@@ -1,5 +1,8 @@
 {{$NEXT}}
 
+* Add more overrides for the tree objects
+* Fix a test failure (RT #72773)
+
 Overview of changes in Gtk3 0.001 [2011-10-14]
 ==============================================
 
