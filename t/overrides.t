@@ -5,7 +5,7 @@ BEGIN { require './t/inc/setup.pl' };
 use strict;
 use warnings;
 
-plan tests => 46;
+plan tests => 48;
 
 # Gtk3::CHECK_VERSION and check_version
 {
@@ -52,6 +52,15 @@ SKIP: {
   local $@;
   eval { $model->set ($iter, 0) };
   like ($@, qr/Usage/);
+}
+
+# Gtk3::Stock
+{
+  ok (grep { $_ eq 'gtk-ok' } Gtk3::Stock::list_ids ());
+  my $item = Gtk3::Stock::lookup ('gtk-ok');
+  is ($item->{stock_id}, 'gtk-ok');
+  # Gtk3::Stock::add and add_static don't work yet
+  Gtk3::Stock::set_translate_func ('perl-domain', sub {}, 42);
 }
 
 # Gtk3::TreeStore::new, set and get

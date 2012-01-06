@@ -11,12 +11,22 @@ our @ISA = qw(Exporter);
 my $_GTK_BASENAME = 'Gtk';
 my $_GTK_VERSION = '3.0';
 my $_GTK_PACKAGE = 'Gtk3';
+
+my %_GTK_NAME_CORRECTIONS = (
+  'Gtk3::stock_add' => 'Gtk3::Stock::add',
+  'Gtk3::stock_add_static' => 'Gtk3::Stock::add_static',
+  'Gtk3::stock_list_ids' => 'Gtk3::Stock::list_ids',
+  'Gtk3::stock_lookup' => 'Gtk3::Stock::lookup',
+  'Gtk3::stock_set_translate_func' => 'Gtk3::Stock::set_translate_func',
+);
 my @_GTK_FLATTEN_ARRAY_REF_RETURN_FOR = qw/
   Gtk3::CellLayout::get_cells
+  Gtk3::Stock::list_ids
   Gtk3::TreePath::get_indices
   Gtk3::Window::list_toplevels
 /;
 my @_GTK_HANDLE_SENTINEL_BOOLEAN_FOR = qw/
+  Gtk3::Stock::lookup
   Gtk3::TreeModel::get_iter
   Gtk3::TreeModel::get_iter_first
   Gtk3::TreeModel::get_iter_from_string
@@ -43,6 +53,7 @@ sub import {
     basename => $_GTK_BASENAME,
     version => $_GTK_VERSION,
     package => $_GTK_PACKAGE,
+    name_corrections => \%_GTK_NAME_CORRECTIONS,
     flatten_array_ref_return_for => \@_GTK_FLATTEN_ARRAY_REF_RETURN_FOR,
     handle_sentinel_boolean_for => \@_GTK_HANDLE_SENTINEL_BOOLEAN_FOR);
 
