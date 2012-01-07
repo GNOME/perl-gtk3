@@ -257,10 +257,13 @@ sub Gtk3::Window::new {
 
 sub _common_tree_model_new {
   my ($package, $class, @types) = @_;
-  local $@;
-  my $real_types = (@types == 1 && eval { @{$types[0]} })
-                 ? $types[0]
-                 : \@types;
+  my $real_types;
+  {
+    local $@;
+    $real_types = (@types == 1 && eval { @{$types[0]} })
+                ? $types[0]
+                : \@types;
+  }
   return Glib::Object::Introspection->invoke (
     $_GTK_BASENAME, $package, 'new',
     $class, $real_types);
@@ -269,8 +272,13 @@ sub _common_tree_model_new {
 sub _common_tree_model_set {
   my ($package, $model, $iter, @columns_and_values) = @_;
   my (@columns, @values);
-  local $@;
-  if (@columns_and_values == 2 && eval { @{$columns_and_values[0]} }) {
+  my $have_array_refs;
+  {
+    local $@;
+    $have_array_refs =
+      @columns_and_values == 2 && eval { @{$columns_and_values[0]} };
+  }
+  if ($have_array_refs) {
     @columns = @{$columns_and_values[0]};
     @values = @{$columns_and_values[1]};
   } elsif (@columns_and_values % 2 == 0) {
