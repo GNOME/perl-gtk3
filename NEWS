@@ -1,5 +1,14 @@
 {{$NEXT}}
 
+Overview of changes in Gtk3 0.003 [2012-01-14]
+==============================================
+
+* API change: wrap gtk_stock_* as Gtk3::Stock::*.  Also, make
+  Gtk3::Stock::list_ids return a list and make Gtk3::Stock::lookup skip
+  the sentinel boolean.
+* Correctly handle internal errors on perl < 5.14.  This fixes a test
+  failure.
+
 Overview of changes in Gtk3 0.002 [2011-12-09]
 ==============================================
 
