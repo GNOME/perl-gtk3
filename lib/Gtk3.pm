@@ -38,9 +38,17 @@ my @_GTK_HANDLE_SENTINEL_BOOLEAN_FOR = qw/
   Gtk3::TreeSelection::get_selected
 /;
 
+my @_GDK_PIXBUF_FLATTEN_ARRAY_REF_RETURN_FOR = qw/
+  Gtk3::Gdk::Pixbuf::get_formats
+/;
+
 my $_GDK_BASENAME = 'Gdk';
 my $_GDK_VERSION = '3.0';
 my $_GDK_PACKAGE = 'Gtk3::Gdk';
+
+my $_GDK_PIXBUF_BASENAME = 'GdkPixbuf';
+my $_GDK_PIXBUF_VERSION = '2.0';
+my $_GDK_PIXBUF_PACKAGE = 'Gtk3::Gdk';
 
 my $_PANGO_BASENAME = 'Pango';
 my $_PANGO_VERSION = '1.0';
@@ -61,6 +69,12 @@ sub import {
     basename => $_GDK_BASENAME,
     version => $_GDK_VERSION,
     package => $_GDK_PACKAGE);
+
+  Glib::Object::Introspection->setup (
+    basename => $_GDK_PIXBUF_BASENAME,
+    version => $_GDK_PIXBUF_VERSION,
+    package => $_GDK_PIXBUF_PACKAGE,
+    flatten_array_ref_return_for => \@_GDK_PIXBUF_FLATTEN_ARRAY_REF_RETURN_FOR);
 
   Glib::Object::Introspection->setup (
     basename => $_PANGO_BASENAME,
@@ -289,6 +303,98 @@ sub Gtk3::Gdk::Window::new {
     $class, $parent, $attr, $attr_mask);
 }
 
+# GdkPixbuf
+
+sub Gtk3::Gdk::Pixbuf::get_pixels {
+  my $pixel_aref = Glib::Object::Introspection->invoke (
+    $_GDK_PIXBUF_BASENAME, 'Pixbuf', 'get_pixels', @_);
+  return pack 'C*', @{$pixel_aref};
+}
+
+sub Gtk3::Gdk::Pixbuf::new_from_data {
+  my ($class, $data, $colorspace, $has_alpha, $bits_per_sample, $width, $height, $rowstride) = @_;
+  # FIXME: do we need to keep $real_data alive and then release it in a destroy
+  # notify callback?
+  my $real_data;
+  {
+    local $@;
+    $real_data = (eval { @{$data} })
+               ? $data
+               : [unpack 'C*', $data];
+  }
+  return Glib::Object::Introspection->invoke (
+    $_GDK_PIXBUF_BASENAME, 'Pixbuf', 'new_from_data',
+    $class, $real_data, $colorspace, $has_alpha, $bits_per_sample, $width, $height, $rowstride,
+    undef, undef);
+}
+
+sub Gtk3::Gdk::Pixbuf::new_from_inline {
+  my ($class, $data, $copy_pixels) = @_;
+  $copy_pixels = Glib::TRUE unless defined $copy_pixels;
+  my $real_data;
+  {
+    local $@;
+    $real_data = (eval { @{$data} })
+               ? $data
+               : [unpack 'C*', $data];
+  }
+  return Glib::Object::Introspection->invoke (
+    $_GDK_PIXBUF_BASENAME, 'Pixbuf', 'new_from_inline',
+    $class, $real_data, $copy_pixels);
+}
+
+sub Gtk3::Gdk::Pixbuf::new_from_xpm_data {
+  my ($class, @data) = @_;
+  my $real_data;
+  {
+    local $@;
+    $real_data = (@data == 1 && eval { @{$data[0]} })
+               ? $data[0]
+               : \@data;
+  }
+  return Glib::Object::Introspection->invoke (
+    $_GDK_PIXBUF_BASENAME, 'Pixbuf', 'new_from_xpm_data',
+    $class, $real_data);
+}
+
+sub Gtk3::Gdk::Pixbuf::save {
+  my ($pixbuf, $filename, $type, @rest) = @_;
+  my ($keys, $values) = _unpack_columns_and_values (\@rest);
+  if (not defined $keys) {
+    croak ('Usage: $pixbuf->save ($filename, $type, \@keys, \@values)',
+           ' -or-: $pixbuf->save ($filename, $type, $key1 => $value1, ...)');
+  }
+  Glib::Object::Introspection->invoke (
+    $_GDK_PIXBUF_BASENAME, 'Pixbuf', 'save',
+    $pixbuf, $filename, $type, $keys, $values);
+}
+
+sub Gtk3::Gdk::Pixbuf::save_to_buffer {
+  my ($pixbuf, $type, @rest) = @_;
+  my ($keys, $values) = _unpack_columns_and_values (\@rest);
+  if (not defined $keys) {
+    croak ('Usage: $pixbuf->save_to_buffer ($type, \@keys, \@values)',
+           ' -or-: $pixbuf->save_to_buffer ($type, $key1 => $value1, ...)');
+  }
+  my (undef, $buffer) =
+    Glib::Object::Introspection->invoke (
+      $_GDK_PIXBUF_BASENAME, 'Pixbuf', 'save_to_buffer',
+      $pixbuf, $type, $keys, $values);
+  return $buffer;
+}
+
+sub Gtk3::Gdk::Pixbuf::save_to_callback {
+  my ($pixbuf, $save_func, $user_data, $type, @rest) = @_;
+  my ($keys, $values) = _unpack_columns_and_values (\@rest);
+  if (not defined $keys) {
+    croak ('Usage: $pixbuf->save_to_callback ($save_func, $user_data, $type, \@keys, \@values)',
+           ' -or-: $pixbuf->save_to_callback ($save_func, $user_data, $type, $key1 => $value1, ...)');
+  }
+  Glib::Object::Introspection->invoke (
+    $_GDK_PIXBUF_BASENAME, 'Pixbuf', 'save_to_callback',
+    $pixbuf, $save_func, $user_data, $type, $keys, $values);
+}
+
 # - Helpers ----------------------------------------------------------------- #
 
 sub _common_tree_model_new {
@@ -307,34 +413,43 @@ sub _common_tree_model_new {
 
 sub _common_tree_model_set {
   my ($package, $model, $iter, @columns_and_values) = @_;
+  my ($columns, $values) = _unpack_columns_and_values (\@columns_and_values);
+  if (not defined $columns) {
+    croak ('Usage: Gtk3::${package}::set ($store, \@columns, \@values)',
+           ' -or-: Gtk3::${package}::set ($store, $column1 => $value1, ...)');
+  }
+  my @wrapped_values = ();
+  foreach my $i (0..$#{$columns}) {
+    my $column_type = $model->get_column_type ($columns->[$i]);
+    push @wrapped_values,
+         Glib::Object::Introspection::GValueWrapper->new (
+           $column_type, $values->[$i]);
+  }
+  Glib::Object::Introspection->invoke (
+    $_GTK_BASENAME, $package, 'set',
+    $model, $iter, $columns, \@wrapped_values);
+}
+
+sub _unpack_columns_and_values {
+  my ($columns_and_values) = @_;
   my (@columns, @values);
   my $have_array_refs;
   {
     local $@;
     $have_array_refs =
-      @columns_and_values == 2 && eval { @{$columns_and_values[0]} };
+      @$columns_and_values == 2 && eval { @{$columns_and_values->[0]} };
   }
   if ($have_array_refs) {
-    @columns = @{$columns_and_values[0]};
-    @values = @{$columns_and_values[1]};
-  } elsif (@columns_and_values % 2 == 0) {
-    my %cols_to_vals = @columns_and_values;
+    @columns = @{$columns_and_values->[0]};
+    @values = @{$columns_and_values->[1]};
+  } elsif (@$columns_and_values % 2 == 0) {
+    my %cols_to_vals = @$columns_and_values;
     @columns = keys %cols_to_vals;
     @values = values %cols_to_vals;
   } else {
-    croak ('Usage: Gtk3::${package}::set ($store, \@columns, \@values)',
-           ' -or-: Gtk3::${package}::set ($store, $column1 => $value1, ...)');
+    return ();
   }
-  my @wrapped_values = ();
-  foreach my $i (0..$#columns) {
-    my $column_type = $model->get_column_type ($columns[$i]);
-    push @wrapped_values,
-         Glib::Object::Introspection::GValueWrapper->new (
-           $column_type, $values[$i]);
-  }
-  Glib::Object::Introspection->invoke (
-    $_GTK_BASENAME, $package, 'set',
-    $model, $iter, \@columns, \@wrapped_values);
+  return (\@columns, \@values);
 }
 
 1;

@@ -5,7 +5,7 @@ BEGIN { require './t/inc/setup.pl' };
 use strict;
 use warnings;
 
-plan tests => 51;
+plan tests => 59;
 
 # Gtk3::CHECK_VERSION and check_version
 {
@@ -204,4 +204,55 @@ SKIP: {
     x => 100, y => 50,
   });
   isa_ok ($window, 'Gtk3::Gdk::Window');
+}
+
+# Gtk3::Gdk::Pixbuf::get_formats
+{
+  my @formats = Gtk3::Gdk::Pixbuf->get_formats;
+  isa_ok (ref $formats[0], 'Gtk3::Gdk::PixbufFormat');
+}
+
+# Gtk3::Gdk::Pixbuf::save, save_to_buffer, save_to_callback
+SKIP: {
+  # FIXME: https://bugzilla.gnome.org/show_bug.cgi?id=670372
+  skip 'save & save_to_buffer annotations missing', 7;
+
+  my ($width, $height) = (45, 89);
+  my $data = pack "C*", map { int rand 255 } 0..(3*$width*$height);
+  my $pixbuf = Gtk3::Gdk::Pixbuf->new_from_data
+    ($data, 'rgb', Glib::FALSE, 8, $width, $height, $width*3);
+
+  my $filename = 'testsave.png';
+  eval {
+    $pixbuf->save ($filename, 'png',
+                   'key_arg_without_value_arg');
+  };
+  like ($@, qr/Usage/);
+  my $mtime = scalar localtime;
+  my $desc = 'Something really cool';
+  $pixbuf->save ($filename, 'png',
+                 'tEXt::Thumb::MTime' => $mtime,
+                 'tEXt::Description' => $desc);
+  my $new_pixbuf = Gtk3::Gdk::Pixbuf->new_from_file ($filename);
+  isa_ok ($new_pixbuf, 'Gtk3::Gdk::Pixbuf', 'new_from_file');
+  is ($new_pixbuf->get_option ('tEXt::Description'), $desc);
+  is ($new_pixbuf->get_option ('tEXt::Thumb::MTime'), $mtime);
+  unlink $filename;
+
+  my $buffer = eval {
+    $pixbuf->save_to_buffer ('jpeg', [qw/quality/], [0.75]);
+    $pixbuf->save_to_buffer ('jpeg', quality => 0.75);
+  } || eval {
+    $pixbuf->save_to_buffer ('png'); # fallback if jpeg not supported
+  };
+  ok (defined $buffer, 'save_to_buffer');
+  my $loader = Gtk3::Gdk::PixbufLoader->new;
+  $loader->write ($buffer);
+  $loader->close;
+  $new_pixbuf = $loader->get_pixbuf;
+  is ($new_pixbuf->get_width, $width);
+  is ($new_pixbuf->get_height, $height);
+
+  # FIXME: callbacks with automatic args not supported yet.
+  # $pixbuf->save_to_callback (sub { warn @_; return Glib::TRUE; }, 'data', 'png');
 }

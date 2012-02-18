@@ -1,5 +1,6 @@
 {{$NEXT}}
 
+* Provide GdkPixbuf bindings under Gtk3::Gdk::Pixbuf.
 * Make Gtk3::[HV]Box::new provide default arg values.
 * Make Gtk3::Gdk::Window::new construct the mask automatically if none is
   given.
@@ -16,8 +17,8 @@ Overview of changes in Gtk3 0.003 [2012-01-14]
 Overview of changes in Gtk3 0.002 [2011-12-09]
 ==============================================
 
-* Add more overrides for the tree objects
-* Fix a test failure (RT #72773)
+* Add more overrides for the tree objects.
+* Fix a test failure.  (RT #72773)
 
 Overview of changes in Gtk3 0.001 [2011-10-14]
 ==============================================
