@@ -133,6 +133,14 @@ sub Gtk3::Button::new {
   }
 }
 
+sub Gtk3::HBox::new {
+  my ($class, $homogeneous, $spacing) = @_;
+  $homogeneous = 5 unless defined $homogeneous;
+  $spacing = 0 unless defined $spacing;
+  return Glib::Object::Introspection->invoke (
+    $_GTK_BASENAME, 'HBox', 'new', $class, $homogeneous, $spacing);
+}
+
 sub Gtk3::ListStore::new {
   return _common_tree_model_new ('ListStore', @_);
 }
@@ -244,6 +252,14 @@ sub Gtk3::TreeViewColumn::new_with_attributes {
     $object->add_attribute ($cell, $attr, $attr_to_column{$attr});
   }
   return $object;
+}
+
+sub Gtk3::VBox::new {
+  my ($class, $homogeneous, $spacing) = @_;
+  $homogeneous = 5 unless defined $homogeneous;
+  $spacing = 0 unless defined $spacing;
+  return Glib::Object::Introspection->invoke (
+    $_GTK_BASENAME, 'VBox', 'new', $class, $homogeneous, $spacing);
 }
 
 sub Gtk3::Window::new {
