@@ -5,7 +5,7 @@ BEGIN { require './t/inc/setup.pl' };
 use strict;
 use warnings;
 
-plan tests => 48;
+plan tests => 51;
 
 # Gtk3::CHECK_VERSION and check_version
 {
@@ -179,4 +179,29 @@ SKIP: {
   my $window2 = Gtk3::Window->new;
   is_deeply ([Gtk3::Window::list_toplevels ()], [$window1, $window2]);
   is (scalar Gtk3::Window::list_toplevels (), $window2);
+}
+
+# Gtk3::Gdk::Window::new
+SKIP: {
+  my $window = Gtk3::Gdk::Window->new (undef, {
+    window_type => 'toplevel',
+  });
+  isa_ok ($window, 'Gtk3::Gdk::Window');
+
+  # FIXME: https://bugzilla.gnome.org/show_bug.cgi?id=670369
+  skip 'window attr type annotation missing', 2;
+
+  $window = Gtk3::Gdk::Window->new (undef, {
+    window_type => 'toplevel',
+    width => 100, height => 50,
+    x => 100, y => 50,
+  }, [qw/x y/]);
+  isa_ok ($window, 'Gtk3::Gdk::Window');
+
+  $window = Gtk3::Gdk::Window->new (undef, {
+    window_type => 'toplevel',
+    width => 100, height => 50,
+    x => 100, y => 50,
+  });
+  isa_ok ($window, 'Gtk3::Gdk::Window');
 }

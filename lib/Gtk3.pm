@@ -269,6 +269,26 @@ sub Gtk3::Window::new {
     $_GTK_BASENAME, 'Window', 'new', $class, $type);
 }
 
+# Gdk
+
+sub Gtk3::Gdk::Window::new {
+  my ($class, $parent, $attr, $attr_mask) = @_;
+  if (not defined $attr_mask) {
+    $attr_mask = Gtk3::Gdk::WindowAttributesType->new ([]);
+    if (exists $attr->{title}) { $attr_mask |= 'GDK_WA_TITLE' };
+    if (exists $attr->{x}) { $attr_mask |= 'GDK_WA_X' };
+    if (exists $attr->{y}) { $attr_mask |= 'GDK_WA_Y' };
+    if (exists $attr->{cursor}) { $attr_mask |= 'GDK_WA_CURSOR' };
+    if (exists $attr->{visual}) { $attr_mask |= 'GDK_WA_VISUAL' };
+    if (exists $attr->{wmclass_name} && exists $attr->{wmclass_class}) { $attr_mask |= 'GDK_WA_WMCLASS' };
+    if (exists $attr->{override_redirect}) { $attr_mask |= 'GDK_WA_NOREDIR' };
+    if (exists $attr->{type_hint}) { $attr_mask |= 'GDK_WA_TYPE_HINT' };
+  }
+  return Glib::Object::Introspection->invoke (
+    $_GDK_BASENAME, 'Window', 'new',
+    $class, $parent, $attr, $attr_mask);
+}
+
 # - Helpers ----------------------------------------------------------------- #
 
 sub _common_tree_model_new {
