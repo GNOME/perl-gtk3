@@ -1,5 +1,8 @@
 {{$NEXT}}
 
+Overview of changes in Gtk3 0.004 [2012-03-18]
+==============================================
+
 * Provide GdkPixbuf bindings under Gtk3::Gdk::Pixbuf.
 * Make Gtk3::[HV]Box::new provide default arg values.
 * Make Gtk3::Gdk::Window::new construct the mask automatically if none is
