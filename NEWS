@@ -4,6 +4,7 @@
 * Make Gtk3::[HV]Box::new provide default arg values.
 * Make Gtk3::Gdk::Window::new construct the mask automatically if none is
   given.
+* Clarify licensing terms.
 
 Overview of changes in Gtk3 0.003 [2012-01-14]
 ==============================================

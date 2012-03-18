@@ -517,10 +517,11 @@ L<http://gtk2-perl.sourceforge.net>.
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright (C) 2011 by Torsten Schoenfeld <kaffeetisch@gmx.de>
+Copyright (C) 2011-2012 by Torsten Schoenfeld <kaffeetisch@gmx.de>
 
 This library is free software; you can redistribute it and/or modify it under
-the terms of the Lesser General Public License (LGPL).  For more information,
-see http://www.fsf.org/licenses/lgpl.txt
+the terms of the GNU Library General Public License as published by the Free
+Software Foundation; either version 2.1 of the License, or (at your option) any
+later version.
 
 =cut

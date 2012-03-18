@@ -1,0 +1,46 @@
+Gtk3
+====
+
+Perl bindings to the 3.x series of the gtk+ toolkit.  This module allows you to
+write graphical user interfaces in a Perlish and object-oriented way, freeing
+you from the casting and memory management in C, yet remaining very close in
+spirit to original API.
+
+
+INSTALLATION
+------------
+
+To install this module type the following:
+
+   perl Makefile.PL
+   make
+   make test
+   make install
+
+
+DEPENDENCIES
+------------
+
+Gtk3 needs this C library:
+
+  gtk+-3.0 >= 3.0.0
+
+and these Perl modules:
+
+  Glib::Object::Introspection >= 0.002
+
+
+BUG REPORTS
+-----------
+
+Please report bugs to the gnome-perl product in GNOME's Bugzilla:
+<http://bugzilla.gnome.org/enter_bug.cgi?product=gnome-perl>
+
+
+LICENSE
+-------
+
+This library is free software; you can redistribute it and/or modify it under
+the terms of the GNU Library General Public License as published by the Free
+Software Foundation; either version 2.1 of the License, or (at your option) any
+later version.
