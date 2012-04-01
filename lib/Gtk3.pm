@@ -12,6 +12,18 @@ my $_GTK_BASENAME = 'Gtk';
 my $_GTK_VERSION = '3.0';
 my $_GTK_PACKAGE = 'Gtk3';
 
+my $_GDK_BASENAME = 'Gdk';
+my $_GDK_VERSION = '3.0';
+my $_GDK_PACKAGE = 'Gtk3::Gdk';
+
+my $_GDK_PIXBUF_BASENAME = 'GdkPixbuf';
+my $_GDK_PIXBUF_VERSION = '2.0';
+my $_GDK_PIXBUF_PACKAGE = 'Gtk3::Gdk';
+
+my $_PANGO_BASENAME = 'Pango';
+my $_PANGO_VERSION = '1.0';
+my $_PANGO_PACKAGE = 'Pango';
+
 my %_GTK_NAME_CORRECTIONS = (
   'Gtk3::stock_add' => 'Gtk3::Stock::add',
   'Gtk3::stock_add_static' => 'Gtk3::Stock::add_static',
@@ -20,6 +32,7 @@ my %_GTK_NAME_CORRECTIONS = (
   'Gtk3::stock_set_translate_func' => 'Gtk3::Stock::set_translate_func',
 );
 my @_GTK_FLATTEN_ARRAY_REF_RETURN_FOR = qw/
+  Gtk3::Builder::get_objects
   Gtk3::CellLayout::get_cells
   Gtk3::Stock::list_ids
   Gtk3::TreePath::get_indices
@@ -41,18 +54,6 @@ my @_GTK_HANDLE_SENTINEL_BOOLEAN_FOR = qw/
 my @_GDK_PIXBUF_FLATTEN_ARRAY_REF_RETURN_FOR = qw/
   Gtk3::Gdk::Pixbuf::get_formats
 /;
-
-my $_GDK_BASENAME = 'Gdk';
-my $_GDK_VERSION = '3.0';
-my $_GDK_PACKAGE = 'Gtk3::Gdk';
-
-my $_GDK_PIXBUF_BASENAME = 'GdkPixbuf';
-my $_GDK_PIXBUF_VERSION = '2.0';
-my $_GDK_PIXBUF_PACKAGE = 'Gtk3::Gdk';
-
-my $_PANGO_BASENAME = 'Pango';
-my $_PANGO_VERSION = '1.0';
-my $_PANGO_PACKAGE = 'Pango';
 
 sub import {
   my $class = shift;
@@ -135,6 +136,101 @@ sub Gtk3::main {
 sub Gtk3::main_quit {
   # Ignore any arguments passed in.
   Glib::Object::Introspection->invoke ($_GTK_BASENAME, undef, 'main_quit');
+}
+
+sub Gtk3::Builder::add_objects_from_file {
+  my ($builder, $filename, @rest) = @_;
+  my $ref = _rest_to_ref (\@rest);
+  return Glib::Object::Introspection->invoke (
+    $_GTK_BASENAME, 'Builder', 'add_objects_from_file',
+    $builder, $filename, $ref);
+}
+
+sub Gtk3::Builder::add_objects_from_string {
+  my ($builder, $string, @rest) = @_;
+  my $ref = _rest_to_ref (\@rest);
+  return Glib::Object::Introspection->invoke (
+    $_GTK_BASENAME, 'Builder', 'add_objects_from_string',
+    $builder, $string, length $string, $ref);
+}
+
+sub Gtk3::Builder::add_from_string {
+  my ($builder, $string) = @_;
+  return Glib::Object::Introspection->invoke (
+    $_GTK_BASENAME, 'Builder', 'add_from_string',
+    $builder, $string, length $string);
+}
+
+# Copied from Gtk2.pm
+sub Gtk3::Builder::connect_signals {
+  my $builder = shift;
+  my $user_data = shift;
+
+  my $do_connect = sub {
+    my ($object,
+        $signal_name,
+        $user_data,
+        $connect_object,
+        $flags,
+        $handler) = @_;
+    my $func = ($flags & 'after') ? 'signal_connect_after' : 'signal_connect';
+    # we get connect_object when we're supposed to call
+    # signal_connect_object, which ensures that the data (an object)
+    # lives as long as the signal is connected.  the bindings take
+    # care of that for us in all cases, so we only have signal_connect.
+    # if we get a connect_object, just use that instead of user_data.
+    $object->$func($signal_name => $handler,
+                   $connect_object ? $connect_object : $user_data);
+  };
+
+  # $builder->connect_signals ($user_data)
+  # $builder->connect_signals ($user_data, $package)
+  if ($#_ <= 0) {
+    my $package = shift;
+    $package = caller unless defined $package;
+
+    $builder->connect_signals_full(sub {
+      my ($builder,
+          $object,
+          $signal_name,
+          $handler_name,
+          $connect_object,
+          $flags) = @_;
+
+      no strict qw/refs/;
+
+      my $handler = $handler_name;
+      if (ref $package) {
+        $handler = sub { $package->$handler_name(@_) };
+      } else {
+        if ($package && $handler !~ /::/) {
+          $handler = $package.'::'.$handler_name;
+        }
+      }
+
+      $do_connect->($object, $signal_name, $user_data, $connect_object,
+                    $flags, $handler);
+    });
+  }
+
+  # $builder->connect_signals ($user_data, %handlers)
+  else {
+    my %handlers = @_;
+
+    $builder->connect_signals_full(sub {
+      my ($builder,
+          $object,
+          $signal_name,
+          $handler_name,
+          $connect_object,
+          $flags) = @_;
+
+      return unless exists $handlers{$handler_name};
+
+      $do_connect->($object, $signal_name, $user_data, $connect_object,
+                    $flags, $handlers{$handler_name});
+    });
+  }
 }
 
 sub Gtk3::Button::new {
@@ -450,6 +546,16 @@ sub _unpack_columns_and_values {
     return ();
   }
   return (\@columns, \@values);
+}
+
+sub _rest_to_ref {
+  my ($rest) = @_;
+  local $@;
+  if (scalar @$rest == 1 && eval { defined $rest->[0]->[0] }) {
+    return $rest->[0];
+  } else {
+    return $rest;
+  }
 }
 
 1;

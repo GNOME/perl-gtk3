@@ -1,5 +1,7 @@
 {{$NEXT}}
 
+* Add overrides for Gtk3::Builder and implement its connect_signals.
+
 Overview of changes in Gtk3 0.004 [2012-03-18]
 ==============================================
 
