@@ -1,6 +1,7 @@
 {{$NEXT}}
 
 * Add overrides for Gtk3::Builder and implement its connect_signals.
+* Add overrides for Gtk3::Menu::popup and popup_for_device.
 
 Overview of changes in Gtk3 0.004 [2012-03-18]
 ==============================================

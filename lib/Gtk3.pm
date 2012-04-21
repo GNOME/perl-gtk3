@@ -264,6 +264,33 @@ sub Gtk3::ListStore::set {
   return _common_tree_model_set ('ListStore', @_);
 }
 
+sub Gtk3::Menu::popup {
+  my $self = shift;
+  $self->popup_for_device (undef, @_);
+}
+
+sub Gtk3::Menu::popup_for_device {
+  my ($menu, $device, $parent_menu_shell, $parent_menu_item, $func, $data, $button, $activate_time) = @_;
+  my $real_func = sub {
+    my @stuff = eval { $func->(@_) };
+    if ($@) {
+      warn "*** menu position callback ignoring error: $@";
+    }
+    if (@stuff == 3) {
+      return (@stuff);
+    } elsif (@stuff == 2) {
+      return (@stuff, Glib::FALSE); # provide a default for push_in
+    } else {
+      warn "*** menu position callback must return two integers " .
+           "(x, y) or two integers and a boolean (x, y, push_in)";
+      return (0, 0, Glib::FALSE);
+    }
+  };
+  return Glib::Object::Introspection->invoke (
+    $_GTK_BASENAME, 'Menu', 'popup_for_device',
+    $menu, $device, $parent_menu_shell, $parent_menu_item, $real_func, $data, $button, $activate_time);
+}
+
 sub Gtk3::MessageDialog::new {
   my ($class, $parent, $flags, $type, $buttons, $format, @args) = @_;
   my $dialog = Glib::Object::new ($class, message_type => $type,

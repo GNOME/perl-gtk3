@@ -5,7 +5,7 @@ BEGIN { require './t/inc/setup.pl' };
 use strict;
 use warnings;
 
-plan tests => 59;
+plan tests => 61;
 
 # Gtk3::CHECK_VERSION and check_version
 {
@@ -52,6 +52,18 @@ SKIP: {
   local $@;
   eval { $model->set ($iter, 0) };
   like ($@, qr/Usage/);
+}
+
+# Gtk3::Menu::popup and popup_for_device
+{
+  my $menu = Gtk3::Menu->new;
+  my $position_callback = sub {
+    my ($menu, $data) = @_;
+    isa_ok ($menu, "Gtk3::Menu");
+    return @$data;
+  };
+  $menu->popup (undef, undef, $position_callback, [50, 50], 1, 0);
+  $menu->popup_for_device (undef, undef, undef, $position_callback, [50, 50, Glib::TRUE], 1, 0);
 }
 
 # Gtk3::Stock
