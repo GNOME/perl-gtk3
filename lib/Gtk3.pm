@@ -271,7 +271,7 @@ sub Gtk3::Menu::popup {
 
 sub Gtk3::Menu::popup_for_device {
   my ($menu, $device, $parent_menu_shell, $parent_menu_item, $func, $data, $button, $activate_time) = @_;
-  my $real_func = sub {
+  my $real_func = $func ? sub {
     my @stuff = eval { $func->(@_) };
     if ($@) {
       warn "*** menu position callback ignoring error: $@";
@@ -285,7 +285,7 @@ sub Gtk3::Menu::popup_for_device {
            "(x, y) or two integers and a boolean (x, y, push_in)";
       return (0, 0, Glib::FALSE);
     }
-  };
+  } : undef;
   return Glib::Object::Introspection->invoke (
     $_GTK_BASENAME, 'Menu', 'popup_for_device',
     $menu, $device, $parent_menu_shell, $parent_menu_item, $real_func, $data, $button, $activate_time);

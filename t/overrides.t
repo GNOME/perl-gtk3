@@ -62,6 +62,7 @@ SKIP: {
     isa_ok ($menu, "Gtk3::Menu");
     return @$data;
   };
+  $menu->popup (undef, undef, undef, undef, 1, 0);
   $menu->popup (undef, undef, $position_callback, [50, 50], 1, 0);
   $menu->popup_for_device (undef, undef, undef, $position_callback, [50, 50, Glib::TRUE], 1, 0);
 }
