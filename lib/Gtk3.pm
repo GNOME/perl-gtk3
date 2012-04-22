@@ -629,6 +629,37 @@ L<http://mail.gnome.org/mailman/listinfo/gtk-perl-list>.
 Also have a look at the gtk2-perl website and sourceforge project page,
 L<http://gtk2-perl.sourceforge.net>.
 
+=head2 Porting from Gtk2 to Gtk3
+
+The majority of the API has not changed, so as a first approximation you can
+run C<< s/Gtk2/Gtk3/ >> on your application.  A big exception to this rule is
+APIs that were deprecated in gtk+ 2.x -- these were all removed from gtk+ 3.0
+and thus from L<Gtk3>.  The migration guide at
+L<http://developer.gnome.org/gtk3/stable/migrating.html> describes what to use
+instead.  Apart from this, here is a list of some other incompatible
+differences between L<Gtk2> and L<Gtk3>:
+
+=over
+
+=item * The call syntax for class-static methods is now always
+C<< Gtk3::Stock::lookup >> instead of C<< Gtk3::Stock->lookup >>.
+
+=item * The %Gtk2::Gdk::Keysyms hash is gone; instead of C<<
+Gtk2::Gdk::Keysyms{XYZ} >>, use C<< Gtk3::Gdk::KEY_XYZ >>.
+
+=item * The Gtk2::Pango compatibility wrapper was not carried over; simply use
+the namespace "Pango" everywhere.  It gets set up automatically when loading
+L<Gtk3>.
+
+=item * The Gtk3::Menu menu position callback passed to popup() does not
+receive x and y parameters anymore.
+
+=back
+
+Note also that Gtk3::CHECK_VERSION will always fail when passed 2.y.z, so if
+you have any existing version checks in your code, you will most likely need to
+remove them.
+
 =head1 SEE ALSO
 
 =over
