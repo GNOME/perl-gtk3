@@ -5,7 +5,6 @@ BEGIN { require './t/inc/setup.pl' }
 use strict;
 use warnings;
 use Glib ':constants';
-use Cairo::GObject;
 
 plan tests => 15;
 
