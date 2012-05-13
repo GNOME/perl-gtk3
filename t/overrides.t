@@ -56,15 +56,23 @@ SKIP: {
 
 # Gtk3::Menu::popup and popup_for_device
 {
-  my $menu = Gtk3::Menu->new;
-  my $position_callback = sub {
-    my ($menu, $data) = @_;
-    isa_ok ($menu, "Gtk3::Menu");
-    return @$data;
-  };
-  $menu->popup (undef, undef, undef, undef, 1, 0);
-  $menu->popup (undef, undef, $position_callback, [50, 50], 1, 0);
-  $menu->popup_for_device (undef, undef, undef, $position_callback, [50, 50, Glib::TRUE], 1, 0);
+  {
+    my $menu = Gtk3::Menu->new;
+    my $position_callback = sub {
+      my ($menu, $data) = @_;
+      isa_ok ($menu, "Gtk3::Menu");
+      return @$data;
+    };
+    $menu->popup (undef, undef, $position_callback, [50, 50], 1, 0);
+    $menu->popup_for_device (undef, undef, undef, $position_callback, [50, 50, Glib::TRUE], 1, 0);
+  }
+
+  # Test this separately to ensure that specifying no callback does not lead to
+  # an invalid invocation of the destroy notify func.
+  {
+    my $menu = Gtk3::Menu->new;
+    $menu->popup (undef, undef, undef, undef, 1, 0);
+  }
 }
 
 # Gtk3::Stock
