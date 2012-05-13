@@ -244,12 +244,30 @@ sub Gtk3::Button::new {
   }
 }
 
+sub Gtk3::CheckMenuItem::new {
+  my ($class, $mnemonic) = @_;
+  if (defined $mnemonic) {
+    return $class->new_with_mnemonic ($mnemonic);
+  }
+  return Glib::Object::Introspection->invoke (
+    $_GTK_BASENAME, 'CheckMenuItem', 'new', @_);
+}
+
 sub Gtk3::HBox::new {
   my ($class, $homogeneous, $spacing) = @_;
   $homogeneous = 5 unless defined $homogeneous;
   $spacing = 0 unless defined $spacing;
   return Glib::Object::Introspection->invoke (
     $_GTK_BASENAME, 'HBox', 'new', $class, $homogeneous, $spacing);
+}
+
+sub Gtk3::ImageMenuItem::new {
+  my ($class, $mnemonic) = @_;
+  if (defined $mnemonic) {
+    return $class->new_with_mnemonic ($mnemonic);
+  }
+  return Glib::Object::Introspection->invoke (
+    $_GTK_BASENAME, 'ImageMenuItem', 'new', @_);
 }
 
 sub Gtk3::ListStore::new {
@@ -290,6 +308,15 @@ sub Gtk3::Menu::popup_for_device {
   return Glib::Object::Introspection->invoke (
     $_GTK_BASENAME, 'Menu', 'popup_for_device',
     $menu, $device, $parent_menu_shell, $parent_menu_item, $real_func, $data, $button, $activate_time);
+}
+
+sub Gtk3::MenuItem::new {
+  my ($class, $mnemonic) = @_;
+  if (defined $mnemonic) {
+    return $class->new_with_mnemonic ($mnemonic);
+  }
+  return Glib::Object::Introspection->invoke (
+    $_GTK_BASENAME, 'MenuItem', 'new', @_);
 }
 
 sub Gtk3::MessageDialog::new {

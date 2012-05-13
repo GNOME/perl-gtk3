@@ -5,7 +5,7 @@ BEGIN { require './t/inc/setup.pl' };
 use strict;
 use warnings;
 
-plan tests => 61;
+plan tests => 79;
 
 # Gtk3::CHECK_VERSION and check_version
 {
@@ -72,6 +72,25 @@ SKIP: {
   {
     my $menu = Gtk3::Menu->new;
     $menu->popup (undef, undef, undef, undef, 1, 0);
+  }
+}
+
+# Gtk2::MenuItem::new, Gtk2::CheckMenuItem::new, Gtk2::ImageMenuItem::new
+{
+  foreach my $class (qw/Gtk3::MenuItem Gtk3::CheckMenuItem Gtk3::ImageMenuItem/) {
+    my $item;
+
+    $item = $class->new;
+    isa_ok ($item, $class);
+    ok (!$item->get_label); # might be '' or undef
+
+    $item = $class->new ('_Test');
+    isa_ok ($item, $class);
+    is ($item->get_label, '_Test');
+
+    $item = $class->new_with_mnemonic ('_Test');
+    isa_ok ($item, $class);
+    is ($item->get_label, '_Test');
   }
 }
 

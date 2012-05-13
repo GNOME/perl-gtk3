@@ -1,5 +1,7 @@
 {{$NEXT}}
 
+* Add overrides for Gtk3::MenuItem, CheckMenuItem and ImageMenuItem.
+
 Overview of changes in Gtk3 0.005 [2012-04-22]
 ==============================================
 
