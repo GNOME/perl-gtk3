@@ -1,5 +1,8 @@
 {{$NEXT}}
 
+* Add overrides for Gtk3::Gdk::Event.
+* Add overrides for some Gtk3::RadioMenuItem constructors.
+
 Overview of changes in Gtk3 0.007 [2012-07-05]
 ==============================================
 
