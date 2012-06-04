@@ -1,6 +1,11 @@
 {{$NEXT}}
 
+Overview of changes in Gtk3 0.006 [2012-06-04]
+==============================================
+
 * Add overrides for Gtk3::MenuItem, CheckMenuItem and ImageMenuItem.
+* Require Glib 1.260 and Glib::Object::Introspection 0.009 for various
+  improvements.
 
 Overview of changes in Gtk3 0.005 [2012-04-22]
 ==============================================
