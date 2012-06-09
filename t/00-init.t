@@ -3,9 +3,14 @@
 use strict;
 use warnings;
 
-use Test::More tests => 2;
+use Test::More;
 
-BEGIN { use_ok('Gtk3') };
+BEGIN { require Gtk3; }
+my $success = eval { Gtk3->import; 1 };
+BAIL_OUT ("Cannot load Gtk3: $@")
+  unless $success;
+
+plan tests => 1;
 
 SKIP: {
   @ARGV = qw(--help --name gtk2perl --urgs tree);
