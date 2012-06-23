@@ -237,8 +237,9 @@ SKIP: {
 
 # Gtk3::Gdk::Window::new
 SKIP: {
-  # FIXME: https://bugzilla.gnome.org/show_bug.cgi?id=670369
-  skip 'window attr type annotation missing', 3;
+  # https://bugzilla.gnome.org/show_bug.cgi?id=670369
+  skip 'window attr type annotation missing', 3
+    unless Gtk3::CHECK_VERSION (3, 6, 0);
 
   my $window = Gtk3::Gdk::Window->new (undef, {
     window_type => 'toplevel',
