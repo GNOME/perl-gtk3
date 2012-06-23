@@ -1,5 +1,7 @@
 {{$NEXT}}
 
+* Add an override for Gtk3::show_about_dialog.
+
 Overview of changes in Gtk3 0.006 [2012-06-04]
 ==============================================
 

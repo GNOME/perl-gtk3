@@ -139,6 +139,45 @@ sub Gtk3::main_quit {
   Glib::Object::Introspection->invoke ($_GTK_BASENAME, undef, 'main_quit');
 }
 
+{
+  my $global_about_dialog = undef;
+  my $about_dialog_key = '__gtk3_about_dialog';
+
+  sub Gtk3::show_about_dialog {
+    # For backwards-compatibility, optionally accept and discard a class
+    # argument.
+    my $parent_or_class = shift;
+    my $parent = defined $parent_or_class && $parent_or_class eq 'Gtk3'
+               ? shift
+               : $parent_or_class;
+    my %props = @_;
+    my $dialog = defined $parent
+               ? $parent->{$about_dialog_key}
+               : $global_about_dialog;
+
+    if (!$dialog) {
+      $dialog = Gtk3::AboutDialog->new;
+      $dialog->signal_connect (delete_event => \&Gtk3::Widget::hide_on_delete);
+      # FIXME: We can't actually do this fully correctly, because the license
+      # and credits subdialogs are private.
+      $dialog->signal_connect (response => \&Gtk3::Widget::hide);
+      foreach my $prop (keys %props) {
+        $dialog->set ($prop => $props{$prop});
+      }
+      if ($parent) {
+        $dialog->set_modal (Glib::TRUE);
+        $dialog->set_transient_for ($parent);
+        $dialog->set_destroy_with_parent (Glib::TRUE);
+        $parent->{$about_dialog_key} = $dialog;
+      } else {
+        $global_about_dialog = $dialog;
+      }
+    }
+
+    $dialog->present;
+  }
+}
+
 sub Gtk3::Builder::add_objects_from_file {
   my ($builder, $filename, @rest) = @_;
   my $ref = _rest_to_ref (\@rest);
