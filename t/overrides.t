@@ -77,7 +77,10 @@ SKIP: {
 }
 
 # Gtk3::Menu::popup and popup_for_device
-{
+SKIP: {
+  skip 'incorrect annotations for menu position callbacks', 2
+    unless Gtk3::CHECK_VERSION (3, 2, 0);
+
   {
     my $menu = Gtk3::Menu->new;
     my $position_callback = sub {

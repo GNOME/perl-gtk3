@@ -6,7 +6,11 @@ use strict;
 use warnings;
 use Glib ':constants';
 
-plan tests => 15;
+if (check_gi_version(1, 29, 17)) {
+  plan tests => 15;
+} else {
+  plan skip_all => 'tree model ctors not properly supported';
+}
 
 {
   package StandAlone;

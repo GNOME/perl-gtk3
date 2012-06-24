@@ -23,16 +23,20 @@ is (scalar @cells, 2);
 isa_ok ($cells[0], 'Gtk3::CellRendererText');
 isa_ok ($cells[1], 'Gtk3::CellRendererToggle');
 
-my $callback = sub {
-  my ($cb_layout, $cb_cell, $model, $iter, $data) = @_;
-  is ($cb_layout, $layout);
-  is ($cb_cell, $cell);
-  isa_ok ($model, 'Gtk3::ListStore');
-  isa_ok ($iter, 'Gtk3::TreeIter');
-  is ($data, 'bla!');
-};
-$layout->set_cell_data_func ($cell, $callback, 'bla!');
-$layout->set_cell_data_func ($cell, undef);
+SKIP: {
+  skip 'tree model ctors not properly supported', 9
+    unless check_gi_version(1, 29, 17);
+  my $callback = sub {
+    my ($cb_layout, $cb_cell, $model, $iter, $data) = @_;
+    is ($cb_layout, $layout);
+    is ($cb_cell, $cell);
+    isa_ok ($model, 'Gtk3::ListStore');
+    isa_ok ($iter, 'Gtk3::TreeIter');
+    is ($data, 'bla!');
+  };
+  $layout->set_cell_data_func ($cell, $callback, 'bla!');
+  $layout->set_cell_data_func ($cell, undef);
+}
 
 package CustomCellLayout;
 
