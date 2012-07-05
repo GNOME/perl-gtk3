@@ -1,5 +1,9 @@
 {{$NEXT}}
 
+Overview of changes in Gtk3 0.007 [2012-07-05]
+==============================================
+
+* Add overrides for Gtk3::ActionGroup.
 * Add an override for Gtk3::show_about_dialog.
 * Fix some test failures due to older dependencies.
 
