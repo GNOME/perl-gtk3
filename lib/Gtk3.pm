@@ -553,6 +553,26 @@ sub Gtk3::MessageDialog::new {
   return $dialog;
 }
 
+# Gtk3::RadioMenuItem constructors.
+{
+  no strict qw(refs);
+  foreach my $ctor (qw/new new_with_label new_with_mnemonic/) {
+    *{'Gtk3::RadioMenuItem::' . $ctor} = sub {
+      my ($class, $group_or_member, @rest) = @_;
+      my $real_ctor = $ctor;
+      {
+        local $@;
+        if (eval { $group_or_member->isa ('Gtk3::RadioMenuItem') }) {
+          $real_ctor .= '_from_widget';
+        }
+      }
+      return Glib::Object::Introspection->invoke (
+        $_GTK_BASENAME, 'RadioMenuItem', $real_ctor,
+        $class, $group_or_member, @rest);
+    }
+  }
+}
+
 sub Gtk3::TreeModel::get {
   my ($model, $iter, @columns) = @_;
   my @values = map { $model->get_value ($iter, $_) } @columns;
