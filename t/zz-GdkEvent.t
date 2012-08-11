@@ -7,7 +7,7 @@ BEGIN { require './t/inc/setup.pl' }
 use strict;
 use warnings;
 
-plan tests => 134;
+plan tests => 144;
 
 sub fields_ok {
   my ($event, %fields_values) = @_;
@@ -57,18 +57,18 @@ is ($event->get_source_device, $device, '$event->get_source_device');
 isa_ok ($event = Gtk3::Gdk::Event->new ('expose'),
 	'Gtk3::Gdk::EventExpose', 'Gtk3::Gdk::Event->new expose');
 
+field_ok ($event, count => 10);
+
 my $rect = {x => 0, y => 0, width => 100, height => 100}; # FIXME: [0, 0, 100, 100]
 $event->area ($rect);
 is_deeply ($event->area, $rect, '$expose_event->area');
 
-# FIXME: $event->region not accessible currently
-# my $region = Cairo::Region->create ($rect);
-# $event->region ($region);
-# isa_ok ($event->region, 'Cairo::Region', '$expose_event->region');
-# $event->region (undef);
-# is ($event->region, undef, '$expose_event->region');
-
-field_ok ($event, count => 10);
+my $region = Cairo::Region->create ($rect);
+$event->region ($region);
+isa_ok ($event->region, 'Cairo::Region', '$expose_event->region');
+is_deeply ($event->region->get_rectangle (0), $rect);
+$event->region (undef);
+is ($event->region, undef, '$expose_event->region undef');
 
 # Visibility ###################################################################
 
@@ -231,10 +231,12 @@ isa_ok ($event = Gtk3::Gdk::Event->new ('property-notify'),
 
 fields_ok ($event, time => 42);
 
-# FIXME: $event->atom not accessible currently
-# my $atom = Gtk3::Gdk::Atom::intern ('foo', Glib::FALSE);
-# $event->atom ($atom);
-# isa_ok ($event->atom, 'Gtk3::Gdk::Atom', '$property_event->atom');
+my $atom = Gtk3::Gdk::Atom::intern ('foo', Glib::FALSE);
+$event->atom ($atom);
+isa_ok ($event->atom, 'Gtk3::Gdk::Atom', '$property_event->atom');
+is ($event->atom->name, $atom->name, '$property_event->atom');
+$event->atom (undef);
+is ($event->atom, undef);
 
 SKIP: {
   # <https://bugzilla.gnome.org/show_bug.cgi?id=677775>
@@ -290,7 +292,12 @@ isa_ok ($event = Gtk3::Gdk::Event->new ('selection-clear'),
 
 fields_ok ($event, time => 42);
 
-# FIXME: $event->selection, target, property not accessible currently
+$event->property ($atom);
+is ($event->property->name, $atom->name);
+$event->selection ($atom);
+is ($event->selection->name, $atom->name);
+$event->target ($atom);
+is ($event->target->name, $atom->name);
 
 field_ok ($event, requestor => $window);
 field_ok ($event, requestor => undef);
@@ -307,7 +314,8 @@ fields_ok ($event, reason => 'destroy',
 field_ok ($event, owner => $window);
 field_ok ($event, owner => undef);
 
-# FIXME: $event->selection not accessible currently
+$event->selection ($atom);
+is ($event->selection->name, $atom->name);
 
 # GrabBroken ##################################################################
 
