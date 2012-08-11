@@ -40,6 +40,8 @@ my @_GTK_FLATTEN_ARRAY_REF_RETURN_FOR = qw/
   Gtk3::CellLayout::get_cells
   Gtk3::Stock::list_ids
   Gtk3::TreePath::get_indices
+  Gtk3::UIManager::get_action_groups
+  Gtk3::UIManager::get_toplevels
   Gtk3::Window::list_toplevels
 /;
 my @_GTK_HANDLE_SENTINEL_BOOLEAN_FOR = qw/
@@ -742,6 +744,13 @@ sub Gtk3::TreeViewColumn::new_with_attributes {
     $object->add_attribute ($cell, $attr, $attr_to_column{$attr});
   }
   return $object;
+}
+
+sub Gtk3::UIManager::add_ui_from_string {
+  my ($manager, $string) = @_;
+  return Glib::Object::Introspection->invoke (
+    $_GTK_BASENAME, 'UIManager', 'add_ui_from_string',
+    $manager, $string, length $string);
 }
 
 sub Gtk3::VBox::new {
