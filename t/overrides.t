@@ -5,7 +5,7 @@ BEGIN { require './t/inc/setup.pl' };
 use strict;
 use warnings;
 
-plan tests => 80;
+plan tests => 82;
 
 # Gtk3::CHECK_VERSION and check_version
 {
@@ -53,6 +53,19 @@ plan tests => 80;
   $cell->pack_start($one, 0);
   $cell->pack_start($two, 1);
   is_deeply([$cell->get_cells], [$one, $two]);
+}
+
+# Gtk3::CssProvider
+{
+  my $css = "GtkButton {font: Cantarelll 10}";
+  my $expect = qr/Cantarelll/;
+  my $p = Gtk3::CssProvider->new;
+
+  $p->load_from_data ($css);
+  like ($p->to_string, $expect);
+
+  $p->load_from_data ([unpack 'C*', $css]);
+  like ($p->to_string, $expect);
 }
 
 # Gtk3::ListStore::new, set and get
