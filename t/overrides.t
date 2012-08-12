@@ -270,17 +270,23 @@ SKIP: {
 __EOD__
   ok ($ui_manager->add_ui_from_string ($ui_info) != 0);
 
+  my $group_one = Gtk3::ActionGroup->new ("Barney");
+  my $group_two = Gtk3::ActionGroup->new ("Fred");
+  my @entries = (
+    [ "HelpMenu", undef, "_Help" ],
+    [ "About", undef, "_About", "<control>A", "About" ],
+    [ "License", undef, "_License", "<control>L", "License" ],
+  );
+  $group_one->add_actions (\@entries, undef);
+  $ui_manager->insert_action_group ($group_one, 0);
+  $ui_manager->insert_action_group ($group_two, 1);
+  is_deeply ([$ui_manager->get_action_groups], [$group_one, $group_two]);
+
   $ui_manager->ensure_update;
   my @menubars = $ui_manager->get_toplevels ("menubar");
   is (@menubars, 2);
   isa_ok ($menubars[0], "Gtk3::MenuBar");
   isa_ok ($menubars[1], "Gtk3::MenuBar");
-
-  my $group_one = Gtk3::ActionGroup->new ("Barney");
-  my $group_two = Gtk3::ActionGroup->new ("Fred");
-  $ui_manager->insert_action_group ($group_one, 0);
-  $ui_manager->insert_action_group ($group_two, 1);
-  is_deeply ([$ui_manager->get_action_groups], [$group_one, $group_two]);
 }
 
 # Gtk3::Gdk::Window::new
