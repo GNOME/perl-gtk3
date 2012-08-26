@@ -8,6 +8,7 @@
 * Add overrides for Gtk3::RecentChooserDialog.
 * Add overrides for Gtk3::TextBuffer.
 * Add an override for Gtk3::main_level.
+* Add overrides for Gtk3::Gdk::RGBA.
 * Add Gtk3::EVENT_PROPAGATE and Gtk3::EVENT_STOP.
 * Test that no double-frees occur for custom Gtk3::Widget subclasses.
 

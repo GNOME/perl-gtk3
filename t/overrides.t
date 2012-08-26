@@ -5,7 +5,7 @@ BEGIN { require './t/inc/setup.pl' };
 use strict;
 use warnings;
 
-plan tests => 98;
+plan tests => 108;
 
 # Gtk3::CHECK_VERSION and check_version
 {
@@ -335,6 +335,28 @@ __EOD__
   is (@menubars, 2);
   isa_ok ($menubars[0], "Gtk3::MenuBar");
   isa_ok ($menubars[1], "Gtk3::MenuBar");
+}
+
+# Gtk3::Gdk::RGBA
+{
+  my $rgba = Gtk3::Gdk::RGBA->new ({red => 0.0, green => 0.5, blue => 0.5, alpha => 0.5});
+  isa_ok ($rgba, 'Gtk3::Gdk::RGBA');
+  is ($rgba->red, 0.0);
+
+  $rgba = Gtk3::Gdk::RGBA->new (red => 0.5, green => 0.0, blue => 0.5, alpha => 0.5);
+  isa_ok ($rgba, 'Gtk3::Gdk::RGBA');
+  is ($rgba->green, 0.0);
+
+  $rgba = Gtk3::Gdk::RGBA->new (0.5, 0.5, 0.0, 0.5);
+  isa_ok ($rgba, 'Gtk3::Gdk::RGBA');
+  is ($rgba->blue, 0.0);
+
+  $rgba = Gtk3::Gdk::RGBA::parse ('rgba(0.5, 0.5, 0.5, 0.0)');
+  isa_ok ($rgba, 'Gtk3::Gdk::RGBA');
+  is ($rgba->alpha, 0.0);
+
+  ok ($rgba->parse ('rgba(0.5, 0.5, 0.5, 1.0)'));
+  is ($rgba->alpha, 1.0);
 }
 
 # Gtk3::Gdk::Window::new

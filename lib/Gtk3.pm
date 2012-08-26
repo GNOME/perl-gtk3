@@ -1085,6 +1085,38 @@ sub Gtk3::Window::new {
 
 # Gdk
 
+sub Gtk3::Gdk::RGBA::new {
+  my ($class, @rest) = @_;
+  # Handle Gtk3::Gdk::RGBA->new (r, g, b, a) specially.
+  if (4 == @rest) {
+    my %data;
+    @data{qw/red green blue alpha/} = @rest;
+    return Glib::Boxed::new ($class, \%data);
+  }
+  # Fall back to Glib::Boxed::new.
+  return Glib::Boxed::new ($class, @rest);
+}
+
+sub Gtk3::Gdk::RGBA::parse {
+  my $have_instance;
+  {
+    local $@;
+    $have_instance = eval { $_[0]->isa ('Gtk3::Gdk::RGBA') };
+  }
+  # This needs to be switched around if/when
+  # <https://bugzilla.gnome.org/show_bug.cgi?id=682125> is fixed.
+  if ($have_instance) {
+    return Glib::Object::Introspection->invoke (
+      $_GDK_BASENAME, 'RGBA', 'parse', @_);
+  } else {
+    my $instance = Gtk3::Gdk::RGBA->new;
+    my $success = Glib::Object::Introspection->invoke (
+      $_GDK_BASENAME, 'RGBA', 'parse',
+      $instance, @_);
+    return $success ? $instance : undef;
+  }
+}
+
 sub Gtk3::Gdk::Window::new {
   my ($class, $parent, $attr, $attr_mask) = @_;
   if (not defined $attr_mask) {
