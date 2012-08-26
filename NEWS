@@ -4,6 +4,7 @@
 * Add overrides for some Gtk3::RadioMenuItem constructors.
 * Add overrides for Gtk3::CssProvider.
 * Add overrides for Gtk3::UIManager.
+* Always convert GdkRectangle objects to and from Cairo::RectangleInt.
 
 Overview of changes in Gtk3 0.007 [2012-07-05]
 ==============================================

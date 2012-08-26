@@ -171,6 +171,9 @@ sub import {
     version => $_PANGO_VERSION,
     package => $_PANGO_PACKAGE);
 
+  Glib::Object::Introspection->_register_boxed_synonym (
+    "cairo", "RectangleInt", "gdk_rectangle_get_type");
+
   my $init = 0;
   my @unknown_args = ($class);
   foreach (@_) {
@@ -1006,6 +1009,10 @@ Gtk2::Gdk::Keysyms{XYZ} >>, use C<< Gtk3::Gdk::KEY_XYZ >>.
 =item * The Gtk2::Pango compatibility wrapper was not carried over; simply use
 the namespace "Pango" everywhere.  It gets set up automatically when loading
 L<Gtk3>.
+
+=item * The types Gtk2::Allocation and Gtk2::Gdk::Rectangle are now aliases for
+Cairo::RectangleInt, and as such they are represented as plain hashes with
+keys 'width', 'height', 'x' and 'y'.
 
 =item * The Gtk3::Menu menu position callback passed to popup() does not
 receive x and y parameters anymore.
