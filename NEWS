@@ -1,5 +1,8 @@
 {{$NEXT}}
 
+Overview of changes in Gtk3 0.008 [2012-08-26]
+==============================================
+
 * Add overrides for Gtk3::Gdk::Event.
 * Add overrides for some Gtk3::RadioMenuItem constructors.
 * Add overrides for Gtk3::CssProvider.
