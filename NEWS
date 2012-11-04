@@ -1,5 +1,7 @@
 {{$NEXT}}
 
+* Add overrides for Gtk3::Container.
+
 Overview of changes in Gtk3 0.008 [2012-08-26]
 ==============================================
 

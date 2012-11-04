@@ -38,6 +38,7 @@ my @_GTK_FLATTEN_ARRAY_REF_RETURN_FOR = qw/
   Gtk3::ActionGroup::list_actions
   Gtk3::Builder::get_objects
   Gtk3::CellLayout::get_cells
+  Gtk3::Container::get_children
   Gtk3::Stock::list_ids
   Gtk3::TreePath::get_indices
   Gtk3::UIManager::get_action_groups
@@ -554,6 +555,22 @@ sub Gtk3::CheckMenuItem::new {
   }
   return Glib::Object::Introspection->invoke (
     $_GTK_BASENAME, 'CheckMenuItem', 'new', @_);
+}
+
+sub Gtk3::Container::get_focus_chain {
+  my ($container) = @_;
+  my ($is_set, $widgets) = Glib::Object::Introspection->invoke (
+    $_GTK_BASENAME, 'Container', 'get_focus_chain',
+    $container);
+  return () unless $is_set;
+  return @$widgets;
+}
+
+sub Gtk3::Container::set_focus_chain {
+  my ($container, @rest) = @_;
+  return Glib::Object::Introspection->invoke (
+    $_GTK_BASENAME, 'Container', 'set_focus_chain',
+    $container, _rest_to_ref (\@rest));
 }
 
 sub Gtk3::CssProvider::load_from_data {
