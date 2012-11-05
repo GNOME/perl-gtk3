@@ -929,7 +929,7 @@ sub Gtk3::MessageDialog::new {
       return Glib::Object::Introspection->invoke (
         $_GTK_BASENAME, 'RadioMenuItem', $real_ctor,
         $class, $group_or_member, @rest);
-    }
+    };
   }
 }
 
