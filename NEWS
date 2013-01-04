@@ -1,6 +1,7 @@
 {{$NEXT}}
 
 * Add overrides for Gtk3::Container.
+* Test that no double-frees occur for custom Gtk3::Widget subclasses.
 
 Overview of changes in Gtk3 0.008 [2012-08-26]
 ==============================================
