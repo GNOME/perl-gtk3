@@ -205,6 +205,19 @@ sub Gtk3::check_version {
                                        @_ == 4 ? @_[1..3] : @_);
 }
 
+# Names "STOP" and "PROPAGATE" here are per the GtkWidget event signal
+# descriptions.  In some other flavours of signals the jargon is "handled"
+# instead of "stop".  "Handled" matches g_signal_accumulator_true_handled(),
+# though that function doesn't rate a mention in the Gtk docs.  There's
+# nothing fixed in the idea of "true means cease emission" (whether it's
+# called "stop" or "handled").  You can just as easily have false for cease
+# (the way the underlying GSignalAccumulator func in fact operates).  The
+# upshot being don't want to attempt to be too universal with the names
+# here; "EVENT" is meant to hint at the context or signal flavour they're
+# for use with.
+sub Gtk3::EVENT_PROPAGATE() { !1 };
+sub Gtk3::EVENT_STOP() { 1 };
+
 sub Gtk3::init {
   my $rest = Glib::Object::Introspection->invoke (
                $_GTK_BASENAME, undef, 'init',
