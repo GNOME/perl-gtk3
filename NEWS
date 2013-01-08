@@ -1,6 +1,9 @@
 {{$NEXT}}
 
-* Add overrides for Gtk3::Container and Gtk3::Editable.
+* Add overrides for Gtk3::Container.
+* Add overrides for Gtk3::Dialog, including the conversion of predefined
+  response IDs to nick names.  This is an API change.
+* Add overrides for Gtk3::Editable.
 * Add Gtk3::EVENT_PROPAGATE and Gtk3::EVENT_STOP.
 * Test that no double-frees occur for custom Gtk3::Widget subclasses.
 
