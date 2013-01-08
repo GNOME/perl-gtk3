@@ -725,6 +725,32 @@ sub Gtk3::Editable::insert_text {
     @_ == 4 ? @_ : (@_[0,1], length $_[1], $_[2]));
 }
 
+sub Gtk3::FileChooserDialog::new {
+  my ($class, $title, $parent, $action, @varargs) = @_;
+
+  if (@varargs % 2) {
+    croak 'Usage: Gtk2::FileChooserDialog->new' .
+          ' (title, parent, action, backend, button-text =>' .
+          " response-id, ...)\n";
+  }
+
+  my $result = Glib::Object::new (
+    $class,
+    title => $title,
+    action => $action,
+  );
+
+  if ($parent) {
+    $result->set_transient_for ($parent);
+  }
+
+  for (my $i = 0; $i < @varargs; $i += 2) {
+    $result->add_button ($varargs[$i], $_GTK_RESPONSE_NICK_TO_ID->($varargs[$i+1]));
+  }
+
+  return $result;
+}
+
 sub Gtk3::HBox::new {
   my ($class, $homogeneous, $spacing) = @_;
   $homogeneous = 5 unless defined $homogeneous;

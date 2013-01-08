@@ -5,7 +5,7 @@ BEGIN { require './t/inc/setup.pl' };
 use strict;
 use warnings;
 
-plan tests => 95;
+plan tests => 98;
 
 # Gtk3::CHECK_VERSION and check_version
 {
@@ -100,6 +100,17 @@ plan tests => 95;
   is ($entry->insert_text ($my_text, $my_pos),
       length ($orig_text) + length ($my_text));
   is ($entry->get_text, $orig_text . $my_text);
+}
+
+# Gtk3::FileChooserDialog
+{
+  my $parent = Gtk3::Window->new;
+  my $dialog = Gtk3::FileChooserDialog->new ('some title', $parent, 'save',
+                                             'gtk-cancel' => 'cancel',
+                                             'gtk-ok' => 23);
+  is ($dialog->get_title, 'some title');
+  is ($dialog->get_transient_for, $parent);
+  is ($dialog->get_action, 'save');
 }
 
 # Gtk3::ListStore::new, set and get
