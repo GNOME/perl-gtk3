@@ -114,7 +114,7 @@ my %_GDK_REBLESSERS = (
   'Gtk3::Gdk::Event' => \&Gtk3::Gdk::Event::_rebless,
 );
 
-my %_GDK_TYPE_TO_PACKAGE = (
+my %_GDK_EVENT_TYPE_TO_PACKAGE = (
   'expose' => 'Expose',
   'motion-notify' => 'Motion',
   'button-press' => 'Button',
@@ -159,7 +159,7 @@ my %_GDK_TYPE_TO_PACKAGE = (
 {
   no strict qw(refs);
   my %seen;
-  foreach (grep { !$seen{$_}++ } values %_GDK_TYPE_TO_PACKAGE) {
+  foreach (grep { !$seen{$_}++ } values %_GDK_EVENT_TYPE_TO_PACKAGE) {
     push @{'Gtk3::Gdk::Event' . $_ . '::ISA'}, 'Gtk3::Gdk::Event';
   }
 }
@@ -167,8 +167,8 @@ my %_GDK_TYPE_TO_PACKAGE = (
 sub Gtk3::Gdk::Event::_rebless {
   my ($event) = @_;
   my $package = 'Gtk3::Gdk::Event';
-  if (exists $_GDK_TYPE_TO_PACKAGE{$event->type}) {
-    $package .= $_GDK_TYPE_TO_PACKAGE{$event->type};
+  if (exists $_GDK_EVENT_TYPE_TO_PACKAGE{$event->type}) {
+    $package .= $_GDK_EVENT_TYPE_TO_PACKAGE{$event->type};
   }
   return bless $event, $package;
 }
