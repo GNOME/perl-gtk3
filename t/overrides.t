@@ -5,7 +5,7 @@ BEGIN { require './t/inc/setup.pl' };
 use strict;
 use warnings;
 
-plan tests => 87;
+plan tests => 95;
 
 # Gtk3::CHECK_VERSION and check_version
 {
@@ -66,6 +66,40 @@ plan tests => 87;
 
   $p->load_from_data ([unpack 'C*', $css]);
   like ($p->to_string, $expect);
+}
+
+# Gtk3::Editable::insert_text
+{
+  my $entry = Gtk3::Entry->new;
+  my $orig_text = 'aeiou';
+  $entry->set_text ($orig_text);
+  my ($new_text, $pos) = ('0123456789', length $orig_text);
+  is ($entry->insert_text ($new_text, $pos),
+      $pos + length $new_text);
+  $pos = 0;
+  is ($entry->insert_text ($new_text, length $new_text, $pos),
+      $pos + length $new_text);
+  is ($entry->get_text, $new_text . $orig_text . $new_text);
+}
+
+# GtkEditable.insert-text signal
+{
+  my $entry = Gtk3::Entry->new;
+  my $orig_text = 'äöü';
+  $entry->set_text ($orig_text);
+
+  my ($my_text, $my_pos) = ('123', 2);
+  $entry->signal_connect ('insert-text' => sub {
+    my ($entry, $new_text, $new_text_length, $position, $data) = @_;
+    is ($new_text, $my_text);
+    is ($new_text_length, length $my_text);
+    is ($position, $my_pos);
+    # Disregard $position and move the text to the end.
+    return length $entry->get_text;
+  });
+  is ($entry->insert_text ($my_text, $my_pos),
+      length ($orig_text) + length ($my_text));
+  is ($entry->get_text, $orig_text . $my_text);
 }
 
 # Gtk3::ListStore::new, set and get

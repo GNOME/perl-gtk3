@@ -57,6 +57,9 @@ my @_GTK_HANDLE_SENTINEL_BOOLEAN_FOR = qw/
   Gtk3::TreeModelSort::convert_child_iter_to_iter
   Gtk3::TreeSelection::get_selected
 /;
+my @_GTK_USE_GENERIC_SIGNAL_MARSHALLER_FOR = (
+  ['Gtk3::Editable', 'insert-text'],
+);
 
 # - gdk customization ------------------------------------------------------- #
 
@@ -152,7 +155,8 @@ sub import {
     package => $_GTK_PACKAGE,
     name_corrections => \%_GTK_NAME_CORRECTIONS,
     flatten_array_ref_return_for => \@_GTK_FLATTEN_ARRAY_REF_RETURN_FOR,
-    handle_sentinel_boolean_for => \@_GTK_HANDLE_SENTINEL_BOOLEAN_FOR);
+    handle_sentinel_boolean_for => \@_GTK_HANDLE_SENTINEL_BOOLEAN_FOR,
+    use_generic_signal_marshaller_for => \@_GTK_USE_GENERIC_SIGNAL_MARSHALLER_FOR);
 
   Glib::Object::Introspection->setup (
     basename => $_GDK_BASENAME,
@@ -591,6 +595,12 @@ sub Gtk3::CssProvider::load_from_data {
   return Glib::Object::Introspection->invoke (
     $_GTK_BASENAME, 'CssProvider', 'load_from_data',
     $self, _unpack_unless_array_ref ($data));
+}
+
+sub Gtk3::Editable::insert_text {
+  return Glib::Object::Introspection->invoke (
+    $_GTK_BASENAME, 'Editable', 'insert_text',
+    @_ == 4 ? @_ : (@_[0,1], length $_[1], $_[2]));
 }
 
 sub Gtk3::HBox::new {
@@ -1046,6 +1056,11 @@ keys 'width', 'height', 'x' and 'y'.
 
 =item * The Gtk3::Menu menu position callback passed to popup() does not
 receive x and y parameters anymore.
+
+=item * Callbacks connected to Gtk3::Editable's "insert-text" signal do not
+have as many options anymore as they had in Gtk2.  Changes to arguments will
+not be propagated to the next signal handler, and only the updated position can
+and must be returned.
 
 =back
 

@@ -1,6 +1,6 @@
 {{$NEXT}}
 
-* Add overrides for Gtk3::Container.
+* Add overrides for Gtk3::Container and Gtk3::Editable.
 * Add Gtk3::EVENT_PROPAGATE and Gtk3::EVENT_STOP.
 * Test that no double-frees occur for custom Gtk3::Widget subclasses.
 
