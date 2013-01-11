@@ -973,6 +973,11 @@ sub Gtk3::Gdk::Window::new {
     if (exists $attr->{wmclass_name} && exists $attr->{wmclass_class}) { $attr_mask |= 'GDK_WA_WMCLASS' };
     if (exists $attr->{override_redirect}) { $attr_mask |= 'GDK_WA_NOREDIR' };
     if (exists $attr->{type_hint}) { $attr_mask |= 'GDK_WA_TYPE_HINT' };
+    if (!Gtk3::CHECK_VERSION (3, 6, 0)) {
+      # Before 3.6, the attribute mask parameter lacked proper annotations, hence
+      # we numerify it here.  FIXME: This breaks encapsulation.
+      $attr_mask = $$attr_mask;
+    }
   }
   return Glib::Object::Introspection->invoke (
     $_GDK_BASENAME, 'Window', 'new',
