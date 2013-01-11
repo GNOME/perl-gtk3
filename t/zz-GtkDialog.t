@@ -51,19 +51,24 @@ $btn3->clicked;
 
 # make sure that known response types are converted to strings for the reponse
 # signal of Gtk3::Dialog and its ancestors
-foreach my $package (qw/Gtk3::Dialog Gtk3::AboutDialog/) {
-  my $d = $package->new;
-  my $b = $d->add_button ('First Button', 'ok');
-  $d->signal_connect (response => sub {
-    is ($_[1], 'ok', "$package response");
-    Gtk3::EVENT_STOP;
-  });
-  Glib::Idle->add( sub {
-    $b->clicked;
-    Glib::SOURCE_REMOVE;
-  });
-  is ($d->run, 'ok', "$package run");
-  $d->hide;
+SKIP: {
+  skip 'Need generic signal marshaller', 4
+    unless check_gi_version (1, 33, 10);
+
+  foreach my $package (qw/Gtk3::Dialog Gtk3::AboutDialog/) {
+    my $d = $package->new;
+    my $b = $d->add_button ('First Button', 'ok');
+    $d->signal_connect (response => sub {
+      is ($_[1], 'ok', "$package response");
+      Gtk3::EVENT_STOP;
+    });
+    Glib::Idle->add( sub {
+      $b->clicked;
+      Glib::SOURCE_REMOVE;
+    });
+    is ($d->run, 'ok', "$package run");
+    $d->hide;
+  }
 }
 
 {

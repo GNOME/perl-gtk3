@@ -83,7 +83,10 @@ plan tests => 98;
 }
 
 # GtkEditable.insert-text signal
-{
+SKIP: {
+  skip 'Need generic signal marshaller', 5
+    unless check_gi_version (1, 33, 10);
+
   my $entry = Gtk3::Entry->new;
   my $orig_text = 'äöü';
   $entry->set_text ($orig_text);
