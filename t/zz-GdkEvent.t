@@ -41,7 +41,7 @@ field_ok ($event, window => $window);
 field_ok ($event, window => undef);
 field_ok ($event, send_event => 23);
 
-my $screen = Gtk3::Gdk::Screen->get_default;
+my $screen = Gtk3::Gdk::Screen::get_default;
 $event->set_screen ($screen);
 is ($event->get_screen, $screen, '$event->get_screen');
 

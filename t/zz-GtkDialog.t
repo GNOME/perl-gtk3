@@ -77,7 +77,7 @@ SKIP: {
   $d->set_alternative_button_order (qw(ok cancel accept), 3);
   $d->set_alternative_button_order;
 
-  my $screen = Gtk3::Gdk::Screen->get_default;
+  my $screen = Gtk3::Gdk::Screen::get_default;
   ok (defined Gtk3::alternative_dialog_button_order ($screen));
   ok (defined Gtk3::alternative_dialog_button_order (undef));
   ok (defined Gtk3::alternative_dialog_button_order);
