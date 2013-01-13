@@ -278,6 +278,11 @@ sub Gtk3::main {
   Glib::Object::Introspection->invoke ($_GTK_BASENAME, undef, 'main');
 }
 
+sub Gtk3::main_level {
+  # Ignore any arguments passed in.
+  return Glib::Object::Introspection->invoke ($_GTK_BASENAME, undef, 'main_level');
+}
+
 sub Gtk3::main_quit {
   # Ignore any arguments passed in.
   Glib::Object::Introspection->invoke ($_GTK_BASENAME, undef, 'main_quit');
