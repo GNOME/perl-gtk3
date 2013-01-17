@@ -1184,8 +1184,8 @@ sub _common_tree_model_set {
   my ($package, $model, $iter, @columns_and_values) = @_;
   my ($columns, $values) = _unpack_columns_and_values (\@columns_and_values);
   if (not defined $columns) {
-    croak ('Usage: Gtk3::${package}::set ($store, \@columns, \@values)',
-           ' -or-: Gtk3::${package}::set ($store, $column1 => $value1, ...)');
+    croak ("Usage: Gtk3::${package}::set (\$model, \$iter, \@columns, \@values)",
+           " -or-: Gtk3::${package}::set (\$model, \$iter, \$column1 => \$value1, ...)");
   }
   my @wrapped_values = ();
   foreach my $i (0..$#{$columns}) {
