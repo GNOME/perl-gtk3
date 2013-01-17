@@ -864,6 +864,31 @@ sub Gtk3::MessageDialog::new {
   }
 }
 
+sub Gtk3::RecentChooserDialog::new {
+  my ($class, $title, $parent, @buttons) = @_;
+  my $dialog = Glib::Object::new ($class, title => $title);
+  for (my $i = 0; $i < @buttons; $i += 2) {
+    $dialog->add_button ($buttons[$i], $buttons[$i+1]);
+  }
+  if (defined $parent) {
+    $dialog->set_transient_for ($parent);
+  }
+  return $dialog;
+}
+
+sub Gtk3::RecentChooserDialog::new_for_manager {
+  my ($class, $title, $parent, $mgr, @buttons) = @_;
+  my $dialog = Glib::Object::new ($class, title => $title,
+    recent_manager => $mgr);
+  for (my $i = 0; $i < @buttons; $i += 2) {
+    $dialog->add_button ($buttons[$i], $buttons[$i+1]);
+  }
+  if (defined $parent) {
+    $dialog->set_transient_for ($parent);
+  }
+  return $dialog;
+}
+
 sub Gtk3::TextBuffer::create_tag {
   my ($buffer, $tag_name, @rest) = @_;
   if (@rest % 2) {
