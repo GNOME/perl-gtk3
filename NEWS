@@ -1,8 +1,8 @@
 {{$NEXT}}
 
 * Add overrides for Gtk3::Container.
-* Add overrides for Gtk3::Dialog, including the conversion of predefined
-  response IDs to nick names.  This is an API change.
+* Add overrides for Gtk3::Dialog and Gtk3::InfoBar, including the conversion of
+  predefined response IDs to nick names.
 * Add overrides for Gtk3::Editable.
 * Add overrides for Gtk3::FileChooserDialog.
 * Add overrides for Gtk3::RecentChooserDialog.

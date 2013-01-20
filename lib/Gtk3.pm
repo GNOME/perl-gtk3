@@ -61,6 +61,7 @@ my @_GTK_HANDLE_SENTINEL_BOOLEAN_FOR = qw/
 my @_GTK_USE_GENERIC_SIGNAL_MARSHALLER_FOR = (
   ['Gtk3::Editable', 'insert-text'],
   ['Gtk3::Dialog',   'response',    \&Gtk3::Dialog::_gtk3_perl_response_converter],
+  ['Gtk3::InfoBar',  'response',    \&Gtk3::Dialog::_gtk3_perl_response_converter],
 );
 
 # FIXME: G:O:I should provide some general mechanism wrapping
@@ -638,22 +639,41 @@ sub Gtk3::CssProvider::load_from_data {
     $self, _unpack_unless_array_ref ($data));
 }
 
-sub Gtk3::Dialog::add_action_widget {
-  Glib::Object::Introspection->invoke (
-    $_GTK_BASENAME, 'Dialog', 'add_action_widget',
-    $_[0], $_[1], $_GTK_RESPONSE_NICK_TO_ID->($_[2]));
-}
-
-sub Gtk3::Dialog::add_button {
-  Glib::Object::Introspection->invoke (
-    $_GTK_BASENAME, 'Dialog', 'add_button',
-    $_[0], $_[1], $_GTK_RESPONSE_NICK_TO_ID->($_[2]));
-}
-
-sub Gtk3::Dialog::add_buttons {
-  my ($dialog, @rest) = @_;
-  for (my $i = 0; $i < @rest; $i += 2) {
-    $dialog->add_button ($rest[$i], $rest[$i+1]);
+# Gtk3::Dialog / Gtk3::InfoBar methods due to overlap
+{
+  no strict qw(refs);
+  foreach my $dialog_package (qw/Dialog InfoBar/) {
+    *{'Gtk3::' . $dialog_package . '::add_action_widget'} = sub {
+      Glib::Object::Introspection->invoke (
+        $_GTK_BASENAME, $dialog_package, 'add_action_widget',
+        $_[0], $_[1], $_GTK_RESPONSE_NICK_TO_ID->($_[2]));
+    };
+    *{'Gtk3::' . $dialog_package . '::add_button'} = sub {
+      Glib::Object::Introspection->invoke (
+        $_GTK_BASENAME, $dialog_package, 'add_button',
+        $_[0], $_[1], $_GTK_RESPONSE_NICK_TO_ID->($_[2]));
+    };
+    *{'Gtk3::' . $dialog_package . '::add_buttons'} = sub {
+      my ($dialog, @rest) = @_;
+      for (my $i = 0; $i < @rest; $i += 2) {
+        $dialog->add_button ($rest[$i], $rest[$i+1]);
+      }
+    };
+    *{'Gtk3::' . $dialog_package . '::response'} = sub {
+      return Glib::Object::Introspection->invoke (
+        $_GTK_BASENAME, $dialog_package, 'response',
+        $_[0], $_GTK_RESPONSE_NICK_TO_ID->($_[1]));
+    };
+    *{'Gtk3::' . $dialog_package . '::set_default_response'} = sub {
+      Glib::Object::Introspection->invoke (
+        $_GTK_BASENAME, $dialog_package, 'set_default_response',
+        $_[0], $_GTK_RESPONSE_NICK_TO_ID->($_[1]));
+    };
+    *{'Gtk3::' . $dialog_package . '::set_response_sensitive'} = sub {
+      Glib::Object::Introspection->invoke (
+        $_GTK_BASENAME, $dialog_package, 'set_response_sensitive',
+        $_[0], $_GTK_RESPONSE_NICK_TO_ID->($_[1]), $_[2]);
+    };
   }
 }
 
@@ -693,12 +713,6 @@ sub Gtk3::Dialog::new_with_buttons {
   &Gtk3::Dialog::new;
 }
 
-sub Gtk3::Dialog::response {
-  return Glib::Object::Introspection->invoke (
-    $_GTK_BASENAME, 'Dialog', 'response',
-    $_[0], $_GTK_RESPONSE_NICK_TO_ID->($_[1]));
-}
-
 sub Gtk3::Dialog::run {
   my $id = Glib::Object::Introspection->invoke (
     $_GTK_BASENAME, 'Dialog', 'run', @_);
@@ -711,18 +725,6 @@ sub Gtk3::Dialog::set_alternative_button_order {
   Glib::Object::Introspection->invoke (
     $_GTK_BASENAME, 'Dialog', 'set_alternative_button_order_from_array',
     $dialog, [map { $_GTK_RESPONSE_NICK_TO_ID->($_) } @rest]);
-}
-
-sub Gtk3::Dialog::set_default_response {
-  Glib::Object::Introspection->invoke (
-    $_GTK_BASENAME, 'Dialog', 'set_default_response',
-    $_[0], $_GTK_RESPONSE_NICK_TO_ID->($_[1]));
-}
-
-sub Gtk3::Dialog::set_response_sensitive {
-  Glib::Object::Introspection->invoke (
-    $_GTK_BASENAME, 'Dialog', 'set_response_sensitive',
-    $_[0], $_GTK_RESPONSE_NICK_TO_ID->($_[1]), $_[2]);
 }
 
 sub Gtk3::Editable::insert_text {
@@ -772,6 +774,27 @@ sub Gtk3::ImageMenuItem::new {
   }
   return Glib::Object::Introspection->invoke (
     $_GTK_BASENAME, 'ImageMenuItem', 'new', @_);
+}
+
+sub Gtk3::InfoBar::new {
+  my ($class, @buttons) = @_;
+  if (@_ == 1) {
+    return Glib::Object::Introspection->invoke (
+      $_GTK_BASENAME, 'InfoBar', 'new', @_);
+  } elsif (@buttons % 2) {
+    croak "Usage: Gtk3::InfoBar->new_with_buttons" .
+    " (button-text => response_id, ...)\n";
+  } else {
+    my $infobar = Gtk3::InfoBar->new;
+    for (my $i = 0; $i < @buttons; $i += 2) {
+      $infobar->add_button ($buttons[$i], $buttons[$i+1]);
+    }
+    return $infobar;
+  }
+}
+
+sub Gtk3::InfoBar::new_with_buttons {
+  &Gtk3::InfoBar::new;
 }
 
 sub Gtk3::ListStore::new {
