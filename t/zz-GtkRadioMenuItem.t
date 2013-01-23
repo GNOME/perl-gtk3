@@ -43,11 +43,12 @@ SKIP: {
              $item_five, $item_six, $item_seven]);
 }
 
-SKIP: {
-  skip 'the item-based API is not bootstrap-able', 2
-    unless 0; # FIXME: <https://bugzilla.gnome.org/show_bug.cgi?id=679563>
+{
+  # FIXME: The item-based API is not bootstrap-able on its own yet, see
+  # <https://bugzilla.gnome.org/show_bug.cgi?id=679563>.
+  # my $item_one = Gtk3::RadioMenuItem -> new_from_widget(undef);
 
-  my $item_one = Gtk3::RadioMenuItem -> new_from_widget(undef);
+  my $item_one = Gtk3::RadioMenuItem -> new([]);
   my $item_two = Gtk3::RadioMenuItem -> new($item_one);
   my $item_three = Gtk3::RadioMenuItem -> new_with_label($item_one, "Bla");
   my $item_four = Gtk3::RadioMenuItem -> new_with_mnemonic($item_one, "_Bla");
