@@ -8,6 +8,7 @@
 * Add overrides for Gtk3::RecentChooserDialog.
 * Add overrides for Gtk3::TextBuffer.
 * Add an override for Gtk3::main_level.
+* Add overrides for various button constructors.
 * Add overrides for Gtk3::Gdk::RGBA.
 * Add Gtk3::EVENT_PROPAGATE and Gtk3::EVENT_STOP.
 * In Gtk3::TreeModel::get, if no columns are specified, use all columns.

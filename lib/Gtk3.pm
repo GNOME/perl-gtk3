@@ -597,13 +597,24 @@ sub Gtk3::Builder::connect_signals {
   }
 }
 
-sub Gtk3::Button::new {
-  my ($class, $label) = @_;
-  if (defined $label) {
-    return $class->new_with_mnemonic ($label);
-  } else {
-    return Glib::Object::Introspection->invoke (
-      $_GTK_BASENAME, 'Button', 'new', @_);
+{
+  no strict 'refs';
+  my @button_classes = ([Button => 'new_with_mnemonic'],
+                        [CheckButton => 'new_with_mnemonic'],
+                        [ColorButton => 'new_with_color'],
+                        [FontButton => 'new_with_font'],
+                        [ToggleButton => 'new_with_mnemonic']);
+  foreach my $button_pair (@button_classes) {
+    my ($button_class, $button_ctor) = @$button_pair;
+    *{'Gtk3::' . $button_class . '::new'} = sub {
+      my ($class, $thing) = @_;
+      if (defined $thing) {
+        return $class->$button_ctor ($thing);
+      } else {
+        return Glib::Object::Introspection->invoke (
+          $_GTK_BASENAME, $button_class, 'new', @_);
+      }
+    }
   }
 }
 
@@ -795,6 +806,16 @@ sub Gtk3::InfoBar::new {
 
 sub Gtk3::InfoBar::new_with_buttons {
   &Gtk3::InfoBar::new;
+}
+
+sub Gtk3::LinkButton::new {
+  my ($class, $uri, $label) = @_;
+  if (defined $label) {
+    return Gtk3::LinkButton->new_with_label ($uri, $label);
+  } else {
+    return Glib::Object::Introspection->invoke (
+      $_GTK_BASENAME, 'LinkButton', 'new', @_);
+  }
 }
 
 sub Gtk3::ListStore::new {

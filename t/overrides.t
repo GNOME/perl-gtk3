@@ -5,7 +5,7 @@ BEGIN { require './t/inc/setup.pl' };
 use strict;
 use warnings;
 
-plan tests => 112;
+plan tests => 123;
 
 # Gtk3::CHECK_VERSION and check_version
 {
@@ -44,6 +44,14 @@ plan tests => 112;
   ok (1);
 }
 
+# Gtk3::Button::new
+{
+  my $button = Gtk3::Button->new;
+  ok (!defined ($button->get_label));
+  $button = Gtk3::Button->new ('_Test');
+  is ($button->get_label, '_Test');
+}
+
 # Gtk3::CellLayout::get_cells
 {
   my $cell = Gtk3::TreeViewColumn->new;
@@ -53,6 +61,23 @@ plan tests => 112;
   $cell->pack_start($one, 0);
   $cell->pack_start($two, 1);
   is_deeply([$cell->get_cells], [$one, $two]);
+}
+
+# Gtk3::CheckButton::new
+{
+  my $button = Gtk3::CheckButton->new;
+  ok (!defined ($button->get_label));
+  $button = Gtk3::CheckButton->new ('_Test');
+  is ($button->get_label, '_Test');
+}
+
+# Gtk3::ColorButton::new
+{
+  my $button = Gtk3::ColorButton->new;
+  is ($button->get_color->red, 0);
+  my $color = Gtk3::Gdk::Color->new (red => 2**16-1, green => 0, blue => 0);
+  $button = Gtk3::ColorButton->new ($color);
+  is ($button->get_color->red, $color->red);
 }
 
 # Gtk3::CssProvider
@@ -114,6 +139,23 @@ SKIP: {
   is ($dialog->get_title, 'some title');
   is ($dialog->get_transient_for, $parent);
   is ($dialog->get_action, 'save');
+}
+
+# Gtk3::FontButton::new
+{
+  my $button = Gtk3::FontButton->new;
+  # $button->get_font_name can be anything
+  $button = Gtk3::FontButton->new ('Sans');
+  ok (defined $button->get_font_name);
+}
+
+# Gtk3::LinkButton::new
+{
+  my ($host, $label) = ('http://localhost', 'Local');
+  my $button = Gtk3::LinkButton->new ($host);
+  is ($button->get_label, $host);
+  $button = Gtk3::LinkButton->new ($host, $label);
+  is ($button->get_label, $label);
 }
 
 # Gtk3::ListStore::new, set and get
@@ -189,6 +231,14 @@ SKIP: {
   is ($item->{stock_id}, 'gtk-ok');
   # Gtk3::Stock::add and add_static don't work yet
   Gtk3::Stock::set_translate_func ('perl-domain', sub {}, 42);
+}
+
+# Gtk3::ToggleButton::new
+{
+  my $button = Gtk3::ToggleButton->new;
+  ok (!defined ($button->get_label));
+  $button = Gtk3::ToggleButton->new ('_Test');
+  is ($button->get_label, '_Test');
 }
 
 # Gtk3::TreeStore::new, set and get
