@@ -984,6 +984,9 @@ sub Gtk3::TextBuffer::set_text {
 
 sub Gtk3::TreeModel::get {
   my ($model, $iter, @columns) = @_;
+  if (!@columns) {
+    @columns = (0..($model->get_n_columns-1));
+  }
   my @values = map { $model->get_value ($iter, $_) } @columns;
   return @values[0..$#values];
 }

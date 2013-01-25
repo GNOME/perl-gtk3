@@ -5,7 +5,7 @@ BEGIN { require './t/inc/setup.pl' };
 use strict;
 use warnings;
 
-plan tests => 108;
+plan tests => 112;
 
 # Gtk3::CHECK_VERSION and check_version
 {
@@ -124,11 +124,13 @@ SKIP: {
   my $model = Gtk3::ListStore->new ([qw/Glib::String Glib::Int/]);
   my $iter = $model->append;
   $model->set ($iter, [0, 1], ['Foo', 23]);
+  is_deeply ([$model->get ($iter)], ['Foo', 23]);
   is_deeply ([$model->get ($iter, 0,1)], ['Foo', 23]);
   is (scalar $model->get ($iter, 0,1), 23);
 
   $iter = $model->append;
   $model->set ($iter, 0 => 'Bar', 1 => 42);
+  is_deeply ([$model->get ($iter)], ['Bar', 42]);
   is_deeply ([$model->get ($iter, 0,1)], ['Bar', 42]);
   is (scalar $model->get ($iter, 0,1), 42);
 
@@ -197,11 +199,13 @@ SKIP: {
   my $model = Gtk3::TreeStore->new ([qw/Glib::String Glib::Int/]);
   my $iter = $model->append (undef);
   $model->set ($iter, [0, 1], ['Foo', 23]);
+  is_deeply ([$model->get ($iter)], ['Foo', 23]);
   is_deeply ([$model->get ($iter, 0,1)], ['Foo', 23]);
   is (scalar $model->get ($iter, 0,1), 23);
 
   $iter = $model->append (undef);
   $model->set ($iter, 0 => 'Bar', 1 => 42);
+  is_deeply ([$model->get ($iter)], ['Bar', 42]);
   is_deeply ([$model->get ($iter, 0,1)], ['Bar', 42]);
   is (scalar $model->get ($iter, 0,1), 42);
 
