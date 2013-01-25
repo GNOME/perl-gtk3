@@ -20,6 +20,7 @@ is ($window->child_type, 'Gtk3::Widget', 'a window wants a widget');
 # i think we'd know if $container->add didn't work
 $window->add ($vbox);
 ok (1, 'added a widget to the window');
+$window->show_all;
 
 $window->set_focus_child($vbox);
 ok (1);

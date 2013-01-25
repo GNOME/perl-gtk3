@@ -10,6 +10,7 @@ plan tests => 3;
 # Gtk3::Widget.size-allocate
 {
   my $window = Gtk3::Window->new;
+  $window->show;
   my $alloc = {x => 10, y => 10, width => 100, height => 100};
   my $data = [23, 42];
   $window->signal_connect (size_allocate => sub {
