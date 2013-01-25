@@ -104,7 +104,6 @@ plan tests => 171;
     ok (defined ($record), "GET_ITER: record defined");
     ok ($record->{pos} == $n, "GET_ITER: record has the correct index");
 
-    # FIXME3: return [ $list->{stamp}, $n, $record, undef ];
     return (TRUE, Gtk3::TreeIter->new (stamp => $list->{stamp}, user_data => $record));
   }
 
@@ -136,7 +135,6 @@ plan tests => 171;
 
     ok ($record->{pos} < @{$list->{data}}, "GET_VALUE: record within bounds");
 
-    # FIXME3: return $record->{value};
     return Glib::Object::Introspection::GValueWrapper->new (
       Glib::String::, $record->{value});
   }
@@ -158,7 +156,6 @@ plan tests => 171;
 
     ok ($nextrecord->{pos} == ($record->{pos} + 1), "ITER_NEXT: next record's pos OK");
 
-    # FIXME3: return [ $list->{stamp}, $nextrecord->{pos}, $nextrecord, undef ];
     $iter->user_data ($nextrecord);
     return TRUE;
   }
@@ -177,7 +174,6 @@ plan tests => 171;
     return (FALSE, undef) unless @{ $list->{data} };
 
     # Set iter to first item in list
-    # FIXME3: return [ $list->{stamp}, 0, $list->{data}[0] ];
     return (TRUE, Gtk3::TreeIter->new (stamp => $list->{stamp}, user_data => $list->{data}[0]));
   }
 
@@ -218,7 +214,6 @@ plan tests => 171;
     ok (defined ($record), "ITER_NTH_CHILD: record defined");
     ok ($record->{pos} == $n, "ITER_NTH_CHILD: record's pos correct");
 
-    # FIXME3: return [ $list->{stamp}, $n, $record, undef ];
     return (TRUE, Gtk3::TreeIter->new (stamp => $list->{stamp}, user_data => $record));
   }
 

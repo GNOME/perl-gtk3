@@ -1362,17 +1362,34 @@ Gtk2::Gdk::Keysyms{XYZ} >>, use C<< Gtk3::Gdk::KEY_XYZ >>.
 the namespace "Pango" everywhere.  It gets set up automatically when loading
 L<Gtk3>.
 
-=item * The types Gtk2::Allocation and Gtk2::Gdk::Rectangle are now aliases for
+=item * The types Gtk3::Allocation and Gtk3::Gdk::Rectangle are now aliases for
 Cairo::RectangleInt, and as such they are represented as plain hashes with
 keys 'width', 'height', 'x' and 'y'.
 
-=item * The Gtk3::Menu menu position callback passed to popup() does not
-receive x and y parameters anymore.
-
-=item * Callbacks connected to Gtk3::Editable's "insert-text" signal do not
+=item * Gtk3::Editable: Callbacks connected the "insert-text" signal do not
 have as many options anymore as they had in Gtk2.  Changes to arguments will
 not be propagated to the next signal handler, and only the updated position can
 and must be returned.
+
+=item * Gtk3::Menu: The position callback passed to popup() does not receive x
+and y parameters anymore.
+
+=item * Gtk3::TreeModel: iter_next() and iter_previous() are now methods that
+modify the iter directly, instead of returning a new one.  rows_reordered() and
+the "rows-reordered" signal are currently unusable.
+
+=item * Gtk3::TreeSortable: get_sort_column_id() has an additional boolean
+return value.
+
+=item * Implementations of Gtk3::TreeModel: Gtk3::TreeIter now has a
+constructor called new() expecting C<< key => value >> pairs;
+new_from_arrayref() does not exist anymore.  To access the contents of
+Gtk3::TreeIter, use stamp(), user_data(), user_data2() and user_data3();
+to_arrayref() does not exist anymore.  GET_ITER(), ITER_CHILDREN(),
+ITER_NTH_CHILD() and ITER_PARENT() must return an additional boolean value.
+ITER_NEXT() must modify the iter and return a boolean rather than return a new
+iter.  GET_VALUE() must return the value wrapped with C<<
+Glib::Object::Introspection::GValueWrapper->new >>.
 
 =back
 
@@ -1402,7 +1419,7 @@ remove them.
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright (C) 2011-2012 by Torsten Schoenfeld <kaffeetisch@gmx.de>
+Copyright (C) 2011-2013 by Torsten Schoenfeld <kaffeetisch@gmx.de>
 
 This library is free software; you can redistribute it and/or modify it under
 the terms of the GNU Library General Public License as published by the Free
