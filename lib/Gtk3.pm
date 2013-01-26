@@ -515,14 +515,14 @@ sub Gtk3::Builder::add_objects_from_string {
   my $ref = _rest_to_ref (\@rest);
   return Glib::Object::Introspection->invoke (
     $_GTK_BASENAME, 'Builder', 'add_objects_from_string',
-    $builder, $string, length $string, $ref);
+    $builder, $string, -1, $ref); # wants length in bytes
 }
 
 sub Gtk3::Builder::add_from_string {
   my ($builder, $string) = @_;
   return Glib::Object::Introspection->invoke (
     $_GTK_BASENAME, 'Builder', 'add_from_string',
-    $builder, $string, length $string);
+    $builder, $string, -1); # wants length in bytes
 }
 
 # Copied from Gtk2.pm
@@ -741,7 +741,7 @@ sub Gtk3::Dialog::set_alternative_button_order {
 sub Gtk3::Editable::insert_text {
   return Glib::Object::Introspection->invoke (
     $_GTK_BASENAME, 'Editable', 'insert_text',
-    @_ == 4 ? @_ : (@_[0,1], length $_[1], $_[2]));
+    @_ == 4 ? @_ : (@_[0,1], -1, $_[2])); # wants length in bytes
 }
 
 sub Gtk3::FileChooserDialog::new {
@@ -950,25 +950,25 @@ sub Gtk3::TextBuffer::create_tag {
 sub Gtk3::TextBuffer::insert {
   return Glib::Object::Introspection->invoke (
     $_GTK_BASENAME, 'TextBuffer', 'insert',
-    @_ == 4 ? @_ : (@_[0,1,2], length $_[2]));
+    @_ == 4 ? @_ : (@_[0,1,2], -1)); # wants length in bytes
 }
 
 sub Gtk3::TextBuffer::insert_at_cursor {
   return Glib::Object::Introspection->invoke (
     $_GTK_BASENAME, 'TextBuffer', 'insert_at_cursor',
-    @_ == 3 ? @_ : (@_[0,1], length $_[1]));
+    @_ == 3 ? @_ : (@_[0,1], -1)); # wants length in bytes
 }
 
 sub Gtk3::TextBuffer::insert_interactive {
   return Glib::Object::Introspection->invoke (
     $_GTK_BASENAME, 'TextBuffer', 'insert_interactive',
-    @_ == 5 ? @_ : (@_[0,1,2], length $_[2], $_[3]));
+    @_ == 5 ? @_ : (@_[0,1,2], -1, $_[3])); # wants length in bytes
 }
 
 sub Gtk3::TextBuffer::insert_interactive_at_cursor {
   return Glib::Object::Introspection->invoke (
     $_GTK_BASENAME, 'TextBuffer', 'insert_interactive_at_cursor',
-    @_ == 4 ? @_ : (@_[0,1], length $_[1], $_[2]));
+    @_ == 4 ? @_ : (@_[0,1], -1, $_[2])); # wants length in bytes
 }
 
 sub Gtk3::TextBuffer::insert_with_tags {
@@ -1000,7 +1000,7 @@ sub Gtk3::TextBuffer::insert_with_tags_by_name {
 sub Gtk3::TextBuffer::set_text {
   return Glib::Object::Introspection->invoke (
     $_GTK_BASENAME, 'TextBuffer', 'set_text',
-    @_ == 3 ? @_ : (@_[0,1], length $_[1]));
+    @_ == 3 ? @_ : (@_[0,1], -1)); # wants length in bytes
 }
 
 sub Gtk3::TreeModel::get {
@@ -1089,7 +1089,7 @@ sub Gtk3::UIManager::add_ui_from_string {
   my ($manager, $string) = @_;
   return Glib::Object::Introspection->invoke (
     $_GTK_BASENAME, 'UIManager', 'add_ui_from_string',
-    $manager, $string, length $string);
+    $manager, $string, -1); # wants length in bytes
 }
 
 sub Gtk3::VBox::new {

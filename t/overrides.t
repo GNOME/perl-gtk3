@@ -4,8 +4,10 @@ BEGIN { require './t/inc/setup.pl' };
 
 use strict;
 use warnings;
+use utf8;
+use Encode;
 
-plan tests => 123;
+plan tests => 125;
 
 # Gtk3::CHECK_VERSION and check_version
 {
@@ -97,14 +99,27 @@ plan tests => 123;
 {
   my $entry = Gtk3::Entry->new;
   my $orig_text = 'aeiou';
+  my $orig_text_chars = length ($orig_text);
+  my $orig_text_bytes = length (Encode::encode_utf8 ($orig_text));
   $entry->set_text ($orig_text);
-  my ($new_text, $pos) = ('0123456789', length $orig_text);
+  my ($new_text, $pos) = ('0123456789', $orig_text_chars);
+  my $new_text_chars = length ($new_text);
+  my $new_text_bytes = length (Encode::encode_utf8 ($new_text));
   is ($entry->insert_text ($new_text, $pos),
-      $pos + length $new_text);
+      $pos + $new_text_chars);
   $pos = 0;
-  is ($entry->insert_text ($new_text, length $new_text, $pos),
-      $pos + length $new_text);
+  is ($entry->insert_text ($new_text, $new_text_bytes, $pos),
+      $pos + $new_text_chars);
   is ($entry->get_text, $new_text . $orig_text . $new_text);
+}
+
+# Gtk3::Editable::insert_text and length issues
+{
+  my $entry = Gtk3::Entry->new;
+  my ($text, $pos) = ('0123456789€', 0);
+  is ($entry->insert_text ($text, $pos),
+      $pos + length ($text));
+  is ($entry->get_text, $text);
 }
 
 # GtkEditable.insert-text signal
@@ -118,9 +133,9 @@ SKIP: {
 
   my ($my_text, $my_pos) = ('123', 2);
   $entry->signal_connect ('insert-text' => sub {
-    my ($entry, $new_text, $new_text_length, $position, $data) = @_;
+    my ($entry, $new_text, $new_text_bytes, $position, $data) = @_;
     is ($new_text, $my_text);
-    is ($new_text_length, length $my_text);
+    is ($new_text_bytes, length (Encode::encode_utf8 ($my_text)));
     is ($position, $my_pos);
     # Disregard $position and move the text to the end.
     return length $entry->get_text;

@@ -6,6 +6,7 @@ BEGIN { require './t/inc/setup.pl' }
 
 use strict;
 use warnings;
+use utf8;
 use Glib qw/TRUE FALSE/;
 
 plan tests => 38;
@@ -24,7 +25,8 @@ isa_ok($buffer -> get_end_iter(), "Gtk3::TextIter");
 
 $buffer -> set_modified(FALSE);
 
-my $text = "Lore ipsem dolor.  I think that is misspelled.\n";
+# Use one multi-byte character to test length handling.
+my $text = "Lore ipsem dolor‽  I think that is misspelled.\n";
 my $start = sub { $buffer -> get_start_iter() };
 my $end = sub { $buffer -> get_end_iter() };
 my $bounds = sub { $buffer -> get_bounds() };
