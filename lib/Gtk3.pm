@@ -64,34 +64,30 @@ my @_GTK_USE_GENERIC_SIGNAL_MARSHALLER_FOR = (
   ['Gtk3::InfoBar',  'response',    \&Gtk3::Dialog::_gtk3_perl_response_converter],
 );
 
-# FIXME: G:O:I should provide some general mechanism wrapping
-# looks_like_number, gperl_try_convert_enum and
-# gperl_convert_back_enum_pass_unknown.  Then this would not be needed.
-my %_GTK_RESPONSE_ID_TO_NICK = (
-   -1 => 'none',
-   -2 => 'reject',
-   -3 => 'accept',
-   -4 => 'delete-event',
-   -5 => 'ok',
-   -6 => 'cancel',
-   -7 => 'close',
-   -8 => 'yes',
-   -9 => 'no',
-  -10 => 'apply',
-  -11 => 'help',
-);
-my %_GTK_RESPONSE_NICK_TO_ID = reverse %_GTK_RESPONSE_ID_TO_NICK;
 my $_GTK_RESPONSE_ID_TO_NICK = sub {
-  exists $_GTK_RESPONSE_ID_TO_NICK{$_[0]}
-    ? $_GTK_RESPONSE_ID_TO_NICK{$_[0]}
-    : $_[0]
+  my ($id) = @_;
+  {
+    local $@;
+    my $nick = eval { Glib::Object::Introspection->convert_enum_to_sv (
+                        'Gtk3::ResponseType', $id) };
+    if (defined $nick) {
+      return $nick;
+    }
+  }
+  return $id;
 };
 my $_GTK_RESPONSE_NICK_TO_ID = sub {
-  exists $_GTK_RESPONSE_NICK_TO_ID{$_[0]}
-    ? $_GTK_RESPONSE_NICK_TO_ID{$_[0]}
-    : $_[0]
+  my ($nick) = @_;
+  {
+    local $@;
+    my $id = eval { Glib::Object::Introspection->convert_sv_to_enum (
+                      'Gtk3::ResponseType', $nick) };
+    if (defined $id) {
+      return $id;
+    }
+  }
+  return $nick;
 };
-
 # Converter for the "response" signal.
 sub Gtk3::Dialog::_gtk3_perl_response_converter {
   my ($dialog, $id) = @_;
@@ -764,7 +760,7 @@ sub Gtk3::FileChooserDialog::new {
   }
 
   for (my $i = 0; $i < @varargs; $i += 2) {
-    $result->add_button ($varargs[$i], $_GTK_RESPONSE_NICK_TO_ID->($varargs[$i+1]));
+    $result->add_button ($varargs[$i], $varargs[$i+1]);
   }
 
   return $result;
