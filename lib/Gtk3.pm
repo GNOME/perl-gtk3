@@ -822,6 +822,25 @@ sub Gtk3::ListStore::get {
   return Gtk3::TreeModel::get (@_);
 }
 
+sub Gtk3::ListStore::insert_with_values {
+  my ($model, $position, @columns_and_values) = @_;
+  my ($columns, $values) = _unpack_keys_and_values (\@columns_and_values);
+  if (not defined $columns) {
+    croak ("Usage: Gtk3::ListStore::insert_with_values (\$model, \$position, \\\@columns, \\\@values)\n",
+           " -or-: Gtk3::ListStore::insert_with_values (\$model, \$position, \$column1 => \$value1, ...)");
+  }
+  my @wrapped_values = ();
+  foreach my $i (0..$#{$columns}) {
+    my $column_type = $model->get_column_type ($columns->[$i]);
+    push @wrapped_values,
+         Glib::Object::Introspection::GValueWrapper->new (
+           $column_type, $values->[$i]);
+  }
+  return Glib::Object::Introspection->invoke (
+    $_GTK_BASENAME, 'ListStore', 'insert_with_valuesv', # FIXME: missing rename-to annotation?
+    $model, $position, $columns, \@wrapped_values);
+}
+
 sub Gtk3::ListStore::set {
   return _common_tree_model_set ('ListStore', @_);
 }
@@ -1056,6 +1075,25 @@ sub Gtk3::TreeStore::new {
 # Reroute 'get' to Gtk3::TreeModel instead of Glib::Object.
 sub Gtk3::TreeStore::get {
   return Gtk3::TreeModel::get (@_);
+}
+
+sub Gtk3::TreeStore::insert_with_values {
+  my ($model, $parent, $position, @columns_and_values) = @_;
+  my ($columns, $values) = _unpack_keys_and_values (\@columns_and_values);
+  if (not defined $columns) {
+    croak ("Usage: Gtk3::TreeStore::insert_with_values (\$model, \$parent, \$position, \\\@columns, \\\@values)\n",
+           " -or-: Gtk3::TreeStore::insert_with_values (\$model, \$parent, \$position, \$column1 => \$value1, ...)");
+  }
+  my @wrapped_values = ();
+  foreach my $i (0..$#{$columns}) {
+    my $column_type = $model->get_column_type ($columns->[$i]);
+    push @wrapped_values,
+         Glib::Object::Introspection::GValueWrapper->new (
+           $column_type, $values->[$i]);
+  }
+  return Glib::Object::Introspection->invoke (
+    $_GTK_BASENAME, 'TreeStore', 'insert_with_values',
+    $model, $parent, $position, $columns, \@wrapped_values);
 }
 
 sub Gtk3::TreeStore::set {

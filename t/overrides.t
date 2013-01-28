@@ -7,7 +7,7 @@ use warnings;
 use utf8;
 use Encode;
 
-plan tests => 125;
+plan tests => 131;
 
 # Gtk3::CHECK_VERSION and check_version
 {
@@ -173,7 +173,7 @@ SKIP: {
   is ($button->get_label, $label);
 }
 
-# Gtk3::ListStore::new, set and get
+# Gtk3::ListStore::new, set and get, insert_with_values
 SKIP: {
   skip 'tree model ctors not properly supported', 5
     unless check_gi_version(1, 29, 17);
@@ -191,9 +191,22 @@ SKIP: {
   is_deeply ([$model->get ($iter, 0,1)], ['Bar', 42]);
   is (scalar $model->get ($iter, 0,1), 42);
 
-  local $@;
-  eval { $model->set ($iter, 0) };
-  like ($@, qr/Usage/);
+  {
+    local $@;
+    eval { $model->set ($iter, 0) };
+    like ($@, qr/Usage/);
+  }
+
+  $iter = $model->insert_with_values (-1, [0, 1], ['FooFoo', 2323]);
+  is_deeply ([$model->get ($iter)], ['FooFoo', 2323]);
+  $iter = $model->insert_with_values (-1, 0 => 'BarBar', 1 => 4242);
+  is_deeply ([$model->get ($iter)], ['BarBar', 4242]);
+
+  {
+    local $@;
+    eval { $model->insert_with_values (-1, 0); };
+    like ($@, qr/Usage/);
+  }
 }
 
 # Gtk3::Menu::popup and popup_for_device
@@ -256,7 +269,7 @@ SKIP: {
   is ($button->get_label, '_Test');
 }
 
-# Gtk3::TreeStore::new, set and get
+# Gtk3::TreeStore::new, set and get, insert_with_values
 SKIP: {
   skip 'tree model ctors not properly supported', 5
     unless check_gi_version(1, 29, 17);
@@ -274,9 +287,22 @@ SKIP: {
   is_deeply ([$model->get ($iter, 0,1)], ['Bar', 42]);
   is (scalar $model->get ($iter, 0,1), 42);
 
-  local $@;
-  eval { $model->set ($iter, 0) };
-  like ($@, qr/Usage/);
+  {
+    local $@;
+    eval { $model->set ($iter, 0) };
+    like ($@, qr/Usage/);
+  }
+
+  $iter = $model->insert_with_values (undef, -1, [0, 1], ['FooFoo', 2323]);
+  is_deeply ([$model->get ($iter)], ['FooFoo', 2323]);
+  $iter = $model->insert_with_values (undef, -1, 0 => 'BarBar', 1 => 4242);
+  is_deeply ([$model->get ($iter)], ['BarBar', 4242]);
+
+  {
+    local $@;
+    eval { $model->insert_with_values (undef, -1, 0); };
+    like ($@, qr/Usage/);
+  }
 }
 
 # Gtk3::TreePath::new, new_from_string, new_from_indices, get_indices
