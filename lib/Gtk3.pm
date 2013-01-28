@@ -789,8 +789,7 @@ sub Gtk3::InfoBar::new {
     return Glib::Object::Introspection->invoke (
       $_GTK_BASENAME, 'InfoBar', 'new', @_);
   } elsif (@buttons % 2) {
-    croak "Usage: Gtk3::InfoBar->new_with_buttons" .
-    " (button-text => response_id, ...)\n";
+    croak "Usage: Gtk3::InfoBar->new_with_buttons (button-text => response_id, ...)\n";
   } else {
     my $infobar = Gtk3::InfoBar->new;
     for (my $i = 0; $i < @buttons; $i += 2) {
@@ -1203,10 +1202,10 @@ sub Gtk3::Gdk::Pixbuf::new_from_xpm_data {
 
 sub Gtk3::Gdk::Pixbuf::save {
   my ($pixbuf, $filename, $type, @rest) = @_;
-  my ($keys, $values) = _unpack_columns_and_values (\@rest);
+  my ($keys, $values) = _unpack_keys_and_values (\@rest);
   if (not defined $keys) {
-    croak ('Usage: $pixbuf->save ($filename, $type, \@keys, \@values)',
-           ' -or-: $pixbuf->save ($filename, $type, $key1 => $value1, ...)');
+    croak ("Usage: $pixbuf->save (\$filename, \$type, \\\@keys, \\\@values)\n",
+           " -or-: $pixbuf->save (\$filename, \$type, \$key1 => \$value1, ...)");
   }
   Glib::Object::Introspection->invoke (
     $_GDK_PIXBUF_BASENAME, 'Pixbuf', 'save',
@@ -1215,10 +1214,10 @@ sub Gtk3::Gdk::Pixbuf::save {
 
 sub Gtk3::Gdk::Pixbuf::save_to_buffer {
   my ($pixbuf, $type, @rest) = @_;
-  my ($keys, $values) = _unpack_columns_and_values (\@rest);
+  my ($keys, $values) = _unpack_keys_and_values (\@rest);
   if (not defined $keys) {
-    croak ('Usage: $pixbuf->save_to_buffer ($type, \@keys, \@values)',
-           ' -or-: $pixbuf->save_to_buffer ($type, $key1 => $value1, ...)');
+    croak ("Usage: $pixbuf->save_to_buffer (\$type, \\\@keys, \\\@values)\n",
+           " -or-: $pixbuf->save_to_buffer (\$type, \$key1 => \$value1, ...)");
   }
   my (undef, $buffer) =
     Glib::Object::Introspection->invoke (
@@ -1229,10 +1228,10 @@ sub Gtk3::Gdk::Pixbuf::save_to_buffer {
 
 sub Gtk3::Gdk::Pixbuf::save_to_callback {
   my ($pixbuf, $save_func, $user_data, $type, @rest) = @_;
-  my ($keys, $values) = _unpack_columns_and_values (\@rest);
+  my ($keys, $values) = _unpack_keys_and_values (\@rest);
   if (not defined $keys) {
-    croak ('Usage: $pixbuf->save_to_callback ($save_func, $user_data, $type, \@keys, \@values)',
-           ' -or-: $pixbuf->save_to_callback ($save_func, $user_data, $type, $key1 => $value1, ...)');
+    croak ("Usage: $pixbuf->save_to_callback (\$save_func, \$user_data, \$type, \\\@keys, \\\@values)\n",
+           " -or-: $pixbuf->save_to_callback (\$save_func, \$user_data, \$type, \$key1 => \$value1, ...)");
   }
   Glib::Object::Introspection->invoke (
     $_GDK_PIXBUF_BASENAME, 'Pixbuf', 'save_to_callback',
@@ -1257,9 +1256,9 @@ sub _common_tree_model_new {
 
 sub _common_tree_model_set {
   my ($package, $model, $iter, @columns_and_values) = @_;
-  my ($columns, $values) = _unpack_columns_and_values (\@columns_and_values);
+  my ($columns, $values) = _unpack_keys_and_values (\@columns_and_values);
   if (not defined $columns) {
-    croak ("Usage: Gtk3::${package}::set (\$model, \$iter, \@columns, \@values)",
+    croak ("Usage: Gtk3::${package}::set (\$model, \$iter, \\\@columns, \\\@values)\n",
            " -or-: Gtk3::${package}::set (\$model, \$iter, \$column1 => \$value1, ...)");
   }
   my @wrapped_values = ();
@@ -1274,26 +1273,26 @@ sub _common_tree_model_set {
     $model, $iter, $columns, \@wrapped_values);
 }
 
-sub _unpack_columns_and_values {
-  my ($columns_and_values) = @_;
-  my (@columns, @values);
+sub _unpack_keys_and_values {
+  my ($keys_and_values) = @_;
+  my (@keys, @values);
   my $have_array_refs;
   {
     local $@;
     $have_array_refs =
-      @$columns_and_values == 2 && eval { @{$columns_and_values->[0]} };
+      @$keys_and_values == 2 && eval { @{$keys_and_values->[0]} };
   }
   if ($have_array_refs) {
-    @columns = @{$columns_and_values->[0]};
-    @values = @{$columns_and_values->[1]};
-  } elsif (@$columns_and_values % 2 == 0) {
-    my %cols_to_vals = @$columns_and_values;
-    @columns = keys %cols_to_vals;
-    @values = values %cols_to_vals;
+    @keys = @{$keys_and_values->[0]};
+    @values = @{$keys_and_values->[1]};
+  } elsif (@$keys_and_values % 2 == 0) {
+    my %keys_to_vals = @$keys_and_values;
+    @keys = keys %keys_to_vals;
+    @values = values %keys_to_vals;
   } else {
     return ();
   }
-  return (\@columns, \@values);
+  return (\@keys, \@values);
 }
 
 sub _unpack_unless_array_ref {
