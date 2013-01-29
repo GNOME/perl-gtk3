@@ -41,6 +41,7 @@ my @_GTK_FLATTEN_ARRAY_REF_RETURN_FOR = qw/
   Gtk3::Container::get_children
   Gtk3::Stock::list_ids
   Gtk3::TreePath::get_indices
+  Gtk3::TreeView::get_columns
   Gtk3::UIManager::get_action_groups
   Gtk3::UIManager::get_toplevels
   Gtk3::Window::list_toplevels
@@ -57,6 +58,11 @@ my @_GTK_HANDLE_SENTINEL_BOOLEAN_FOR = qw/
   Gtk3::TreeModelFilter::convert_child_iter_to_iter
   Gtk3::TreeModelSort::convert_child_iter_to_iter
   Gtk3::TreeSelection::get_selected
+  Gtk3::TreeView::get_dest_row_at_pos
+  Gtk3::TreeView::get_path_at_pos
+  Gtk3::TreeView::get_tooltip_context
+  Gtk3::TreeView::get_visible_range
+  Gtk3::TreeViewColumn::cell_get_position
 /;
 my @_GTK_USE_GENERIC_SIGNAL_MARSHALLER_FOR = (
   ['Gtk3::Editable', 'insert-text'],
@@ -1107,15 +1113,50 @@ sub Gtk3::TreeView::new {
     $_GTK_BASENAME, 'TreeView', $method, @_);
 }
 
+sub Gtk3::TreeView::insert_column_with_attributes {
+  my ($tree_view, $position, $title, $cell, @rest) = @_;
+  if (@rest % 2) {
+    croak ('Usage: $tree_view->insert_column_with_attributes (position, title, cell_renderer, attr1 => col1, ...)');
+  }
+  my $column = Gtk3::TreeViewColumn->new;
+  my $n = $tree_view->insert_column ($column, $position);
+  $column->set_title ($title);
+  $column->pack_start ($cell, Glib::TRUE);
+  for (my $i = 0; $i < @rest; $i += 2) {
+    $column->add_attribute ($cell, $rest[$i], $rest[$i+1]);
+  }
+  return $n;
+}
+
 sub Gtk3::TreeViewColumn::new_with_attributes {
-  my ($class, $title, $cell, %attr_to_column) = @_;
+  my ($class, $title, $cell, @rest) = @_;
+  if (@rest % 2) {
+    croak ('Usage: Gtk3::TreeViewColumn->new_with_attributes (title, cell_renderer, attr1 => col1, ...)');
+  }
   my $object = $class->new;
   $object->set_title ($title);
   $object->pack_start ($cell, Glib::TRUE);
-  foreach my $attr (keys %attr_to_column) {
-    $object->add_attribute ($cell, $attr, $attr_to_column{$attr});
+  for (my $i = 0; $i < @rest; $i += 2) {
+    $object->add_attribute ($cell, $rest[$i], $rest[$i+1]);
   }
   return $object;
+}
+
+# Gtk3::TreeViewColumn::set_attributes and Gtk3::CellLayout::set_attributes
+{
+  no strict 'refs';
+  foreach my $package (qw/TreeViewColumn CellLayout/) {
+    *{'Gtk3::' . $package . '::set_attributes'} = sub {
+      my ($object, $cell, @rest) = @_;
+      if (@rest % 2) {
+        croak ('Usage: $object->set_attributes (cell_renderer, attr1 => col1, ...)');
+      }
+      $object->clear_attributes ($cell);
+      for (my $i = 0; $i < @rest; $i += 2) {
+        $object->add_attribute ($cell, $rest[$i], $rest[$i+1]);
+      }
+    }
+  }
 }
 
 sub Gtk3::UIManager::add_ui_from_string {

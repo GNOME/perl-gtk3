@@ -9,6 +9,7 @@
 * Add overrides for Gtk3::TextBuffer.
 * Add overrides for Gtk3::ListStore's and Gtk3::TreeStore's
   insert_with_values().
+* Add more overrides for Gtk3::TreeView and friends.
 * Add overrides for various button constructors.
 * Add an override for Gtk3::main_level.
 * Add overrides for Gtk3::Gdk::RGBA.

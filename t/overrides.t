@@ -7,7 +7,7 @@ use warnings;
 use utf8;
 use Encode;
 
-plan tests => 131;
+plan tests => 139;
 
 # Gtk3::CHECK_VERSION and check_version
 {
@@ -381,7 +381,7 @@ SKIP: {
 
 # Gtk3::TreeSelection::get_selected
 SKIP: {
-  skip 'tree model ctors not properly supported', 2
+  skip 'tree model ctors not properly supported', 3
     unless check_gi_version(1, 29, 17);
 
   my $model = Gtk3::ListStore->new ('Glib::String');
@@ -392,6 +392,69 @@ SKIP: {
   my ($sel_model, $sel_iter) = $selection->get_selected;
   is ($sel_model, $model);
   isa_ok ($sel_iter, 'Gtk3::TreeIter');
+  $sel_iter = $selection->get_selected;
+  isa_ok ($sel_iter, 'Gtk3::TreeIter');
+}
+
+# Gtk3::TreeView::insert_column_with_attributes, get_dest_row_at_pos,
+# get_path_at_pos, get_tooltip_context, get_visible_range
+SKIP: {
+  skip 'tree model ctors not properly supported', 5
+    unless check_gi_version(1, 29, 17);
+
+  my $model = Gtk3::ListStore->new ('Glib::String');
+  $model->insert_with_values (-1, 0 => 'Test string');
+
+  my $view = Gtk3::TreeView->new ($model);
+  $view->insert_column_with_attributes (-1, 'String',
+                                        Gtk3::CellRendererText->new,
+                                        text => 0);
+  my $column = $view->get_column (0);
+  is ($column->get_title, 'String');
+  is_deeply ([$view->get_columns], [$column]);
+
+  my $window = Gtk3::Window->new;
+  $window->add ($view);
+  $window->show_all;
+
+  my @bin_pos = (0, 0);
+  my @widget_pos = $view->convert_bin_window_to_widget_coords (@bin_pos);
+  my @dest_stuff = $view->get_dest_row_at_pos (@widget_pos);
+  is (@dest_stuff, 2);
+  my @pos_stuff = $view->get_path_at_pos (@bin_pos);
+  is (@pos_stuff, 4);
+
+  my @tooltip_stuff = $view->get_tooltip_context (@widget_pos, Glib::TRUE);
+  is (@tooltip_stuff, 5);
+
+  # Nondeterministic:
+  my @vis_paths = $view->get_visible_range;
+  # is (@vis_paths, 2); # or sometimes 0
+}
+
+# Gtk3::TreeViewColumn::new_with_attributes, set_attributes, cell_get_position
+{
+  skip 'tree model ctors not properly supported', 2
+    unless check_gi_version(1, 29, 17);
+
+  my $model = Gtk3::ListStore->new ('Glib::String');
+  $model->insert_with_values (-1, 0 => 'Test string');
+
+  my $renderer = Gtk3::CellRendererText->new;
+  my $column = Gtk3::TreeViewColumn->new_with_attributes (
+    'String', $renderer, text => 0);
+  is ($column->get_title, 'String');
+  $column->set_attributes ($renderer, text => 0);
+
+  my $view = Gtk3::TreeView->new ($model);
+  $view->insert_column ($column, -1);
+
+  my $window = Gtk3::Window->new;
+  $window->add ($view);
+  $window->show_all;
+
+  my @cell_stuff = $column->cell_get_position ($renderer);
+  is (@cell_stuff, 2);
 }
 
 # Gtk3::UIManager
