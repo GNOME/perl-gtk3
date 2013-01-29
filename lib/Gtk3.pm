@@ -1461,7 +1461,7 @@ L<Gtk3>.
 Cairo::RectangleInt, and as such they are represented as plain hashes with
 keys 'width', 'height', 'x' and 'y'.
 
-=item * Gtk3::Editable: Callbacks connected the "insert-text" signal do not
+=item * Gtk3::Editable: Callbacks connected to the "insert-text" signal do not
 have as many options anymore as they had in Gtk2.  Changes to arguments will
 not be propagated to the next signal handler, and only the updated position can
 and must be returned.
@@ -1469,12 +1469,18 @@ and must be returned.
 =item * Gtk3::Menu: The position callback passed to popup() does not receive x
 and y parameters anymore.
 
-=item * Gtk3::TreeModel: iter_next() and iter_previous() are now methods that
-modify the iter directly, instead of returning a new one.  rows_reordered() and
-the "rows-reordered" signal are currently unusable.
+=item * Gtk3::TreeModel: iter_next() is now a method that is modifying the iter
+directly, instead of returning a new one.  rows_reordered() and the
+"rows-reordered" signal are currently unusable.
+
+=item * Gtk3::TreeSelection: get_selected_rows() now returns two values: an
+array ref containing the selected paths, and the model.  get_user_data() is not
+available currently.
 
 =item * Gtk3::TreeSortable: get_sort_column_id() has an additional boolean
 return value.
+
+=item * Gtk3::TreeStore, Gtk3::ListStore: reorder() is currently unusable.
 
 =item * Implementations of Gtk3::TreeModel: Gtk3::TreeIter now has a
 constructor called new() expecting C<< key => value >> pairs;
@@ -1485,6 +1491,9 @@ ITER_NTH_CHILD() and ITER_PARENT() must return an additional boolean value.
 ITER_NEXT() must modify the iter and return a boolean rather than return a new
 iter.  GET_VALUE() must return the value wrapped with C<<
 Glib::Object::Introspection::GValueWrapper->new >>.
+
+=item * Implementations of Gtk3::CellLayout: GET_CELLS() now needs to return an
+array ref instead of a list.
 
 =back
 

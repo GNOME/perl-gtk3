@@ -110,5 +110,5 @@ sub GET_CELLS {
   $self->{cell_one} = Gtk3::CellRendererText->new;
   $self->{cell_two} = Gtk3::CellRendererToggle->new;
   my @list = grow_the_stack();
-  return [$self->{cell_one}, $self->{cell_two}]; # FIXME: list instead of array ref?
+  return [$self->{cell_one}, $self->{cell_two}];
 }
