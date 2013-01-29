@@ -420,4 +420,3 @@ __END__
 
 Copyright (C) 2003-2012 by the gtk2-perl team (see the file AUTHORS for the
 full list).  See LICENSE for more information.
-

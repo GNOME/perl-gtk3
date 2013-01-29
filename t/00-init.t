@@ -19,8 +19,3 @@ SKIP: {
   Gtk3::init ();
   is_deeply (\@ARGV, [qw(--help --urgs tree)]);
 }
-
-__END__
-
-Copyright (C) 2011 by the gtk2-perl team (see the file AUTHORS for the full
-list).  See LICENSE for more information.
