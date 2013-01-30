@@ -175,7 +175,7 @@ SKIP: {
 
 # Gtk3::ListStore::new, set and get, insert_with_values
 SKIP: {
-  skip 'tree model ctors not properly supported', 5
+  skip 'tree model ctors not properly supported', 10
     unless check_gi_version(1, 29, 17);
 
   my $model = Gtk3::ListStore->new ([qw/Glib::String Glib::Int/]);
@@ -271,7 +271,7 @@ SKIP: {
 
 # Gtk3::TreeStore::new, set and get, insert_with_values
 SKIP: {
-  skip 'tree model ctors not properly supported', 5
+  skip 'tree model ctors not properly supported', 10
     unless check_gi_version(1, 29, 17);
 
   my $model = Gtk3::TreeStore->new ([qw/Glib::String Glib::Int/]);
@@ -433,7 +433,7 @@ SKIP: {
 }
 
 # Gtk3::TreeViewColumn::new_with_attributes, set_attributes, cell_get_position
-{
+SKIP: {
   skip 'tree model ctors not properly supported', 2
     unless check_gi_version(1, 29, 17);
 
