@@ -6,74 +6,12 @@ use strict;
 use warnings;
 use Glib ':constants';
 
-if (check_gi_version(1, 29, 17)) {
-  plan tests => 15;
-} else {
-  plan skip_all => 'tree model ctors not properly supported';
-}
+plan skip_all => 'tree model ctors not properly supported'
+  unless check_gi_version(1, 29, 17);
+plan tests => 15;
 
-{
-  package StandAlone;
-  use Glib::Object::Subclass
-    Gtk3::CellRenderer::
-    ;
-  use Test::More;
-  sub GET_PREFERRED_WIDTH {
-    my ($cell, $widget) = @_;
-    return (23, 42);
-  }
-  sub GET_ALIGNED_AREA {
-    my ($cell, $widget, $flags, $cell_area) = @_;
-    return $cell_area;
-  }
-  sub START_EDITING {
-    my ($cell, $event, $widget, $path, $bg_area, $cell_area, $flags) = @_;
-    return Gtk3::Entry->new;
-  }
-}
-
-{
-  my ($cell, $view) = prepare_cell ('StandAlone');
-
-  my ($min, $nat) = $cell->get_preferred_width ($view);
-  is ($min, 23);
-  is ($nat, 42);
-
-  my $rect = { x => 5, y => 5, width => 10, height => 10 };
-  my $aligned_rect = $cell->get_aligned_area ($view, 'selected', $rect);
-  is_deeply ($rect, $aligned_rect);
-
-  $cell->set (mode => 'editable');
-  my $event = Gtk3::Gdk::Event->new ("button-press");
-  my $editable = $cell->start_editing ($event, $view, "0", $rect, $rect, qw(selected));
-  isa_ok ($editable, "Gtk3::Entry");
-  TODO: {
-    local $TODO = 'ref-counting not quite right yet';
-    my $destroyed = FALSE;
-    $editable->signal_connect (destroy => sub { $destroyed = TRUE });
-    undef $editable;
-    ok ($destroyed, 'editable was destroyed');
-  }
-}
-
-{
-  package InheritorC;
-  use Glib::Object::Subclass
-    Gtk3::CellRendererText::
-    ;
-  sub GET_PREFERRED_WIDTH {
-    return shift->SUPER::GET_PREFERRED_WIDTH (@_);
-  }
-  sub GET_ALIGNED_AREA {
-    return shift->SUPER::GET_ALIGNED_AREA (@_);
-  }
-  sub START_EDITING {
-    return shift->SUPER::START_EDITING (@_);
-  }
-}
-
-{
-  my ($cell, $view) = prepare_cell ('InheritorC');
+foreach my $package (qw/StandAlone InheritorC InheritorPerl/) {
+  my ($cell, $view) = prepare_cell ($package);
 
   my ($min, $nat) = $cell->get_preferred_width ($view);
   ok (defined $min);
@@ -83,47 +21,8 @@ if (check_gi_version(1, 29, 17)) {
   my $aligned_rect = $cell->get_aligned_area ($view, 'selected', $rect);
   ok (exists $aligned_rect->{x});
 
+  $cell->set (mode => 'editable');
   $cell->set (editable => TRUE);
-  my $event = Gtk3::Gdk::Event->new ("button-press");
-  my $editable = $cell->start_editing ($event, $view, "0", $rect, $rect, qw(selected));
-  isa_ok ($editable, "Gtk3::Entry");
-  TODO: {
-    local $TODO = 'ref-counting not quite right yet';
-    my $destroyed = FALSE;
-    $editable->signal_connect (destroy => sub { $destroyed = TRUE });
-    undef $editable;
-    ok ($destroyed, 'editable was destroyed');
-  }
-}
-
-{
-  package InheritorPerl;
-  use Glib::Object::Subclass
-    StandAlone::
-    ;
-  sub GET_PREFERRED_WIDTH {
-    return shift->SUPER::GET_PREFERRED_WIDTH (@_);
-  }
-  sub GET_ALIGNED_AREA {
-    return shift->SUPER::GET_ALIGNED_AREA (@_);
-  }
-  sub START_EDITING {
-    return shift->SUPER::START_EDITING (@_);
-  }
-}
-
-{
-  my ($cell, $view) = prepare_cell ('InheritorPerl');
-
-  my ($min, $nat) = $cell->get_preferred_width ($view);
-  ok (defined $min);
-  ok (defined $nat);
-
-  my $rect = { x => 5, y => 5, width => 10, height => 10 };
-  my $aligned_rect = $cell->get_aligned_area ($view, 'selected', $rect);
-  ok (exists $aligned_rect->{x});
-
-  $cell->set (mode => 'editable');
   my $event = Gtk3::Gdk::Event->new ("button-press");
   my $editable = $cell->start_editing ($event, $view, "0", $rect, $rect, qw(selected));
   isa_ok ($editable, "Gtk3::Entry");
@@ -152,4 +51,65 @@ sub prepare_cell {
   $view->append_column ($column);
 
   return ($cell, $view);
+}
+
+{
+  package StandAlone;
+  use Glib::Object::Subclass
+    Gtk3::CellRenderer::,
+    properties => [
+      Glib::ParamSpec->boolean (
+        'editable',
+        'editable',
+        'editable',
+        Glib::FALSE,
+        [qw/readable writable/],
+      ),
+    ],
+    ;
+  use Test::More;
+  sub GET_PREFERRED_WIDTH {
+    my ($cell, $widget) = @_;
+    return (23, 42);
+  }
+  sub GET_ALIGNED_AREA {
+    my ($cell, $widget, $flags, $cell_area) = @_;
+    return $cell_area;
+  }
+  sub START_EDITING {
+    my ($cell, $event, $widget, $path, $bg_area, $cell_area, $flags) = @_;
+    return Gtk3::Entry->new;
+  }
+}
+
+{
+  package InheritorC;
+  use Glib::Object::Subclass
+    Gtk3::CellRendererText::
+    ;
+  sub GET_PREFERRED_WIDTH {
+    return shift->SUPER::GET_PREFERRED_WIDTH (@_);
+  }
+  sub GET_ALIGNED_AREA {
+    return shift->SUPER::GET_ALIGNED_AREA (@_);
+  }
+  sub START_EDITING {
+    return shift->SUPER::START_EDITING (@_);
+  }
+}
+
+{
+  package InheritorPerl;
+  use Glib::Object::Subclass
+    StandAlone::
+    ;
+  sub GET_PREFERRED_WIDTH {
+    return shift->SUPER::GET_PREFERRED_WIDTH (@_);
+  }
+  sub GET_ALIGNED_AREA {
+    return shift->SUPER::GET_ALIGNED_AREA (@_);
+  }
+  sub START_EDITING {
+    return shift->SUPER::START_EDITING (@_);
+  }
 }
