@@ -21,12 +21,14 @@ foreach my $package (qw/StandAlone InheritorC InheritorPerl/) {
   my $aligned_rect = $cell->get_aligned_area ($view, 'selected', $rect);
   ok (exists $aligned_rect->{x});
 
-  $cell->set (mode => 'editable');
-  $cell->set (editable => TRUE);
-  my $event = Gtk3::Gdk::Event->new ("button-press");
-  my $editable = $cell->start_editing ($event, $view, "0", $rect, $rect, qw(selected));
-  isa_ok ($editable, "Gtk3::Entry");
   TODO: {
+    local $SIG{__WARN__} = sub { warn $_[0] if -1 == index $_[0], 'Asked to hand out object' };
+    $cell->set (mode => 'editable');
+    $cell->set (editable => TRUE);
+    my $event = Gtk3::Gdk::Event->new ("button-press");
+    my $editable = $cell->start_editing ($event, $view, "0", $rect, $rect, qw(selected));
+    isa_ok ($editable, "Gtk3::Entry");
+
     local $TODO = 'ref-counting not quite right yet';
     my $destroyed = FALSE;
     $editable->signal_connect (destroy => sub { $destroyed = TRUE });
