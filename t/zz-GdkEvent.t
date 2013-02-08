@@ -7,7 +7,7 @@ BEGIN { require './t/inc/setup.pl' }
 use strict;
 use warnings;
 
-plan tests => 144;
+plan tests => 142;
 
 sub fields_ok {
   my ($event, %fields_values) = @_;
@@ -34,7 +34,6 @@ is ($event->type, 'enter-notify');
 my $window = Gtk3::Gdk::Window->new (undef, {
 			width => 20,
 			height => 20,
-			wclass => 'input-output',
 			window_type => 'toplevel'
 		});
 field_ok ($event, window => $window);
@@ -111,7 +110,12 @@ is ($event->get_axis ("x"), 13);
 $event = Gtk3::Gdk::Event->new ('motion-notify');
 $event->device ($device);
 $event->window ($window);
-$event->request_motions;
+
+SKIP: {
+  skip 'request_motions; missing annotations', 0
+    unless Gtk3::CHECK_VERSION(3, 2, 0);
+  $event->request_motions;
+}
 
 # Button #######################################################################
 
@@ -132,7 +136,7 @@ field_ok ($event, device => $device);
 field_ok ($event, device => undef);
 
 SKIP: {
-  skip 'new 3.2 stuff', 2
+  skip 'get_button&get_click_count; new in 3.2', 2
     unless Gtk3::CHECK_VERSION(3, 2, 0);
 
   is ($event->get_button, 2);
@@ -149,8 +153,6 @@ fields_ok ($event, time => 42,
                    y => 14,
                    x_root => 15,
                    y_root => 16,
-                   delta_x => 17,
-                   delta_y => 18,
                    state => [qw/shift-mask control-mask/],
                    direction => 'down');
 
@@ -158,13 +160,17 @@ field_ok ($event, device => $device);
 field_ok ($event, device => undef);
 
 SKIP: {
-  skip 'new 3.2 stuff', 2
-    unless Gtk3::CHECK_VERSION(3, 2, 0);
+  skip 'new 3.4 stuff', 2
+    unless Gtk3::CHECK_VERSION(3, 4, 0);
+
+  $event->delta_x (17);
+  $event->delta_y (18);
+
   is ($event->get_scroll_direction, 'down');
 
   #  <https://bugzilla.gnome.org/show_bug.cgi?id=677774>
-  skip 'missing annotations', 1
-    unless Gtk3::CHECK_VERSION(3, 5, 6);
+  skip 'direction&get_scroll_deltas; missing annotations', 1
+    unless Gtk3::CHECK_VERSION(3, 6, 0);
   $event->direction ('smooth');
   is_deeply ([$event->get_scroll_deltas], [17, 18]);
 }
@@ -182,7 +188,7 @@ fields_ok ($event, time => 42,
                    is_modifier => Glib::TRUE);
 
 SKIP: {
-  skip 'new 3.2 stuff', 2
+  skip 'keycode&keyval; new in 3.2', 2
     unless Gtk3::CHECK_VERSION(3, 2, 0);
 
   is ($event->get_keycode, 10);
@@ -231,17 +237,22 @@ isa_ok ($event = Gtk3::Gdk::Event->new ('property-notify'),
 
 fields_ok ($event, time => 42);
 
-my $atom = Gtk3::Gdk::Atom::intern ('foo', Glib::FALSE);
-$event->atom ($atom);
-isa_ok ($event->atom, 'Gtk3::Gdk::Atom', '$property_event->atom');
-is ($event->atom->name, $atom->name, '$property_event->atom');
-$event->atom (undef);
-is ($event->atom, undef);
+SKIP: {
+  skip 'atom stuff; missing annotations', 3
+    unless Gtk3::CHECK_VERSION(3, 2, 0);
+
+  my $atom = Gtk3::Gdk::Atom::intern ('foo', Glib::FALSE);
+  $event->atom ($atom);
+  isa_ok ($event->atom, 'Gtk3::Gdk::Atom', '$property_event->atom');
+  is ($event->atom->name, $atom->name, '$property_event->atom');
+  $event->atom (undef);
+  is ($event->atom, undef);
+}
 
 SKIP: {
   # <https://bugzilla.gnome.org/show_bug.cgi?id=677775>
-  skip 'missing annotations', 1
-    unless Gtk3::CHECK_VERSION (3, 5, 6);
+  skip 'state accessor; missing annotations', 1
+    unless Gtk3::CHECK_VERSION (3, 6, 0);
   field_ok ($event, state => 'new-value');
 }
 
@@ -292,12 +303,18 @@ isa_ok ($event = Gtk3::Gdk::Event->new ('selection-clear'),
 
 fields_ok ($event, time => 42);
 
-$event->property ($atom);
-is ($event->property->name, $atom->name);
-$event->selection ($atom);
-is ($event->selection->name, $atom->name);
-$event->target ($atom);
-is ($event->target->name, $atom->name);
+SKIP: {
+  skip 'atom stuff; missing annotations', 3
+    unless Gtk3::CHECK_VERSION(3, 2, 0);
+
+  my $atom = Gtk3::Gdk::Atom::intern ('foo', Glib::FALSE);
+  $event->property ($atom);
+  is ($event->property->name, $atom->name);
+  $event->selection ($atom);
+  is ($event->selection->name, $atom->name);
+  $event->target ($atom);
+  is ($event->target->name, $atom->name);
+}
 
 field_ok ($event, requestor => $window);
 field_ok ($event, requestor => undef);
@@ -314,8 +331,14 @@ fields_ok ($event, reason => 'destroy',
 field_ok ($event, owner => $window);
 field_ok ($event, owner => undef);
 
-$event->selection ($atom);
-is ($event->selection->name, $atom->name);
+SKIP: {
+  skip 'atom stuff; missing annotations', 1
+    unless Gtk3::CHECK_VERSION(3, 2, 0);
+
+  my $atom = Gtk3::Gdk::Atom::intern ('foo', Glib::FALSE);
+  $event->selection ($atom);
+  is ($event->selection->name, $atom->name);
+}
 
 # GrabBroken ##################################################################
 
@@ -331,7 +354,7 @@ field_ok ($event, grab_window => undef);
 # Touch #######################################################################
 
 SKIP: {
-  skip 'new 3.4 stuff', 2
+  skip 'touch stuff; new in 3.4', 10
     unless Gtk3::CHECK_VERSION(3, 4, 0);
 
   isa_ok ($event = Gtk3::Gdk::Event->new ("touch-begin"),
@@ -353,12 +376,15 @@ SKIP: {
 
 # Misc. #######################################################################
 
-{
+SKIP: {
+  skip 'misc. stuff; missing annotations', 4
+    unless Gtk3::CHECK_VERSION(3, 2, 0);
+
   my $event = Gtk3::Gdk::Event->new ('button-press');
 
   $event->put;
   ok (Gtk3::Gdk::events_pending);
-  isa_ok (Gtk3::Gdk::Event::get, 'Gtk3::Gdk::EventButton');
+  isa_ok (Gtk3::Gdk::Event::get (), 'Gtk3::Gdk::EventButton');
 
   my $i_know_you = 0;
   Gtk3::Gdk::Event::handler_set (sub {
@@ -399,7 +425,7 @@ SKIP: {
   skip 'new 3.4 stuff', 1
     unless Gtk3::CHECK_VERSION (3, 4, 0);
   my $event = Gtk3::Gdk::Event->new ('button-press');
-  $event->button (Gtk3::Gdk::BUTTON_SECONDARY);
+  $event->button (Gtk3::Gdk::BUTTON_SECONDARY ());
   $event->window ($window);
   ok ($event->triggers_context_menu);
 }

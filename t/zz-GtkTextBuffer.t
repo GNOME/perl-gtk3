@@ -117,7 +117,10 @@ $buffer -> remove_tag($tag_one, $bounds->());
 $buffer -> remove_tag_by_name("bulb", $bounds->());
 $buffer -> remove_all_tags($bounds->());
 
-{
+SKIP: {
+  skip 'clipboard stuff; missing annotations', 0
+    unless Gtk3::CHECK_VERSION (3, 2, 0);
+
   my $clipboard = Gtk3::Clipboard::get(Gtk3::Gdk::Atom::intern('clipboard', Glib::FALSE));
 
   $buffer -> paste_clipboard($clipboard, $buffer -> get_end_iter(), TRUE);

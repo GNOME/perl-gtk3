@@ -83,7 +83,10 @@ plan tests => 139;
 }
 
 # Gtk3::CssProvider
-{
+SKIP: {
+  skip 'Gtk3::CssProvider; incorrect annotations', 2
+    unless Gtk3::CHECK_VERSION (3, 2, 0);
+
   my $css = "GtkButton {font: Cantarelll 10}";
   my $expect = qr/Cantarelll/;
   my $p = Gtk3::CssProvider->new;
@@ -124,7 +127,7 @@ plan tests => 139;
 
 # GtkEditable.insert-text signal
 SKIP: {
-  skip 'Need generic signal marshaller', 5
+  skip 'GtkEditable.insert-text signal; need generic signal marshaller', 5
     unless check_gi_version (1, 33, 10);
 
   my $entry = Gtk3::Entry->new;
@@ -175,7 +178,7 @@ SKIP: {
 
 # Gtk3::ListStore::new, set and get, insert_with_values
 SKIP: {
-  skip 'tree model ctors not properly supported', 10
+  skip 'Gtk3::ListStore; tree model ctors not properly supported', 10
     unless check_gi_version(1, 29, 17);
 
   my $model = Gtk3::ListStore->new ([qw/Glib::String Glib::Int/]);
@@ -211,7 +214,7 @@ SKIP: {
 
 # Gtk3::Menu::popup and popup_for_device
 SKIP: {
-  skip 'incorrect annotations for menu position callbacks', 2
+  skip 'Gtk3::Menu; incorrect annotations', 2
     unless Gtk3::CHECK_VERSION (3, 2, 0);
 
   {
@@ -271,7 +274,7 @@ SKIP: {
 
 # Gtk3::TreeStore::new, set and get, insert_with_values
 SKIP: {
-  skip 'tree model ctors not properly supported', 10
+  skip 'Gtk3::TreeStore; tree model ctors not properly supported', 10
     unless check_gi_version(1, 29, 17);
 
   my $model = Gtk3::TreeStore->new ([qw/Glib::String Glib::Int/]);
@@ -319,7 +322,7 @@ SKIP: {
 
 # Gtk3::TreeModel::get_iter, get_iter_first, get_iter_from_string
 SKIP: {
-  skip 'tree model ctors not properly supported', 6
+  skip 'Gtk3::TreeModel; tree model ctors not properly supported', 6
     unless check_gi_version(1, 29, 17);
 
   my $model = Gtk3::ListStore->new ('Glib::String');
@@ -335,7 +338,7 @@ SKIP: {
 
 # Gtk3::TreeModel::iter_children, iter_nth_child, iter_parent
 SKIP: {
-  skip 'tree model ctors not properly supported', 6
+  skip 'Gtk3::TreeModel; tree model ctors not properly supported', 6
     unless check_gi_version(1, 29, 17);
 
   my $model = Gtk3::TreeStore->new ([qw/Glib::String/]);
@@ -351,7 +354,7 @@ SKIP: {
 
 # Gtk3::TreeModelFilter
 SKIP: {
-  skip 'tree model ctors not properly supported', 3
+  skip 'Gtk3::TreeFilter; tree model ctors not properly supported', 3
     unless check_gi_version(1, 29, 17);
 
   my $child_model = Gtk3::TreeStore->new ([qw/Glib::String/]);
@@ -366,7 +369,7 @@ SKIP: {
 
 # Gtk3::TreeModelSort
 SKIP: {
-  skip 'tree model ctors not properly supported', 3
+  skip 'Gtk3::TreeModelSort; tree model ctors not properly supported', 3
     unless check_gi_version(1, 29, 17);
 
   my $child_model = Gtk3::TreeStore->new ([qw/Glib::String/]);
@@ -381,7 +384,7 @@ SKIP: {
 
 # Gtk3::TreeSelection::get_selected
 SKIP: {
-  skip 'tree model ctors not properly supported', 3
+  skip 'Gtk3::TreeSelection; tree model ctors not properly supported', 3
     unless check_gi_version(1, 29, 17);
 
   my $model = Gtk3::ListStore->new ('Glib::String');
@@ -399,7 +402,7 @@ SKIP: {
 # Gtk3::TreeView::insert_column_with_attributes, get_dest_row_at_pos,
 # get_path_at_pos, get_tooltip_context, get_visible_range
 SKIP: {
-  skip 'tree model ctors not properly supported', 5
+  skip 'Gtk3::TreeView; tree model ctors not properly supported', 5
     unless check_gi_version(1, 29, 17);
 
   my $model = Gtk3::ListStore->new ('Glib::String');
@@ -434,7 +437,7 @@ SKIP: {
 
 # Gtk3::TreeViewColumn::new_with_attributes, set_attributes, cell_get_position
 SKIP: {
-  skip 'tree model ctors not properly supported', 2
+  skip 'Gtk3::TreeViewColumn; tree model ctors not properly supported', 2
     unless check_gi_version(1, 29, 17);
 
   my $model = Gtk3::ListStore->new ('Glib::String');
@@ -520,7 +523,7 @@ __EOD__
 # Gtk3::Gdk::Window::new
 SKIP: {
   # https://bugzilla.gnome.org/show_bug.cgi?id=670369
-  skip 'window attr type annotation missing', 3
+  skip 'Gtk3::Gdk::Window::new; window attr type annotation missing', 3
     unless Gtk3::CHECK_VERSION (3, 6, 0);
 
   my $window = Gtk3::Gdk::Window->new (undef, {
@@ -552,7 +555,7 @@ SKIP: {
 # Gtk3::Gdk::Pixbuf::save, save_to_buffer, save_to_callback
 SKIP: {
   # FIXME: https://bugzilla.gnome.org/show_bug.cgi?id=670372
-  skip 'save & save_to_buffer annotations missing', 7;
+  skip 'Gtk3::Gdk::Pixbuf; save & save_to_buffer annotations missing', 7;
 
   my ($width, $height) = (45, 89);
   my $data = pack "C*", map { int rand 255 } 0..(3*$width*$height);
