@@ -1277,6 +1277,9 @@ sub Gtk3::Gdk::Pixbuf::new_from_xpm_data {
     $class, $real_data);
 }
 
+# The next three subs might have to change when
+# <https://bugzilla.gnome.org/show_bug.cgi?id=670372> is accepted.
+
 sub Gtk3::Gdk::Pixbuf::save {
   my ($pixbuf, $filename, $type, @rest) = @_;
   my ($keys, $values) = _unpack_keys_and_values (\@rest);
@@ -1285,7 +1288,7 @@ sub Gtk3::Gdk::Pixbuf::save {
            " -or-: $pixbuf->save (\$filename, \$type, \$key1 => \$value1, ...)");
   }
   Glib::Object::Introspection->invoke (
-    $_GDK_PIXBUF_BASENAME, 'Pixbuf', 'save',
+    $_GDK_PIXBUF_BASENAME, 'Pixbuf', 'savev',
     $pixbuf, $filename, $type, $keys, $values);
 }
 
@@ -1298,7 +1301,7 @@ sub Gtk3::Gdk::Pixbuf::save_to_buffer {
   }
   my (undef, $buffer) =
     Glib::Object::Introspection->invoke (
-      $_GDK_PIXBUF_BASENAME, 'Pixbuf', 'save_to_buffer',
+      $_GDK_PIXBUF_BASENAME, 'Pixbuf', 'save_to_bufferv',
       $pixbuf, $type, $keys, $values);
   return $buffer;
 }
@@ -1311,7 +1314,7 @@ sub Gtk3::Gdk::Pixbuf::save_to_callback {
            " -or-: $pixbuf->save_to_callback (\$save_func, \$user_data, \$type, \$key1 => \$value1, ...)");
   }
   Glib::Object::Introspection->invoke (
-    $_GDK_PIXBUF_BASENAME, 'Pixbuf', 'save_to_callback',
+    $_GDK_PIXBUF_BASENAME, 'Pixbuf', 'save_to_callbackv',
     $pixbuf, $save_func, $user_data, $type, $keys, $values);
 }
 

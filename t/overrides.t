@@ -7,7 +7,7 @@ use warnings;
 use utf8;
 use Encode;
 
-plan tests => 139;
+plan tests => 145;
 
 # Gtk3::CHECK_VERSION and check_version
 {
@@ -552,17 +552,30 @@ SKIP: {
   isa_ok (ref $formats[0], 'Gtk3::Gdk::PixbufFormat');
 }
 
-# Gtk3::Gdk::Pixbuf::save, save_to_buffer, save_to_callback
+# Gtk3::Gdk::Pixbuf::new_from_data
 SKIP: {
-  # FIXME: https://bugzilla.gnome.org/show_bug.cgi?id=670372
-  skip 'Gtk3::Gdk::Pixbuf; save & save_to_buffer annotations missing', 7;
+  skip 'Gtk3::Gdk::Pixbuf; new_from_data has incorrect annotations', 2;
 
   my ($width, $height) = (45, 89);
-  my $data = pack "C*", map { int rand 255 } 0..(3*$width*$height);
+  my ($r, $g, $b) = (255, 0, 255);
+  my $data = pack 'C*', (($r, $g, $b) x ($width*$height));
   my $pixbuf = Gtk3::Gdk::Pixbuf->new_from_data
     ($data, 'rgb', Glib::FALSE, 8, $width, $height, $width*3);
+  is ($pixbuf->get_byte_length, 3*$width*$height);
+  is ($pixbuf->get_pixels, $data);
+}
+
+# Gtk3::Gdk::Pixbuf::save, save_to_buffer, save_to_callback
+SKIP: {
+  #skip 'Gtk3::Gdk::Pixbuf; save & save_to_buffer annotations missing', 11;
+
+  my ($width, $height) = (10, 5);
+  my $pixbuf = Gtk3::Gdk::Pixbuf->new ('rgb', Glib::TRUE, 8, $width, $height);
+  $pixbuf->fill (hex '0xFF000000');
+  my $expected_pixels = $pixbuf->get_pixels;
 
   my $filename = 'testsave.png';
+  END { unlink $filename; }
   eval {
     $pixbuf->save ($filename, 'png',
                    'key_arg_without_value_arg');
@@ -577,13 +590,13 @@ SKIP: {
   isa_ok ($new_pixbuf, 'Gtk3::Gdk::Pixbuf', 'new_from_file');
   is ($new_pixbuf->get_option ('tEXt::Description'), $desc);
   is ($new_pixbuf->get_option ('tEXt::Thumb::MTime'), $mtime);
-  unlink $filename;
+  is ($new_pixbuf->get_width, $width);
+  is ($new_pixbuf->get_height, $height);
+  is ($new_pixbuf->get_pixels, $expected_pixels);
 
   my $buffer = eval {
-    $pixbuf->save_to_buffer ('jpeg', [qw/quality/], [0.75]);
-    $pixbuf->save_to_buffer ('jpeg', quality => 0.75);
-  } || eval {
-    $pixbuf->save_to_buffer ('png'); # fallback if jpeg not supported
+    $pixbuf->save_to_buffer ('png', [qw/compression/], [9]);
+    $pixbuf->save_to_buffer ('png', compression => 9);
   };
   ok (defined $buffer, 'save_to_buffer');
   my $loader = Gtk3::Gdk::PixbufLoader->new;
@@ -592,7 +605,12 @@ SKIP: {
   $new_pixbuf = $loader->get_pixbuf;
   is ($new_pixbuf->get_width, $width);
   is ($new_pixbuf->get_height, $height);
+  is ($new_pixbuf->get_pixels, $expected_pixels);
 
   # FIXME: callbacks with automatic args not supported yet.
-  # $pixbuf->save_to_callback (sub { warn @_; return Glib::TRUE; }, 'data', 'png');
+  #$pixbuf->save_to_callback (sub {
+  #  my ($pixels, $length, $data) = @_;
+  #  warn join ', ', @$pixels;
+  #  return Glib::TRUE, undef;
+  #}, 'data', 'png');
 }
