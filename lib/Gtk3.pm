@@ -310,10 +310,8 @@ sub Gtk3::main_quit {
 
     if (!$dialog) {
       $dialog = Gtk3::AboutDialog->new;
-      $dialog->signal_connect (delete_event => \&Gtk3::Widget::hide_on_delete);
-      # FIXME: We can't actually do this fully correctly, because the license
-      # and credits subdialogs are private.
-      $dialog->signal_connect (response => \&Gtk3::Widget::hide);
+      $dialog->signal_connect (delete_event => sub { $dialog->hide_on_delete });
+      $dialog->signal_connect (response => sub { $dialog->hide });
       foreach my $prop (keys %props) {
         $dialog->set ($prop => $props{$prop});
       }
