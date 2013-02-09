@@ -423,7 +423,7 @@ sub Gtk3::ActionGroup::add_toggle_actions {
 
     my $action = Gtk3::ToggleAction->new (
       $name, $label, $tooltip, $stock_id);
-    $action->set_active ($is_active);
+    $action->set_active ($is_active) if defined $is_active;
 
     if ($callback) {
       $action->signal_connect ('activate', $callback, $user_data);
