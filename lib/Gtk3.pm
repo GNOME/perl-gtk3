@@ -218,6 +218,13 @@ sub import {
   Glib::Object::Introspection->_register_boxed_synonym (
     "cairo", "RectangleInt", "gdk_rectangle_get_type");
 
+  # FIXME: This uses an undocumented interface for overloading to avoid the
+  # need for a package declaration.
+  Gtk3::Gdk::Atom->overload::OVERLOAD (
+    '==' => sub { ${$_[0]} == ${$_[1]} },
+    '!=' => sub { ${$_[0]} != ${$_[1]} },
+    fallback => 1);
+
   my $init = 0;
   my @unknown_args = ($class);
   foreach (@_) {
@@ -1482,6 +1489,10 @@ available currently.
 return value.
 
 =item * Gtk3::TreeStore, Gtk3::ListStore: reorder() is currently unusable.
+
+=item * Gtk3::Gdk::Atom: The constructor new() is not provided anymore, and the
+class function intern() must now be called as C<< Gtk3::Gdk::Atom::intern
+(name, only_if_exists) >>.
 
 =item * Implementations of Gtk3::TreeModel: Gtk3::TreeIter now has a
 constructor called new() expecting C<< key => value >> pairs;

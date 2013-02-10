@@ -12,10 +12,12 @@
 * Add more overrides for Gtk3::TreeView and friends.
 * Add overrides for various button constructors.
 * Add an override for Gtk3::main_level.
-* Add overrides for Gtk3::Gdk::RGBA.
 * Add Gtk3::EVENT_PROPAGATE and Gtk3::EVENT_STOP.
 * In Gtk3::TreeModel::get, if no columns are specified, use all columns.
 * Test that no double-frees occur for custom Gtk3::Widget subclasses.
+* Add overrides for Gtk3::Gdk::Atom.
+* Add overrides for Gtk3::Gdk::RGBA.
+* Make Gtk3::Gdk::Pixbuf::save, save_to_buffer and save_to_callback usable.
 * Fix test failures on older versions of gtk+.
 
 Overview of changes in Gtk3 0.008 [2012-08-26]

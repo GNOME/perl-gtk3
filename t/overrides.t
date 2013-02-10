@@ -7,7 +7,7 @@ use warnings;
 use utf8;
 use Encode;
 
-plan tests => 145;
+plan tests => 147;
 
 # Gtk3::CHECK_VERSION and check_version
 {
@@ -498,6 +498,15 @@ __EOD__
   isa_ok ($menubars[1], "Gtk3::MenuBar");
 }
 
+# Gtk3::Gdk::Atom
+{
+  my $atom1 = Gtk3::Gdk::Atom::intern("CLIPBOARD", Glib::FALSE);
+  my $atom2 = Gtk3::Gdk::Atom::intern("CLIPBOARD", Glib::FALSE);
+  my $atom3 = Gtk3::Gdk::Atom::intern("PRIMARY", Glib::FALSE);
+  ok ($atom1 == $atom2);
+  ok ($atom1 != $atom3);
+}
+
 # Gtk3::Gdk::RGBA
 {
   my $rgba = Gtk3::Gdk::RGBA->new ({red => 0.0, green => 0.5, blue => 0.5, alpha => 0.5});
@@ -567,8 +576,6 @@ SKIP: {
 
 # Gtk3::Gdk::Pixbuf::save, save_to_buffer, save_to_callback
 SKIP: {
-  #skip 'Gtk3::Gdk::Pixbuf; save & save_to_buffer annotations missing', 11;
-
   my ($width, $height) = (10, 5);
   my $pixbuf = Gtk3::Gdk::Pixbuf->new ('rgb', Glib::TRUE, 8, $width, $height);
   $pixbuf->fill (hex '0xFF000000');
