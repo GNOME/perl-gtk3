@@ -1,5 +1,8 @@
 {{$NEXT}}
 
+Overview of changes in Gtk3 0.009 [2013-02-14]
+==============================================
+
 * Add overrides for Gtk3::Container.
 * Add overrides for Gtk3::Dialog and Gtk3::InfoBar, including the conversion of
   predefined response IDs to nick names.
