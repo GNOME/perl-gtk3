@@ -1,5 +1,7 @@
 {{$NEXT}}
 
+* Fix a few test failures for older gtk+.
+
 Overview of changes in Gtk3 0.009 [2013-02-14]
 ==============================================
 

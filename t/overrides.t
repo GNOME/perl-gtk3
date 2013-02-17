@@ -499,7 +499,9 @@ __EOD__
 }
 
 # Gtk3::Gdk::Atom
-{
+SKIP: {
+  skip 'atom stuff; missing annotations', 2
+    unless Gtk3::CHECK_VERSION(3, 2, 0);
   my $atom1 = Gtk3::Gdk::Atom::intern("CLIPBOARD", Glib::FALSE);
   my $atom2 = Gtk3::Gdk::Atom::intern("CLIPBOARD", Glib::FALSE);
   my $atom3 = Gtk3::Gdk::Atom::intern("PRIMARY", Glib::FALSE);
@@ -576,13 +578,16 @@ SKIP: {
 
 # Gtk3::Gdk::Pixbuf::save, save_to_buffer, save_to_callback
 SKIP: {
+  skip 'pixbuf stuff; missing annotations', 19
+    unless Gtk3::Gdk::PIXBUF_MINOR >= 25;
+
   my ($width, $height) = (10, 5);
   my $pixbuf = Gtk3::Gdk::Pixbuf->new ('rgb', Glib::TRUE, 8, $width, $height);
   $pixbuf->fill (hex '0xFF000000');
   my $expected_pixels = $pixbuf->get_pixels;
 
   my $filename = 'testsave.png';
-  END { unlink $filename; }
+  END { unlink $filename if defined $filename; }
   eval {
     $pixbuf->save ($filename, 'png',
                    'key_arg_without_value_arg');
