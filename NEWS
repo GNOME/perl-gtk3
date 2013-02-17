@@ -1,5 +1,7 @@
 {{$NEXT}}
 
+* Add overrides for Gtk3::Image.
+
 Overview of changes in Gtk3 0.011 [2013-09-01]
 ==============================================
 
