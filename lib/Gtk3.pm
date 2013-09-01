@@ -779,8 +779,8 @@ sub Gtk3::FileChooserDialog::new {
 
 sub Gtk3::HBox::new {
   my ($class, $homogeneous, $spacing) = @_;
-  $homogeneous = 5 unless defined $homogeneous;
-  $spacing = 0 unless defined $spacing;
+  $homogeneous = 0 unless defined $homogeneous;
+  $spacing = 5 unless defined $spacing;
   return Glib::Object::Introspection->invoke (
     $_GTK_BASENAME, 'HBox', 'new', $class, $homogeneous, $spacing);
 }
@@ -1173,8 +1173,8 @@ sub Gtk3::UIManager::add_ui_from_string {
 
 sub Gtk3::VBox::new {
   my ($class, $homogeneous, $spacing) = @_;
-  $homogeneous = 5 unless defined $homogeneous;
-  $spacing = 0 unless defined $spacing;
+  $homogeneous = 0 unless defined $homogeneous;
+  $spacing = 5 unless defined $spacing;
   return Glib::Object::Introspection->invoke (
     $_GTK_BASENAME, 'VBox', 'new', $class, $homogeneous, $spacing);
 }

@@ -7,7 +7,7 @@ use warnings;
 use utf8;
 use Encode;
 
-plan tests => 155;
+plan tests => 159;
 
 # Gtk3::CHECK_VERSION and check_version
 {
@@ -44,6 +44,15 @@ plan tests => 155;
   Gtk3::show_about_dialog (Gtk3::Window->new, %props);
   Gtk3->show_about_dialog (Gtk3::Window->new, %props);
   ok (1);
+}
+
+# Gtk3::[HV]Box
+{
+  foreach my $class (qw/HBox VBox/) {
+    my $box = "Gtk3::$class"->new;
+    ok (!$box->get_homogeneous);
+    is ($box->get_spacing, 5);
+  }
 }
 
 # Gtk3::Button::new
