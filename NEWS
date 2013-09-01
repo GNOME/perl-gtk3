@@ -1,8 +1,15 @@
 {{$NEXT}}
 
+Overview of changes in Gtk3 0.011 [2013-09-01]
+==============================================
+
+* Add forgotten release notes.
+
 Overview of changes in Gtk3 0.010 [2013-09-01]
 ==============================================
 
+* Gtk3::HBox/Gtk3::VBox: use correct defaults in constructors.
+* Gtk3::TextBuffer::create_tag: handle all property pairs.
 * Fix a few test failures for older gtk+.
 
 Overview of changes in Gtk3 0.009 [2013-02-14]
