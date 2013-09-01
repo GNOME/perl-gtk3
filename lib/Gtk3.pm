@@ -551,7 +551,7 @@ sub Gtk3::Builder::connect_signals {
     # care of that for us in all cases, so we only have signal_connect.
     # if we get a connect_object, just use that instead of user_data.
     $object->$func($signal_name => $handler,
-                   $connect_object ? $connect_object : $user_data);
+                   $connect_object || $user_data);
   };
 
   # $builder->connect_signals ($user_data)
