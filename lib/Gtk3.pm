@@ -966,7 +966,7 @@ sub Gtk3::TextBuffer::create_tag {
   my $tag = Gtk3::TextTag->new ($tag_name);
   my $tag_table = $buffer->get_tag_table;
   $tag_table->add ($tag);
-  for (my $i = 2 ; $i < @rest ; $i += 2) {
+  for (my $i = 0 ; $i < @rest ; $i += 2) {
     $tag->set_property ($rest[$i], $rest[$i+1]);
   }
   return $tag;

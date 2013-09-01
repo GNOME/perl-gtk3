@@ -9,7 +9,7 @@ use warnings;
 use utf8;
 use Glib qw/TRUE FALSE/;
 
-plan tests => 38;
+plan tests => 40;
 
 my $table = Gtk3::TextTagTable -> new();
 
@@ -102,8 +102,10 @@ ok(!$buffer -> get_selection_bounds());
   $buffer -> select_range($bounds->());
 }
 
-my $tag_one = $buffer -> create_tag("alb", indent => 2);
+my $tag_one = $buffer -> create_tag("alb", indent => 2, justification => 'center');
 isa_ok($tag_one, "Gtk3::TextTag");
+is($tag_one->get ('indent'), 2);
+is($tag_one->get ('justification'), 'center');
 
 $buffer -> apply_tag($tag_one, $bounds->());
 $buffer -> apply_tag_by_name("alb", $bounds->());
