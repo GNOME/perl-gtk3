@@ -9,7 +9,7 @@ use warnings;
 use utf8;
 use Glib qw/TRUE FALSE/;
 
-plan tests => 40;
+plan tests => 44;
 
 my $table = Gtk3::TextTagTable -> new();
 
@@ -158,3 +158,14 @@ $buffer -> end_user_action();
   my $mark = Gtk3::TextMark -> new('bla', TRUE);
   $buffer -> add_mark($mark, $end->());
 }
+
+{
+  my $buf = Gtk3::TextBuffer -> new();
+  $buf -> set_text('v年x最y');
+  my ($s,$e) = $buf -> get_bounds();
+  ok($s -> forward_find_char(sub{shift eq '年'}));
+  is($s -> get_char, '年');
+  ok(not $e -> backward_find_char(sub{shift eq '%'}, undef, $s));
+  is($e -> get_char, '年');
+}
+
