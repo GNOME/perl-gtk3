@@ -1292,8 +1292,8 @@ sub Gtk3::Gdk::Pixbuf::save {
   my ($pixbuf, $filename, $type, @rest) = @_;
   my ($keys, $values) = _unpack_keys_and_values (\@rest);
   if (not defined $keys) {
-    croak ("Usage: $pixbuf->save (\$filename, \$type, \\\@keys, \\\@values)\n",
-           " -or-: $pixbuf->save (\$filename, \$type, \$key1 => \$value1, ...)");
+    croak ("Usage: \$pixbuf->save (\$filename, \$type, \\\@keys, \\\@values)\n",
+           " -or-: \$pixbuf->save (\$filename, \$type, \$key1 => \$value1, ...)");
   }
   Glib::Object::Introspection->invoke (
     $_GDK_PIXBUF_BASENAME, 'Pixbuf', 'savev',
@@ -1304,8 +1304,8 @@ sub Gtk3::Gdk::Pixbuf::save_to_buffer {
   my ($pixbuf, $type, @rest) = @_;
   my ($keys, $values) = _unpack_keys_and_values (\@rest);
   if (not defined $keys) {
-    croak ("Usage: $pixbuf->save_to_buffer (\$type, \\\@keys, \\\@values)\n",
-           " -or-: $pixbuf->save_to_buffer (\$type, \$key1 => \$value1, ...)");
+    croak ("Usage: \$pixbuf->save_to_buffer (\$type, \\\@keys, \\\@values)\n",
+           " -or-: \$pixbuf->save_to_buffer (\$type, \$key1 => \$value1, ...)");
   }
   my (undef, $buffer) =
     Glib::Object::Introspection->invoke (
@@ -1318,8 +1318,8 @@ sub Gtk3::Gdk::Pixbuf::save_to_callback {
   my ($pixbuf, $save_func, $user_data, $type, @rest) = @_;
   my ($keys, $values) = _unpack_keys_and_values (\@rest);
   if (not defined $keys) {
-    croak ("Usage: $pixbuf->save_to_callback (\$save_func, \$user_data, \$type, \\\@keys, \\\@values)\n",
-           " -or-: $pixbuf->save_to_callback (\$save_func, \$user_data, \$type, \$key1 => \$value1, ...)");
+    croak ("Usage: \$pixbuf->save_to_callback (\$save_func, \$user_data, \$type, \\\@keys, \\\@values)\n",
+           " -or-: \$pixbuf->save_to_callback (\$save_func, \$user_data, \$type, \$key1 => \$value1, ...)");
   }
   Glib::Object::Introspection->invoke (
     $_GDK_PIXBUF_BASENAME, 'Pixbuf', 'save_to_callbackv',
