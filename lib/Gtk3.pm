@@ -1386,7 +1386,7 @@ sub _unpack_keys_and_values {
 sub _unpack_unless_array_ref {
   my ($data) = @_;
   local $@;
-  return defined eval { @{$data} }
+  return eval { @{$data} }
     ? $data
     : [unpack 'C*', $data];
 }
