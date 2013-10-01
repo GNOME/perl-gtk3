@@ -1,6 +1,16 @@
 {{$NEXT}}
 
+* Add forgotten release notes.
+* Reenable UploadToCPAN Dist::Zilla plugin
+
+Overview of changes in Gtk3 0.012 [2013-09-30]
+==============================================
+
 * Add overrides for Gtk3::Image.
+∗ Fix partial misquoting in croak usage
+* Do not use 'defined' on an array (Spotted by Thierry Vignaud)
+* Add overrides for Gtk3::Image (Based on a patch by Dave M.)
+* Add two more tests for Gtk3::TextBuffer (Zach Morgan)
 
 Overview of changes in Gtk3 0.011 [2013-09-01]
 ==============================================
