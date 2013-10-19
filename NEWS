@@ -1,5 +1,12 @@
 {{$NEXT}}
 
+Overview of changes in Gtk3 0.014 [2013-10-18]
+==============================================
+
+* dist.ini: document 'is_trial', sets 'testing' in metadata
+* dist.ini: Add MetaJSON, set MetaYAML version = 2
+* dist.ini: Add [MetaResources] block with correct URLs; fixes RT#89118
+
 Overview of changes in Gtk3 0.013 [2013-09-30]
 ==============================================
 
