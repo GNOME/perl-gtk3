@@ -569,7 +569,7 @@ SKIP: {
 # Gtk3::Gdk::Pixbuf::get_formats
 {
   my @formats = Gtk3::Gdk::Pixbuf::get_formats;
-  isa_ok (ref $formats[0], 'Gtk3::Gdk::PixbufFormat');
+  isa_ok ($formats[0], 'Gtk3::Gdk::PixbufFormat');
 }
 
 # Gtk3::Gdk::Pixbuf::new_from_data
