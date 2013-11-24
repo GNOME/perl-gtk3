@@ -1,5 +1,7 @@
 {{$NEXT}}
 
+* Require Test::Simple >= 0.96.
+
 Overview of changes in Gtk3 0.014 [2013-10-18]
 ==============================================
 
