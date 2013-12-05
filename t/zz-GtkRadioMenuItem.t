@@ -7,12 +7,9 @@ BEGIN { require './t/inc/setup.pl' }
 use strict;
 use warnings;
 
-plan tests => 11;
+plan tests => 12;
 
-SKIP: {
-  skip 'list-based API; it is broken currently', 9
-    unless 0; # FIXME: <https://bugzilla.gnome.org/show_bug.cgi?id=679563>
-
+{
   my $item_one = Gtk3::RadioMenuItem -> new();
   isa_ok($item_one, "Gtk3::RadioMenuItem");
 
@@ -24,6 +21,9 @@ SKIP: {
 
   my $item_four = Gtk3::RadioMenuItem -> new_with_mnemonic([$item_one, $item_two], "_Bla");
   isa_ok($item_four, "Gtk3::RadioMenuItem");
+
+  is_deeply($item_one -> get_group(),
+            [$item_one, $item_two, $item_four]);
 
   $item_three -> set_group($item_one -> get_group());
   is_deeply($item_one -> get_group(),
@@ -43,15 +43,8 @@ SKIP: {
              $item_five, $item_six, $item_seven]);
 }
 
-SKIP: {
-  skip 'item-based API; missing annotations', 2
-    unless Gtk3::CHECK_VERSION (3, 6, 0);
-
-  # FIXME: The item-based API is not bootstrap-able on its own yet, see
-  # <https://bugzilla.gnome.org/show_bug.cgi?id=679563>.
-  # my $item_one = Gtk3::RadioMenuItem -> new_from_widget(undef);
-
-  my $item_one = Gtk3::RadioMenuItem -> new([]);
+{
+  my $item_one = Gtk3::RadioMenuItem -> new_from_widget(undef);
   my $item_two = Gtk3::RadioMenuItem -> new($item_one);
   my $item_three = Gtk3::RadioMenuItem -> new_with_label($item_one, "Bla");
   my $item_four = Gtk3::RadioMenuItem -> new_with_mnemonic($item_one, "_Bla");

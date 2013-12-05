@@ -970,22 +970,90 @@ sub Gtk3::MessageDialog::new {
   return $dialog;
 }
 
-# Gtk3::RadioMenuItem constructors.
+# Gtk3::RadioAction, Gtk3::RadioButton, Gtk3::RadioMenuItem and
+# Gtk3::RadioToolButton constructors.
 {
   no strict qw(refs);
-  foreach my $ctor (qw/new new_with_label new_with_mnemonic/) {
-    *{'Gtk3::RadioMenuItem::' . $ctor} = sub {
-      my ($class, $group_or_member, @rest) = @_;
-      my $real_ctor = $ctor;
-      {
-        local $@;
-        if (eval { $group_or_member->isa ('Gtk3::RadioMenuItem') }) {
+
+  my $group_converter = sub {
+    my ($ctor, $group_or_member, $package) = @_;
+    local $@;
+    # undef => []
+    if (!defined $group_or_member) {
+      return ($ctor, []);
+    }
+    # [] => []
+    elsif (eval { $#$group_or_member == -1 }) {
+      return ($ctor, []);
+    }
+    # [member1, ...] => member1
+    elsif (eval { $#$group_or_member >= 0}) {
+      return ($ctor . '_from_widget', $group_or_member->[0]);
+    }
+    # member => member
+    elsif (eval { $group_or_member->isa ('Gtk3::' . $package) }) {
+      return ($ctor . '_from_widget', $group_or_member);
+    }
+    else {
+      croak ('Unhandled group or member argument encountered');
+    }
+  };
+
+  # Gtk3::RadioAction/Gtk3::RadioButton/Gtk3::RadioMenuItem/Gtk3::RadioToolButton
+  foreach my $package (qw/RadioAction RadioButton RadioMenuItem RadioToolButton/) {
+    *{'Gtk3::' . $package . '::set_group'} = sub {
+      my ($button, $group) = @_;
+      my $real_group = $group;
+      if (eval { $#$group >= 0 }) {
+        $real_group = $group->[0];
+      }
+      $button->set (group => $real_group);
+    };
+  }
+
+  # Gtk3::RadioButton/Gtk3::RadioMenuItem
+  foreach my $package (qw/RadioButton RadioMenuItem/) {
+    foreach my $ctor (qw/new new_with_label new_with_mnemonic/) {
+      # Avoid using the list-based API, as G:O:I does not support the memory
+      # ownership semantics.  Use the item-based API instead.
+      *{'Gtk3::' . $package . '::' . $ctor} = sub {
+        my ($class, $group_or_member, @rest) = @_;
+        my ($real_ctor, $real_group_or_member) =
+          $group_converter->($ctor, $group_or_member, $package);
+        return Glib::Object::Introspection->invoke (
+          $_GTK_BASENAME, $package, $real_ctor,
+          $class, $real_group_or_member, @rest);
+      };
+
+      # Work around <https://bugzilla.gnome.org/show_bug.cgi?id=679563>.
+      *{'Gtk3::' . $package . '::' . $ctor . '_from_widget'} = sub {
+        my ($class, $member, @rest) = @_;
+        my $real_ctor = $ctor;
+        my $real_group_or_member = $member;
+        if (!defined $member) {
+          $real_group_or_member = [];
+        } else {
           $real_ctor .= '_from_widget';
         }
-      }
+        return Glib::Object::Introspection->invoke (
+          $_GTK_BASENAME, $package, $real_ctor,
+          $class, $real_group_or_member, @rest);
+      };
+    }
+  }
+
+  # GtkRadioToolButton
+  foreach my $ctor (qw/new new_from_stock/) {
+    # Avoid using the list-based API, as G:O:I does not support the memory
+    # ownership semantics.  Use the item-based API instead.
+    *{'Gtk3::RadioToolButton::' . $ctor} = sub {
+      my ($class, $group_or_member, @rest) = @_;
+      my ($real_ctor, $real_group_or_member) =
+        $group_converter->($ctor, $group_or_member, 'RadioToolButton');
+      $real_ctor =~ s/_from_stock_from_/_with_stock_from_/; # you gotta be kidding me...
       return Glib::Object::Introspection->invoke (
-        $_GTK_BASENAME, 'RadioMenuItem', $real_ctor,
-        $class, $group_or_member, @rest);
+        $_GTK_BASENAME, 'RadioToolButton', $real_ctor,
+        $class, $real_group_or_member, @rest);
     };
   }
 }
@@ -1534,6 +1602,8 @@ and must be returned.
 
 =item * Gtk3::Menu: The position callback passed to popup() does not receive x
 and y parameters anymore.
+
+=item * Gtk3::RadioAction: The constructor now follows the C API.
 
 =item * Gtk3::TreeModel: iter_next() is now a method that is modifying the iter
 directly, instead of returning a new one.  rows_reordered() and the
