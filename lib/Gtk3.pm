@@ -1309,6 +1309,13 @@ sub Gtk3::VBox::new {
     $_GTK_BASENAME, 'VBox', 'new', $class, $homogeneous, $spacing);
 }
 
+sub Gtk3::Widget::render_icon {
+  my ($widget, $stock_id, $size, $detail) = @_;
+  Glib::Object::Introspection->invoke (
+    $_GTK_BASENAME, 'Widget', 'render_icon', $widget, $stock_id,
+    $_GTK_ICON_SIZE_NICK_TO_ID->($size), $detail);
+}
+
 sub Gtk3::Window::new {
   my ($class, $type) = @_;
   $type = 'toplevel' unless defined $type;

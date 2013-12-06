@@ -7,7 +7,7 @@ use warnings;
 use utf8;
 use Encode;
 
-plan tests => 163;
+plan tests => 164;
 
 # Gtk3::CHECK_VERSION and check_version
 {
@@ -526,6 +526,13 @@ __EOD__
   is (@menubars, 2);
   isa_ok ($menubars[0], "Gtk3::MenuBar");
   isa_ok ($menubars[1], "Gtk3::MenuBar");
+}
+
+# Gtk3::Widget
+{
+  my $widget = Gtk3::Label->new ("Test");
+  isa_ok ($widget->render_icon ("gtk-open", "menu", "detail"),
+          "Gtk3::Gdk::Pixbuf");
 }
 
 # Gtk3::Gdk::Atom
