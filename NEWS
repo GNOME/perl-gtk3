@@ -2,6 +2,7 @@
 
 * Add overrides for Gtk3::RadioAction, Gtk3::RadioButton, Gtk3::RadioMenuItem
   and Gtk3::RadioToolButton.
+* Add overrides for Pango::Layout::set_text.
 * Require Test::Simple >= 0.96.
 
 Overview of changes in Gtk3 0.014 [2013-10-18]

@@ -7,7 +7,7 @@ use warnings;
 use utf8;
 use Encode;
 
-plan tests => 159;
+plan tests => 161;
 
 # Gtk3::CHECK_VERSION and check_version
 {
@@ -653,4 +653,16 @@ SKIP: {
   my $error = $@;
   isa_ok ($error, 'Glib::Error');
   is ($error->message, 'buzz');
+}
+
+# Pango::Layout
+{
+  my $label = Gtk3::Label->new ('Bla');
+  my $layout = $label->create_pango_layout ('Bla');
+
+  $layout->set_text('Bla bla.', 3);
+  is ($layout->get_text, 'Bla');
+
+  $layout->set_text('Bla bla.');
+  is ($layout->get_text, 'Bla bla.');
 }

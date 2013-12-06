@@ -1455,6 +1455,14 @@ sub Gtk3::Gdk::Pixbuf::save_to_callback {
     $pixbuf, $save_func, $user_data, $type, $keys, $values);
 }
 
+# Pango
+
+sub Pango::Layout::set_text {
+  return Glib::Object::Introspection->invoke (
+    $_PANGO_BASENAME, 'Layout', 'set_text',
+    @_ == 3 ? @_ : (@_[0,1], -1)); # wants length in bytes
+}
+
 # - Helpers ----------------------------------------------------------------- #
 
 sub _common_tree_model_new {
