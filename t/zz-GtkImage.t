@@ -8,7 +8,7 @@ BEGIN { require './t/inc/setup.pl' }
 use strict;
 use warnings;
 
-plan tests => 32;
+plan tests => 36;
 
 # borrowed from xsane-icons.c
 my @pixbuf_data =
@@ -46,9 +46,15 @@ my $pixbuf = Gtk3::Gdk::Pixbuf->new_from_xpm_data (@pixbuf_data);
 
 ok (my $img = Gtk3::Image->new, 'Gtk3::Image->new');
 
-is_deeply ([$img->get_icon_set], [undef, 'invalid'], 'get_icon_set empty');
+my @ret = $img->get_icon_set;
+is (scalar (@ret), 2);
+is ($ret[0], undef);
+ok (defined $ret[1]); # unpredictable
 is ($img->get_pixbuf, undef, 'get_pixbuf empty');
-is_deeply ([$img->get_stock ()], [undef, 'invalid'], 'get_stock empty');
+@ret = $img->get_stock ();
+is (scalar (@ret), 2);
+is ($ret[0], undef);
+ok (defined $ret[1]); # unpredictable
 is ($img->get_animation, undef, 'get_animation empty');
 is ($img->get_storage_type, 'empty', 'get_storage_type empty');
 
@@ -65,7 +71,7 @@ is_deeply ([$img->get_stock ()], ['gtk-cancel', 'menu'],
 my $iconset = Gtk3::IconSet->new_from_pixbuf ($pixbuf);
 ok ($img = Gtk3::Image->new_from_icon_set ($iconset, 'small-toolbar'),
   'Gtk3::Image->new_from_icon_set');
-my @ret = $img->get_icon_set;
+@ret = $img->get_icon_set;
 is (scalar (@ret), 2, 'new_from_icon_set get_icon_set num rets');
 isa_ok ($ret[0], 'Gtk3::IconSet', 'new_from_icon_set get_icon_set icon_set');
 is ($ret[1], 'small-toolbar', 'new_from_icon_set get_icon_set size');
@@ -80,7 +86,7 @@ isa_ok ($img->get_pixbuf, 'Gtk3::Gdk::Pixbuf', 'new_from_pixbuf get_pixbuf');
 
 $img->set_from_stock ('gtk-quit', 'dialog');
 is ($img->get_storage_type, 'stock', 'set_from_stock get_storage_type');
-ok (eq_array ([$img->get_stock ()], ['gtk-quit', 'dialog']),
+is_deeply ([$img->get_stock ()], ['gtk-quit', 'dialog'],
   'set_from_stock get_stock');
 
 # set from icon set ############################################################
