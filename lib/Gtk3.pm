@@ -987,8 +987,12 @@ sub Gtk3::MessageDialog::new {
       return ($ctor, []);
     }
     # [member1, ...] => member1
-    elsif (eval { $#$group_or_member >= 0}) {
-      return ($ctor . '_from_widget', $group_or_member->[0]);
+    elsif (eval { $#$group_or_member >= 0 }) {
+      my $member = $group_or_member->[0];
+      if (defined $member) {
+        return ($ctor . '_from_widget', $member);
+      }
+      return ($ctor, []);
     }
     # member => member
     elsif (eval { $group_or_member->isa ('Gtk3::' . $package) }) {
