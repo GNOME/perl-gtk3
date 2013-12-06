@@ -7,7 +7,7 @@ use warnings;
 use utf8;
 use Encode;
 
-plan tests => 161;
+plan tests => 163;
 
 # Gtk3::CHECK_VERSION and check_version
 {
@@ -262,6 +262,27 @@ SKIP: {
     isa_ok ($item, $class);
     is ($item->get_label, '_Test');
   }
+}
+
+# Gtk3::SizeGroup
+{
+  my $group = Gtk3::SizeGroup->new ("vertical");
+
+  my @widgets = $group->get_widgets;
+  ok (!@widgets);
+
+  my ($uno, $dos, $tres, $cuatro) =
+    (Gtk3::Label->new ("Tinky-Winky"),
+     Gtk3::Label->new ("Dipsy"),
+     Gtk3::Label->new ("La La"),
+     Gtk3::Label->new ("Po"));
+
+  $group->add_widget ($uno);
+  $group->add_widget ($dos);
+  $group->add_widget ($tres);
+  $group->add_widget ($cuatro);
+  @widgets = $group->get_widgets;
+  is (scalar @widgets, 4);
 }
 
 # Gtk3::Stock

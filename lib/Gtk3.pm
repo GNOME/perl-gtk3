@@ -39,6 +39,7 @@ my @_GTK_FLATTEN_ARRAY_REF_RETURN_FOR = qw/
   Gtk3::Builder::get_objects
   Gtk3::CellLayout::get_cells
   Gtk3::Container::get_children
+  Gtk3::SizeGroup::get_widgets
   Gtk3::Stock::list_ids
   Gtk3::TreePath::get_indices
   Gtk3::TreeView::get_columns
