@@ -1,5 +1,8 @@
 {{$NEXT}}
 
+Overview of changes in Gtk3 0.015 [2013-12-08]
+==============================================
+
 * Add overrides for Gtk3::RadioAction, Gtk3::RadioButton, Gtk3::RadioMenuItem
   and Gtk3::RadioToolButton.
 * Add an override for Gtk3::SizeGroup::get_widgets.
