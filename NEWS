@@ -1,5 +1,12 @@
 {{$NEXT}}
 
+Overview of changes in Gtk3 0.016 [2014-02-19]
+==============================================
+
+* README: added more project contact info/addresses/links
+* README: Added more info on how to report bugs, submit patches
+∗ dist.ini: added Twitter URL to MetaResources block
+
 Overview of changes in Gtk3 0.015 [2013-12-08]
 ==============================================
 
