@@ -1,5 +1,7 @@
 {{$NEXT}}
 
+* Fix compatibility with perl 5.20 and non-dot locales.
+
 Overview of changes in Gtk3 0.016 [2014-02-19]
 ==============================================
 

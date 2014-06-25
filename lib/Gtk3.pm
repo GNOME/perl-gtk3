@@ -1471,6 +1471,49 @@ sub Pango::Layout::set_text {
     @_ == 3 ? @_ : (@_[0,1], -1)); # wants length in bytes
 }
 
+# - Fixes ------------------------------------------------------------------- #
+
+# Compatibility with perl 5.20 and non-dot locales.  Wrap all functions that
+# might end up calling setlocale() such that POSIX::setlocale() is also called
+# to ensure perl knows about the current locale.  See the discussion in
+# <https://rt.perl.org/Public/Bug/Display.html?id=121930>,
+# <https://rt.perl.org/Public/Bug/Display.html?id=121317>,
+# <https://rt.perl.org/Public/Bug/Display.html?id=120723>.
+if ($^V ge v5.20.0) {
+  require POSIX;
+  no strict 'refs';
+  no warnings 'redefine';
+
+  my $disable_setlocale = 0;
+  my $orig = \&Gtk3::disable_setlocale;
+  *{Gtk3::disable_setlocale} = sub {
+    $disable_setlocale = 1;
+    $orig->(@_);
+  };
+
+  # These two already have overrides.
+  foreach my $function (qw/Gtk3::init Gtk3::init_check/) {
+    my $orig = \&{$function};
+    *{$function} = sub {
+      if (!$disable_setlocale) {
+        POSIX::setlocale (POSIX::LC_ALL (), '');
+      }
+      $orig->(@_);
+    };
+  }
+
+  # These do not.
+  foreach my $function (qw/init_with_args parse_args/) {
+    *{'Gtk3::' . $function} = sub {
+      if (!$disable_setlocale) {
+        POSIX::setlocale (POSIX::LC_ALL (), '');
+      }
+      Glib::Object::Introspection->invoke (
+        $_GTK_BASENAME, undef, $function, @_);
+    };
+  }
+}
+
 # - Helpers ----------------------------------------------------------------- #
 
 sub _common_tree_model_new {
