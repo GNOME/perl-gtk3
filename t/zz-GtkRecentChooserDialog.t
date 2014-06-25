@@ -8,7 +8,7 @@ BEGIN { require './t/inc/setup.pl' }
 use strict;
 use warnings;
 
-plan tests => 14;
+plan tests => 12;
 
 my $window = Gtk3::Window->new;
 my $manager = Gtk3::RecentManager->new;
@@ -33,15 +33,9 @@ $chooser = Gtk3::RecentChooserDialog->new ('Test', $window, 'gtk-ok' => 'ok');
 isa_ok ($chooser, 'Gtk3::RecentChooser');
 isa_ok ($chooser, 'Gtk3::RecentChooserDialog');
 
-my @buttons = $chooser->get_action_area->get_children;
-is (scalar @buttons, 1);
-
 $chooser = Gtk3::RecentChooserDialog->new_for_manager ('Test', $window, $manager, 'gtk-ok' => 'ok', 'gtk-cancel' => 'cancel');
 isa_ok ($chooser, 'Gtk3::RecentChooser');
 isa_ok ($chooser, 'Gtk3::RecentChooserDialog');
-
-@buttons = $chooser->get_action_area->get_children;
-is (scalar @buttons, 2);
 
 __END__
 
