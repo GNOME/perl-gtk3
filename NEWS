@@ -1,6 +1,10 @@
 {{$NEXT}}
 
+Overview of changes in Gtk3 0.017 [2014-07-02]
+==============================================
+
 * Fix compatibility with perl 5.20 and non-dot locales.
+* Fix a test failure due to changes in gtk+ (GtkRecentChooser)
 
 Overview of changes in Gtk3 0.016 [2014-02-19]
 ==============================================
