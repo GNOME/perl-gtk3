@@ -9,7 +9,7 @@ use Encode;
 
 plan tests => 164;
 
-# Gtk3::CHECK_VERSION and check_version
+note('Gtk3::CHECK_VERSION and check_version');
 {
   my ($x, $y, $z) = (Gtk3::MAJOR_VERSION, Gtk3::MINOR_VERSION, Gtk3::MICRO_VERSION);
   ok (Gtk3::CHECK_VERSION ($x, $y, $z));
@@ -24,8 +24,9 @@ plan tests => 164;
   ok (defined Gtk3->check_version ($x, $y, $z));
 }
 
-# Gtk3::Window::new and list_toplevels.  This is at the top to avoid testing
-# against a polluted list of toplevels.
+note('Gtk3::Window::new and list_toplevels.');
+note(
+'This is at the top to avoid testing against a polluted list of toplevels.');
 {
   my $window1 = Gtk3::Window->new ('toplevel');
   my $window2 = Gtk3::Window->new;
@@ -33,7 +34,7 @@ plan tests => 164;
   is (scalar Gtk3::Window::list_toplevels (), $window2);
 }
 
-# Gtk3::show_about_dialog
+note('Gtk3::show_about_dialog');
 {
   my %props = (program_name => 'Foo',
                version => '42',
@@ -46,7 +47,7 @@ plan tests => 164;
   ok (1);
 }
 
-# Gtk3::[HV]Box
+note('Gtk3::[HV]Box');
 {
   foreach my $class (qw/HBox VBox/) {
     my $box = "Gtk3::$class"->new;
@@ -55,7 +56,7 @@ plan tests => 164;
   }
 }
 
-# Gtk3::Button::new
+note('Gtk3::Button::new');
 {
   my $button = Gtk3::Button->new;
   ok (!defined ($button->get_label));
@@ -63,7 +64,7 @@ plan tests => 164;
   is ($button->get_label, '_Test');
 }
 
-# Gtk3::CellLayout::get_cells
+note('Gtk3::CellLayout::get_cells');
 {
   my $cell = Gtk3::TreeViewColumn->new;
   is_deeply([$cell->get_cells], []);
@@ -74,7 +75,7 @@ plan tests => 164;
   is_deeply([$cell->get_cells], [$one, $two]);
 }
 
-# Gtk3::CheckButton::new
+note('Gtk3::CheckButton::new');
 {
   my $button = Gtk3::CheckButton->new;
   ok (!defined ($button->get_label));
@@ -82,7 +83,7 @@ plan tests => 164;
   is ($button->get_label, '_Test');
 }
 
-# Gtk3::ColorButton::new
+note('Gtk3::ColorButton::new');
 {
   my $button = Gtk3::ColorButton->new;
   is ($button->get_color->red, 0);
@@ -91,11 +92,11 @@ plan tests => 164;
   is ($button->get_color->red, $color->red);
 }
 
-# Gtk3::CssProvider
 SKIP: {
   skip 'Gtk3::CssProvider; incorrect annotations', 2
     unless Gtk3::CHECK_VERSION (3, 2, 0);
 
+  note('Gtk3::CssProvider');
   my $css = "GtkButton {font: Cantarelll 10}";
   my $expect = qr/Cantarelll/;
   my $p = Gtk3::CssProvider->new;
@@ -107,7 +108,7 @@ SKIP: {
   like ($p->to_string, $expect);
 }
 
-# Gtk3::Editable::insert_text
+note('Gtk3::Editable::insert_text');
 {
   my $entry = Gtk3::Entry->new;
   my $orig_text = 'aeiou';
@@ -125,7 +126,7 @@ SKIP: {
   is ($entry->get_text, $new_text . $orig_text . $new_text);
 }
 
-# Gtk3::Editable::insert_text and length issues
+note('Gtk3::Editable::insert_text and length issues');
 {
   my $entry = Gtk3::Entry->new;
   my ($text, $pos) = ('0123456789€', 0);
@@ -134,11 +135,11 @@ SKIP: {
   is ($entry->get_text, $text);
 }
 
-# GtkEditable.insert-text signal
 SKIP: {
   skip 'GtkEditable.insert-text signal; need generic signal marshaller', 5
     unless check_gi_version (1, 33, 10);
 
+  note('GtkEditable.insert-text signal');
   my $entry = Gtk3::Entry->new;
   my $orig_text = 'äöü';
   $entry->set_text ($orig_text);
@@ -157,7 +158,7 @@ SKIP: {
   is ($entry->get_text, $orig_text . $my_text);
 }
 
-# Gtk3::FileChooserDialog
+note('Gtk3::FileChooserDialog');
 {
   my $parent = Gtk3::Window->new;
   my $dialog = Gtk3::FileChooserDialog->new ('some title', $parent, 'save',
@@ -168,7 +169,7 @@ SKIP: {
   is ($dialog->get_action, 'save');
 }
 
-# Gtk3::FontButton::new
+note('Gtk3::FontButton::new');
 {
   my $button = Gtk3::FontButton->new;
   # $button->get_font_name can be anything
@@ -176,7 +177,7 @@ SKIP: {
   ok (defined $button->get_font_name);
 }
 
-# Gtk3::LinkButton::new
+note('Gtk3::LinkButton::new');
 {
   my ($host, $label) = ('http://localhost', 'Local');
   my $button = Gtk3::LinkButton->new ($host);
@@ -185,11 +186,11 @@ SKIP: {
   is ($button->get_label, $label);
 }
 
-# Gtk3::ListStore::new, set and get, insert_with_values
 SKIP: {
   skip 'Gtk3::ListStore; tree model ctors not properly supported', 10
     unless check_gi_version(1, 29, 17);
 
+  note('Gtk3::ListStore::new, set and get, insert_with_values');
   my $model = Gtk3::ListStore->new ([qw/Glib::String Glib::Int/]);
   my $iter = $model->append;
   $model->set ($iter, [0, 1], ['Foo', 23]);
@@ -221,11 +222,11 @@ SKIP: {
   }
 }
 
-# Gtk3::Menu::popup and popup_for_device
 SKIP: {
   skip 'Gtk3::Menu; incorrect annotations', 2
     unless Gtk3::CHECK_VERSION (3, 2, 0);
 
+  note('Gtk3::Menu::popup and popup_for_device');
   {
     my $menu = Gtk3::Menu->new;
     my $position_callback = sub {
@@ -245,7 +246,7 @@ SKIP: {
   }
 }
 
-# Gtk2::MenuItem::new, Gtk2::CheckMenuItem::new, Gtk2::ImageMenuItem::new
+note('Gtk2::MenuItem::new, Gtk2::CheckMenuItem::new, Gtk2::ImageMenuItem::new');
 {
   foreach my $class (qw/Gtk3::MenuItem Gtk3::CheckMenuItem Gtk3::ImageMenuItem/) {
     my $item;
@@ -264,7 +265,7 @@ SKIP: {
   }
 }
 
-# Gtk3::SizeGroup
+note('Gtk3::SizeGroup');
 {
   my $group = Gtk3::SizeGroup->new ("vertical");
 
@@ -285,16 +286,16 @@ SKIP: {
   is (scalar @widgets, 4);
 }
 
-# Gtk3::Stock
+note('Gtk3::Stock');
 {
   ok (grep { $_ eq 'gtk-ok' } Gtk3::Stock::list_ids ());
   my $item = Gtk3::Stock::lookup ('gtk-ok');
   is ($item->{stock_id}, 'gtk-ok');
-  # Gtk3::Stock::add and add_static don't work yet
+  note('Gtk3::Stock::add and add_static do not work yet');
   Gtk3::Stock::set_translate_func ('perl-domain', sub {}, 42);
 }
 
-# Gtk3::ToggleButton::new
+note('Gtk3::ToggleButton::new');
 {
   my $button = Gtk3::ToggleButton->new;
   ok (!defined ($button->get_label));
@@ -302,11 +303,11 @@ SKIP: {
   is ($button->get_label, '_Test');
 }
 
-# Gtk3::TreeStore::new, set and get, insert_with_values
 SKIP: {
   skip 'Gtk3::TreeStore; tree model ctors not properly supported', 10
     unless check_gi_version(1, 29, 17);
 
+  note('Gtk3::TreeStore::new, set and get, insert_with_values');
   my $model = Gtk3::TreeStore->new ([qw/Glib::String Glib::Int/]);
   my $iter = $model->append (undef);
   $model->set ($iter, [0, 1], ['Foo', 23]);
@@ -338,7 +339,7 @@ SKIP: {
   }
 }
 
-# Gtk3::TreePath::new, new_from_string, new_from_indices, get_indices
+note('Gtk3::TreePath::new, new_from_string, new_from_indices, get_indices');
 {
   my $path = Gtk3::TreePath->new;
   isa_ok ($path, 'Gtk3::TreePath');
@@ -350,11 +351,11 @@ SKIP: {
   is_deeply ([$path->get_indices], [1, 2, 3]);
 }
 
-# Gtk3::TreeModel::get_iter, get_iter_first, get_iter_from_string
 SKIP: {
   skip 'Gtk3::TreeModel; tree model ctors not properly supported', 6
     unless check_gi_version(1, 29, 17);
 
+  note('Gtk3::TreeModel::get_iter, get_iter_first, get_iter_from_string');
   my $model = Gtk3::ListStore->new ('Glib::String');
   my $path = Gtk3::TreePath->new_from_string ('0');
   is ($model->get_iter ($path), undef);
@@ -366,11 +367,11 @@ SKIP: {
   isa_ok ($model->get_iter_from_string ('0'), 'Gtk3::TreeIter');
 }
 
-# Gtk3::TreeModel::iter_children, iter_nth_child, iter_parent
 SKIP: {
   skip 'Gtk3::TreeModel; tree model ctors not properly supported', 6
     unless check_gi_version(1, 29, 17);
 
+  note('Gtk3::TreeModel::iter_children, iter_nth_child, iter_parent');
   my $model = Gtk3::TreeStore->new ([qw/Glib::String/]);
   my $parent_iter = $model->append (undef);
   is ($model->iter_children ($parent_iter), undef);
@@ -382,11 +383,11 @@ SKIP: {
   isa_ok ($model->iter_parent ($child_iter), 'Gtk3::TreeIter');
 }
 
-# Gtk3::TreeModelFilter
 SKIP: {
   skip 'Gtk3::TreeFilter; tree model ctors not properly supported', 3
     unless check_gi_version(1, 29, 17);
 
+  note('Gtk3::TreeModelFilter');
   my $child_model = Gtk3::TreeStore->new ([qw/Glib::String/]);
   my $child_iter = $child_model->append (undef);
   $child_model->set ($child_iter, 0 => 'Bla');
@@ -397,11 +398,11 @@ SKIP: {
   is ($model->get ($iter, 0), 'Bla');
 }
 
-# Gtk3::TreeModelSort
 SKIP: {
   skip 'Gtk3::TreeModelSort; tree model ctors not properly supported', 3
     unless check_gi_version(1, 29, 17);
 
+  note('Gtk3::TreeModelSort');
   my $child_model = Gtk3::TreeStore->new ([qw/Glib::String/]);
   my $child_iter = $child_model->append (undef);
   $child_model->set ($child_iter, 0 => 'Bla');
@@ -412,11 +413,11 @@ SKIP: {
   is ($model->get ($iter, 0), 'Bla');
 }
 
-# Gtk3::TreeSelection::get_selected
 SKIP: {
   skip 'Gtk3::TreeSelection; tree model ctors not properly supported', 3
     unless check_gi_version(1, 29, 17);
 
+  note('Gtk3::TreeSelection::get_selected');
   my $model = Gtk3::ListStore->new ('Glib::String');
   my $view = Gtk3::TreeView->new ($model);
   my $selection = $view->get_selection;
@@ -429,12 +430,12 @@ SKIP: {
   isa_ok ($sel_iter, 'Gtk3::TreeIter');
 }
 
-# Gtk3::TreeView::insert_column_with_attributes, get_dest_row_at_pos,
-# get_path_at_pos, get_tooltip_context, get_visible_range
 SKIP: {
   skip 'Gtk3::TreeView; tree model ctors not properly supported', 5
     unless check_gi_version(1, 29, 17);
 
+  note('Gtk3::TreeView::insert_column_with_attributes, get_dest_row_at_pos,');
+  note('get_path_at_pos, get_tooltip_context, get_visible_range');
   my $model = Gtk3::ListStore->new ('Glib::String');
   $model->insert_with_values (-1, 0 => 'Test string');
 
@@ -465,11 +466,12 @@ SKIP: {
   # is (@vis_paths, 2); # or sometimes 0
 }
 
-# Gtk3::TreeViewColumn::new_with_attributes, set_attributes, cell_get_position
 SKIP: {
   skip 'Gtk3::TreeViewColumn; tree model ctors not properly supported', 2
     unless check_gi_version(1, 29, 17);
 
+  note('Gtk3::TreeViewColumn::new_with_attributes, set_attributes');
+  note('cell_get_position');
   my $model = Gtk3::ListStore->new ('Glib::String');
   $model->insert_with_values (-1, 0 => 'Test string');
 
@@ -490,7 +492,7 @@ SKIP: {
   is (@cell_stuff, 2);
 }
 
-# Gtk3::UIManager
+note('Gtk3::UIManager');
 {
   my $ui_manager = Gtk3::UIManager->new;
   my $ui_info = <<__EOD__;
@@ -528,17 +530,18 @@ __EOD__
   isa_ok ($menubars[1], "Gtk3::MenuBar");
 }
 
-# Gtk3::Widget
+note('Gtk3::Widget');
 {
   my $widget = Gtk3::Label->new ("Test");
   isa_ok ($widget->render_icon ("gtk-open", "menu", "detail"),
           "Gtk3::Gdk::Pixbuf");
 }
 
-# Gtk3::Gdk::Atom
 SKIP: {
   skip 'atom stuff; missing annotations', 2
     unless Gtk3::CHECK_VERSION(3, 2, 0);
+
+  note('Gtk3::Gdk::Atom');
   my $atom1 = Gtk3::Gdk::Atom::intern("CLIPBOARD", Glib::FALSE);
   my $atom2 = Gtk3::Gdk::Atom::intern("CLIPBOARD", Glib::FALSE);
   my $atom3 = Gtk3::Gdk::Atom::intern("PRIMARY", Glib::FALSE);
@@ -546,7 +549,7 @@ SKIP: {
   ok ($atom1 != $atom3);
 }
 
-# Gtk3::Gdk::RGBA
+note('Gtk3::Gdk::RGBA');
 {
   my $rgba = Gtk3::Gdk::RGBA->new ({red => 0.0, green => 0.5, blue => 0.5, alpha => 0.5});
   isa_ok ($rgba, 'Gtk3::Gdk::RGBA');
@@ -568,12 +571,12 @@ SKIP: {
   is ($rgba->alpha, 1.0);
 }
 
-# Gtk3::Gdk::Window::new
 SKIP: {
   # https://bugzilla.gnome.org/show_bug.cgi?id=670369
   skip 'Gtk3::Gdk::Window::new; window attr type annotation missing', 3
     unless Gtk3::CHECK_VERSION (3, 6, 0);
 
+  note('Gtk3::Gdk::Window::new');
   my $window = Gtk3::Gdk::Window->new (undef, {
     window_type => 'toplevel',
   });
@@ -594,16 +597,16 @@ SKIP: {
   isa_ok ($window, 'Gtk3::Gdk::Window');
 }
 
-# Gtk3::Gdk::Pixbuf::get_formats
+note('Gtk3::Gdk::Pixbuf::get_formats');
 {
   my @formats = Gtk3::Gdk::Pixbuf::get_formats;
   isa_ok ($formats[0], 'Gtk3::Gdk::PixbufFormat');
 }
 
-# Gtk3::Gdk::Pixbuf::new_from_data
 SKIP: {
   skip 'Gtk3::Gdk::Pixbuf::new_from_data; incorrect annotations', 2;
 
+  note('Gtk3::Gdk::Pixbuf::new_from_data');
   my ($width, $height) = (45, 89);
   my ($r, $g, $b) = (255, 0, 255);
   my $data = pack 'C*', (($r, $g, $b) x ($width*$height));
@@ -613,11 +616,12 @@ SKIP: {
   is ($pixbuf->get_pixels, $data);
 }
 
-# Gtk3::Gdk::Pixbuf::save, save_to_buffer, save_to_callback
+
 SKIP: {
   skip 'pixbuf stuff; missing annotations', 19
     unless Gtk3::Gdk::PIXBUF_MINOR >= 25;
 
+  note('Gtk3::Gdk::Pixbuf::save, save_to_buffer, save_to_callback');
   my ($width, $height) = (10, 5);
   my $pixbuf = Gtk3::Gdk::Pixbuf->new ('rgb', Glib::TRUE, 8, $width, $height);
   $pixbuf->fill (hex '0xFF000000');
@@ -683,7 +687,7 @@ SKIP: {
   is ($error->message, 'buzz');
 }
 
-# Pango::Layout
+note('Pango::Layout');
 {
   my $label = Gtk3::Label->new ('Bla');
   my $layout = $label->create_pango_layout ('Bla');
