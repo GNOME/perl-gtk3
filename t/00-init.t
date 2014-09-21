@@ -6,9 +6,16 @@ use warnings;
 use Test::More;
 
 BEGIN { require Gtk3; }
-my $success = eval { Gtk3->import; 1 };
-BAIL_OUT ("Cannot load Gtk3: $@")
-  unless $success;
+unless (eval { Gtk3->import; 1 }) {
+  my $error = $@;
+  if (eval { $error->isa ('Glib::Error') &&
+             $error->domain eq 'g-irepository-error-quark'})
+  {
+    BAIL_OUT ("OS unsupported: $error");
+  } else {
+    BAIL_OUT ("Cannot load Gtk3: $error");
+  }
+}
 
 plan tests => 2;
 
