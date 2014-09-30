@@ -1,5 +1,8 @@
 {{$NEXT}}
 
+Overview of changes in Gtk3 0.018 [2014-09-30]
+==============================================
+
 * dist.ini: added x_IRC metadata tag
 * Attempt to reduce false negatives from CPAN testers
 * overrides.t: output current object being tested using note()
