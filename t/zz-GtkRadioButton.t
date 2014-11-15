@@ -5,7 +5,11 @@ BEGIN { require './t/inc/setup.pl' }
 use strict;
 use warnings;
 
-plan tests => 11;
+if (Gtk3::CHECK_VERSION (3, 2, 0)) {
+  plan tests => 11;
+} else {
+  plan skip_all => 'GtkRadioButton was not properly annotated in gtk+ < 3.2';
+}
 
 {
   my $item_one = Gtk3::RadioButton -> new();
