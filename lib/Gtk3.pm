@@ -1422,8 +1422,12 @@ sub Gtk3::Gdk::Pixbuf::new_from_xpm_data {
     $class, $real_data);
 }
 
-# The next three subs might have to change when
-# <https://bugzilla.gnome.org/show_bug.cgi?id=670372> is accepted.
+# Version check for the new annotations described in
+# <https://bugzilla.gnome.org/show_bug.cgi?id=670372>.
+my $HAVE_GDK_PIXBUF_2_31_2 = sub {
+  return (Gtk3::Gdk::PIXBUF_MAJOR () == 2 && Gtk3::Gdk::PIXBUF_MINOR () > 31) ||
+         (Gtk3::Gdk::PIXBUF_MAJOR () == 2 && Gtk3::Gdk::PIXBUF_MINOR () == 31 && Gtk3::Gdk::PIXBUF_MICRO () >= 2);
+};
 
 sub Gtk3::Gdk::Pixbuf::save {
   my ($pixbuf, $filename, $type, @rest) = @_;
@@ -1432,8 +1436,9 @@ sub Gtk3::Gdk::Pixbuf::save {
     croak ("Usage: \$pixbuf->save (\$filename, \$type, \\\@keys, \\\@values)\n",
            " -or-: \$pixbuf->save (\$filename, \$type, \$key1 => \$value1, ...)");
   }
+  my $method = $HAVE_GDK_PIXBUF_2_31_2->() ? 'save' : 'savev';
   Glib::Object::Introspection->invoke (
-    $_GDK_PIXBUF_BASENAME, 'Pixbuf', 'savev',
+    $_GDK_PIXBUF_BASENAME, 'Pixbuf', $method,
     $pixbuf, $filename, $type, $keys, $values);
 }
 
@@ -1444,9 +1449,10 @@ sub Gtk3::Gdk::Pixbuf::save_to_buffer {
     croak ("Usage: \$pixbuf->save_to_buffer (\$type, \\\@keys, \\\@values)\n",
            " -or-: \$pixbuf->save_to_buffer (\$type, \$key1 => \$value1, ...)");
   }
+  my $method = $HAVE_GDK_PIXBUF_2_31_2->() ? 'save_to_buffer' : 'save_to_bufferv';
   my (undef, $buffer) =
     Glib::Object::Introspection->invoke (
-      $_GDK_PIXBUF_BASENAME, 'Pixbuf', 'save_to_bufferv',
+      $_GDK_PIXBUF_BASENAME, 'Pixbuf', $method,
       $pixbuf, $type, $keys, $values);
   return $buffer;
 }
@@ -1458,8 +1464,9 @@ sub Gtk3::Gdk::Pixbuf::save_to_callback {
     croak ("Usage: \$pixbuf->save_to_callback (\$save_func, \$user_data, \$type, \\\@keys, \\\@values)\n",
            " -or-: \$pixbuf->save_to_callback (\$save_func, \$user_data, \$type, \$key1 => \$value1, ...)");
   }
+  my $method = $HAVE_GDK_PIXBUF_2_31_2->() ? 'save_to_callback' : 'save_to_callbackv';
   Glib::Object::Introspection->invoke (
-    $_GDK_PIXBUF_BASENAME, 'Pixbuf', 'save_to_callbackv',
+    $_GDK_PIXBUF_BASENAME, 'Pixbuf', $method,
     $pixbuf, $save_func, $user_data, $type, $keys, $values);
 }
 
