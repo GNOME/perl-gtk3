@@ -1,5 +1,11 @@
 {{$NEXT}}
 
+Overview of changes in Gtk3 0.019 [2014-11-25]
+==============================================
+
+* Fix test failures with gdk-pixbuf >= 2.31.2
+* Fix test failures with gtk+ 3.0
+
 Overview of changes in Gtk3 0.018 [2014-09-30]
 ==============================================
 
