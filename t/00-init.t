@@ -20,6 +20,11 @@ unless (eval { Gtk3->import; 1 }) {
 plan tests => 2;
 
 SKIP: {
+  diag (sprintf 'Testing against gtk+ %d.%d.%d',
+        Gtk3::get_major_version (),
+        Gtk3::get_minor_version (),
+        Gtk3::get_micro_version ());
+
   @ARGV = qw(--help --name gtk2perl --urgs tree);
   skip 'Gtk3::init_check failed, probably unable to open DISPLAY', 2
     unless Gtk3::init_check ();
