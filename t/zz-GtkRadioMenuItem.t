@@ -7,10 +7,10 @@ BEGIN { require './t/inc/setup.pl' }
 use strict;
 use warnings;
 
-if (Gtk3::CHECK_VERSION (3, 4, 0)) {
+if (Gtk3::CHECK_VERSION (3, 4, 5)) {
   plan tests => 12;
 } else {
-  plan skip_all => 'GtkRadioMenuItem was not properly annotated in gtk+ < 3.4';
+  plan skip_all => 'GtkRadioMenuItem was not properly annotated in gtk+ < 3.4.5';
 }
 
 {

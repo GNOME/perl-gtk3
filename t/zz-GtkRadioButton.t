@@ -5,10 +5,10 @@ BEGIN { require './t/inc/setup.pl' }
 use strict;
 use warnings;
 
-if (Gtk3::CHECK_VERSION (3, 2, 0)) {
+if (Gtk3::CHECK_VERSION (3, 2, 5)) {
   plan tests => 11;
 } else {
-  plan skip_all => 'GtkRadioButton was not properly annotated in gtk+ < 3.2';
+  plan skip_all => 'GtkRadioButton was not properly annotated in gtk+ < 3.2.5';
 }
 
 {
