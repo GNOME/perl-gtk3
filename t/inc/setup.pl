@@ -7,7 +7,8 @@ if (!Gtk3::init_check ()) {
 
 sub check_gi_version {
   my ($x, $y, $z) = @_;
-  return !system ('pkg-config', "--atleast-version=$x.$y.$z", 'gobject-introspection-1.0');
+  #return !system ('pkg-config', "--atleast-version=$x.$y.$z", 'gobject-introspection-1.0');
+  return Glib::Object::Introspection->CHECK_VERSION ($x, $y, $z);
 }
 
 sub on_unthreaded_freebsd {
