@@ -159,7 +159,10 @@ SKIP: {
 }
 
 note('Gtk3::FileChooserDialog');
-{
+SKIP: {
+  skip 'need a perl built with "-pthread" on freebsd', 3
+    if on_unthreaded_freebsd ();
+
   my $parent = Gtk3::Window->new;
   my $dialog = Gtk3::FileChooserDialog->new ('some title', $parent, 'save',
                                              'gtk-cancel' => 'cancel',

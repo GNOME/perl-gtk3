@@ -8,7 +8,11 @@ BEGIN { require './t/inc/setup.pl' }
 use strict;
 use warnings;
 
-plan tests => 12;
+if (on_unthreaded_freebsd ()) {
+  plan skip_all => 'need a perl built with "-pthread" on freebsd';
+} else {
+  plan tests => 12;
+}
 
 my $window = Gtk3::Window->new;
 my $manager = Gtk3::RecentManager->new;

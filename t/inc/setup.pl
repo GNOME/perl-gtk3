@@ -10,4 +10,14 @@ sub check_gi_version {
   return !system ('pkg-config', "--atleast-version=$x.$y.$z", 'gobject-introspection-1.0');
 }
 
+sub on_unthreaded_freebsd {
+  if ($^O eq 'freebsd') {
+    require Config;
+    if ($Config::Config{ldflags} !~ m/-pthread\b/) {
+      return 1;
+    }
+  }
+  return 0;
+}
+
 1;
