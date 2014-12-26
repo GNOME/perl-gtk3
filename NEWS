@@ -1,5 +1,13 @@
 {{$NEXT}}
 
+Overview of changes in Gtk3 0.020 [2014-12-25]
+==============================================
+
+* Tighten the GtkRadio* test skip conditions
+* Use Glib::Object::Introspection->CHECK_VERSION in the tests
+* When running tests, display the gtk+ version
+* Fix test failures on unthreaded perls on FreeBSD
+
 Overview of changes in Gtk3 0.019 [2014-11-25]
 ==============================================
 
