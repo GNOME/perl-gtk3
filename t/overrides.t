@@ -534,10 +534,12 @@ __EOD__
 }
 
 note('Gtk3::Widget');
-{
+SKIP: {
   my $widget = Gtk3::Label->new ("Test");
-  isa_ok ($widget->render_icon ("gtk-open", "menu", "detail"),
-          "Gtk3::Gdk::Pixbuf");
+  my $pixbuf = $widget->render_icon ("gtk-open", "menu", "detail");
+  skip "pixbuf test; undef returned", 1
+    unless defined $pixbuf;
+  isa_ok ($pixbuf, "Gtk3::Gdk::Pixbuf");
 }
 
 SKIP: {
