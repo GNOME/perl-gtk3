@@ -19,12 +19,12 @@ unless (eval { Gtk3->import; 1 }) {
 
 plan tests => 2;
 
-SKIP: {
-  diag (sprintf 'Testing against gtk+ %d.%d.%d',
-        Gtk3::get_major_version (),
-        Gtk3::get_minor_version (),
-        Gtk3::get_micro_version ());
+diag (sprintf 'Testing against gtk+ %d.%d.%d',
+      Gtk3::get_major_version (),
+      Gtk3::get_minor_version (),
+      Gtk3::get_micro_version ());
 
+SKIP: {
   @ARGV = qw(--help --name gtk2perl --urgs tree);
   skip 'Gtk3::init_check failed, probably unable to open DISPLAY', 2
     unless Gtk3::init_check ();
@@ -34,4 +34,9 @@ SKIP: {
   # Ensure that version parsing still works after the setlocale() done by
   # Gtk3::init().
   ok (defined eval 'use 5.8.0; 1');
+}
+
+# Ensure Gtk3::disable_setlocale () does not recurse forever, as it used to.
+{
+  Gtk3::disable_setlocale ();
 }

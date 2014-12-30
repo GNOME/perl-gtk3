@@ -1492,10 +1492,10 @@ if ($^V ge v5.20.0) {
   no warnings 'redefine';
 
   my $disable_setlocale = 0;
-  my $orig = \&Gtk3::disable_setlocale;
-  *{Gtk3::disable_setlocale} = sub {
+  *{'Gtk3::disable_setlocale'} = sub {
     $disable_setlocale = 1;
-    $orig->(@_);
+    Glib::Object::Introspection->invoke (
+      $_GTK_BASENAME, undef, 'disable_setlocale', @_);
   };
 
   # These two already have overrides.
@@ -1509,7 +1509,6 @@ if ($^V ge v5.20.0) {
     };
   }
 
-  # These do not.
   foreach my $function (qw/init_with_args parse_args/) {
     *{'Gtk3::' . $function} = sub {
       if (!$disable_setlocale) {
