@@ -35,8 +35,3 @@ SKIP: {
   # Gtk3::init().
   ok (defined eval 'use 5.8.0; 1');
 }
-
-# Ensure Gtk3::disable_setlocale () does not recurse forever, as it used to.
-{
-  Gtk3::disable_setlocale ();
-}
