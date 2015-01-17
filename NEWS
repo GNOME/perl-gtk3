@@ -1,5 +1,7 @@
 {{$NEXT}}
 
+* Fix handling of 2button-press and 3button-press events
+
 Overview of changes in Gtk3 0.020 [2014-12-25]
 ==============================================
 

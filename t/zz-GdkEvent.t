@@ -7,7 +7,7 @@ BEGIN { require './t/inc/setup.pl' }
 use strict;
 use warnings;
 
-plan tests => 142;
+plan tests => 144;
 
 sub fields_ok {
   my ($event, %fields_values) = @_;
@@ -119,8 +119,10 @@ SKIP: {
 
 # Button #######################################################################
 
-isa_ok ($event = Gtk3::Gdk::Event->new ('button-press'),
-	'Gtk3::Gdk::EventButton', 'Gtk3::Gdk::Event->new button');
+foreach (qw/3button-press 2button-press button-press/) {
+  isa_ok ($event = Gtk3::Gdk::Event->new ($_),
+          'Gtk3::Gdk::EventButton', "Gtk3::Gdk::Event->new $_");
+}
 
 fields_ok ($event, time => 42,
                    x => 13,
