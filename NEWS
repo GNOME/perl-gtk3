@@ -1,6 +1,7 @@
 {{$NEXT}}
 
 * Fix handling of 2button-press and 3button-press events
+* Handle double-button-press and triple-button-press event type aliases
 
 Overview of changes in Gtk3 0.020 [2014-12-25]
 ==============================================

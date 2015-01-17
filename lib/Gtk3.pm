@@ -186,6 +186,9 @@ my %_GDK_EVENT_TYPE_TO_PACKAGE = (
   'touch-update' => 'Touch',
   'touch-end' => 'Touch',
   'touch-cancel' => 'Touch',
+  # added in 3.6:
+  'double-button-press' => 'Button',
+  'triple-button-press' => 'Button',
 );
 
 # Make all of the above sub-types inherit from Gtk3::Gdk::Event.
