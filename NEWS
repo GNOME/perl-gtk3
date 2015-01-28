@@ -1,7 +1,12 @@
 {{$NEXT}}
 
+Overview of changes in Gtk3 0.021 [2015-01-27]
+==============================================
+
 * Fix handling of 2button-press and 3button-press events
 * Handle double-button-press and triple-button-press event type aliases
+* Fix a test failure with Gtk3::Widget::render_icon
+* Avoid infinite recursion in Gtk3::disable_setlocale
 
 Overview of changes in Gtk3 0.020 [2014-12-25]
 ==============================================
