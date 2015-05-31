@@ -1431,6 +1431,11 @@ my $HAVE_GDK_PIXBUF_2_31_2 = sub {
   return (Gtk3::Gdk::PIXBUF_MAJOR () == 2 && Gtk3::Gdk::PIXBUF_MINOR () > 31) ||
          (Gtk3::Gdk::PIXBUF_MAJOR () == 2 && Gtk3::Gdk::PIXBUF_MINOR () == 31 && Gtk3::Gdk::PIXBUF_MICRO () >= 2);
 };
+my $HAVE_GDK_PIXBUF_2_31_3 = sub {
+  return (Gtk3::Gdk::PIXBUF_MAJOR () == 2 && Gtk3::Gdk::PIXBUF_MINOR () > 31) ||
+         (Gtk3::Gdk::PIXBUF_MAJOR () == 2 && Gtk3::Gdk::PIXBUF_MINOR () == 31 && Gtk3::Gdk::PIXBUF_MICRO () >= 3);
+};
+
 
 sub Gtk3::Gdk::Pixbuf::save {
   my ($pixbuf, $filename, $type, @rest) = @_;
@@ -1439,7 +1444,16 @@ sub Gtk3::Gdk::Pixbuf::save {
     croak ("Usage: \$pixbuf->save (\$filename, \$type, \\\@keys, \\\@values)\n",
            " -or-: \$pixbuf->save (\$filename, \$type, \$key1 => \$value1, ...)");
   }
-  my $method = $HAVE_GDK_PIXBUF_2_31_2->() ? 'save' : 'savev';
+  my $method;
+  if ($HAVE_GDK_PIXBUF_2_31_3->()) {
+      $method = 'savev';
+  }
+  elsif ($HAVE_GDK_PIXBUF_2_31_2->()) {
+      $method = 'save';
+  }
+  else {
+      $method = 'savev';
+  }
   Glib::Object::Introspection->invoke (
     $_GDK_PIXBUF_BASENAME, 'Pixbuf', $method,
     $pixbuf, $filename, $type, $keys, $values);
@@ -1452,7 +1466,16 @@ sub Gtk3::Gdk::Pixbuf::save_to_buffer {
     croak ("Usage: \$pixbuf->save_to_buffer (\$type, \\\@keys, \\\@values)\n",
            " -or-: \$pixbuf->save_to_buffer (\$type, \$key1 => \$value1, ...)");
   }
-  my $method = $HAVE_GDK_PIXBUF_2_31_2->() ? 'save_to_buffer' : 'save_to_bufferv';
+  my $method;
+  if ($HAVE_GDK_PIXBUF_2_31_3->()) {
+      $method = 'save_to_bufferv';
+  }
+  elsif ($HAVE_GDK_PIXBUF_2_31_2->()) {
+      $method = 'save_to_buffer';
+  }
+  else {
+      $method = 'save_to_bufferv';
+  }
   my (undef, $buffer) =
     Glib::Object::Introspection->invoke (
       $_GDK_PIXBUF_BASENAME, 'Pixbuf', $method,
@@ -1467,7 +1490,16 @@ sub Gtk3::Gdk::Pixbuf::save_to_callback {
     croak ("Usage: \$pixbuf->save_to_callback (\$save_func, \$user_data, \$type, \\\@keys, \\\@values)\n",
            " -or-: \$pixbuf->save_to_callback (\$save_func, \$user_data, \$type, \$key1 => \$value1, ...)");
   }
-  my $method = $HAVE_GDK_PIXBUF_2_31_2->() ? 'save_to_callback' : 'save_to_callbackv';
+  my $method;
+  if ($HAVE_GDK_PIXBUF_2_31_3->()) {
+      $method = 'save_to_callbackv';
+  }
+  elsif ($HAVE_GDK_PIXBUF_2_31_2->()) {
+      $method = 'save_to_callback';
+  }
+  else {
+      $method = 'save_to_callbackv';
+  }
   Glib::Object::Introspection->invoke (
     $_GDK_PIXBUF_BASENAME, 'Pixbuf', $method,
     $pixbuf, $save_func, $user_data, $type, $keys, $values);
