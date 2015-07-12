@@ -1,5 +1,11 @@
 {{$NEXT}}
 
+Overview of changes in Gtk3 0.022 [2015-07-11]
+==============================================
+
+* Support gdk-pixbuf >= 2.31.3 that reverted some annotation changes that came
+  with 2.31.2
+
 Overview of changes in Gtk3 0.021 [2015-01-27]
 ==============================================
 
