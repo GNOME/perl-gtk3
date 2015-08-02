@@ -119,9 +119,7 @@ SKIP: {
 
 # Button #######################################################################
 
-foreach (qw/triple-button-press
-            3button-press
-            double-button-press
+foreach (qw/3button-press
             2button-press
             button-press/)
 {
@@ -129,6 +127,18 @@ foreach (qw/triple-button-press
           'Gtk3::Gdk::EventButton', "Gtk3::Gdk::Event->new $_");
 }
 
+SKIP: {
+  skip 'aliases', 2
+    unless Gtk3::CHECK_VERSION (3, 6, 0);
+  foreach (qw/triple-button-press
+              double-button-press/)
+  {
+    isa_ok ($event = Gtk3::Gdk::Event->new ($_),
+            'Gtk3::Gdk::EventButton', "Gtk3::Gdk::Event->new $_");
+  }
+}
+
+$event = Gtk3::Gdk::Event->new ('button-press');
 fields_ok ($event, time => 42,
                    x => 13,
                    y => 14,
