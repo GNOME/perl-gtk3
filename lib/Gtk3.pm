@@ -1704,8 +1704,8 @@ have as many options anymore as they had in Gtk2.  Changes to arguments will
 not be propagated to the next signal handler, and only the updated position can
 and must be returned.
 
-=item * Gtk3::Menu: The position callback passed to popup() does not receive x
-and y parameters anymore.
+=item * Gtk3::Menu: In gtk+ < 3.16, the position callback passed to popup()
+does not receive x and y parameters.
 
 =item * Gtk3::RadioAction: The constructor now follows the C API.
 

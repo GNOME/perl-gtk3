@@ -232,11 +232,20 @@ SKIP: {
   note('Gtk3::Menu::popup and popup_for_device');
   {
     my $menu = Gtk3::Menu->new;
-    my $position_callback = sub {
-      my ($menu, $data) = @_;
-      isa_ok ($menu, "Gtk3::Menu");
-      return @$data;
-    };
+    my $position_callback;
+    if (Gtk3::CHECK_VERSION (3, 16, 0)) {
+      $position_callback = sub {
+        my ($menu, $x, $y, $data) = @_;
+        isa_ok ($menu, "Gtk3::Menu");
+        return @$data;
+      };
+    } else {
+      $position_callback = sub {
+        my ($menu, $data) = @_;
+        isa_ok ($menu, "Gtk3::Menu");
+        return @$data;
+      };
+    }
     $menu->popup (undef, undef, $position_callback, [50, 50], 1, 0);
     $menu->popup_for_device (undef, undef, undef, $position_callback, [50, 50, Glib::TRUE], 1, 0);
   }
