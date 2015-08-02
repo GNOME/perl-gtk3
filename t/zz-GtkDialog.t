@@ -22,6 +22,7 @@ $d1->hide;
 
 # a hand-made dialog, run
 my $d2 = Gtk3::Dialog->new;
+$d2->set_transient_for ($win);
 $d2->add_button ('First Button', 0);
 my $btn2 = $d2->add_button ('gtk-ok', 1);
 $d2->add_buttons ('gtk-cancel', 2, 'gtk-quit', 3, 'Last Button', 4);
@@ -57,6 +58,7 @@ SKIP: {
 
   foreach my $package (qw/Gtk3::Dialog Gtk3::AboutDialog/) {
     my $d = $package->new;
+    $d->set_transient_for ($win);
     my $b = $d->add_button ('First Button', 'ok');
     $d->signal_connect (response => sub {
       is ($_[1], 'ok', "$package response");

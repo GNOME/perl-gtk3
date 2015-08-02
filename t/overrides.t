@@ -40,8 +40,12 @@ note('Gtk3::show_about_dialog');
                version => '42',
                authors => [qw/me myself i/],
                license_type => 'lgpl-2-1');
-  Gtk3::show_about_dialog (undef, %props);
-  Gtk3->show_about_dialog (undef, %props);
+  SKIP: {
+    skip 'dialogs without parent warn as of gtk+ >= 3.16', 0
+      if Gtk3::CHECK_VERSION (3, 16, 0);
+    Gtk3::show_about_dialog (undef, %props);
+    Gtk3->show_about_dialog (undef, %props);
+  }
   Gtk3::show_about_dialog (Gtk3::Window->new, %props);
   Gtk3->show_about_dialog (Gtk3::Window->new, %props);
   ok (1);
