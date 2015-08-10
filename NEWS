@@ -1,5 +1,13 @@
 {{$NEXT}}
 
+Overview of changes in Gtk3 0.023 [2015-08-10]
+==============================================
+
+* Fix a test failure in t/zz-GdkEvent.t
+* Fix warnings from the dialog tests
+* Fix warnings from the Gtk3::Menu tests
+* Test that loading Gtk3 multiple times does not affect vfunc overloading
+
 Overview of changes in Gtk3 0.022 [2015-07-11]
 ==============================================
 
