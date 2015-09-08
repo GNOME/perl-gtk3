@@ -27,28 +27,20 @@ my $_PANGO_PACKAGE = 'Pango';
 
 # - gtk customization ------------------------------------------------------- #
 
-my %_GTK_NAME_CORRECTIONS = (
-  'Gtk3::stock_add' => 'Gtk3::Stock::add',
-  'Gtk3::stock_add_static' => 'Gtk3::Stock::add_static',
-  'Gtk3::stock_list_ids' => 'Gtk3::Stock::list_ids',
-  'Gtk3::stock_lookup' => 'Gtk3::Stock::lookup',
-  'Gtk3::stock_set_translate_func' => 'Gtk3::Stock::set_translate_func',
-);
 my @_GTK_FLATTEN_ARRAY_REF_RETURN_FOR = qw/
   Gtk3::ActionGroup::list_actions
   Gtk3::Builder::get_objects
   Gtk3::CellLayout::get_cells
   Gtk3::Container::get_children
   Gtk3::SizeGroup::get_widgets
-  Gtk3::Stock::list_ids
   Gtk3::TreePath::get_indices
   Gtk3::TreeView::get_columns
   Gtk3::UIManager::get_action_groups
   Gtk3::UIManager::get_toplevels
   Gtk3::Window::list_toplevels
+  Gtk3::stock_list_ids
 /;
 my @_GTK_HANDLE_SENTINEL_BOOLEAN_FOR = qw/
-  Gtk3::Stock::lookup
   Gtk3::TextBuffer::get_selection_bounds
   Gtk3::TreeModel::get_iter
   Gtk3::TreeModel::get_iter_first
@@ -64,6 +56,7 @@ my @_GTK_HANDLE_SENTINEL_BOOLEAN_FOR = qw/
   Gtk3::TreeView::get_tooltip_context
   Gtk3::TreeView::get_visible_range
   Gtk3::TreeViewColumn::cell_get_position
+  Gtk3::stock_lookup
 /;
 my @_GTK_USE_GENERIC_SIGNAL_MARSHALLER_FOR = (
   ['Gtk3::Editable', 'insert-text'],
@@ -224,7 +217,6 @@ sub import {
     basename => $_GTK_BASENAME,
     version => $_GTK_VERSION,
     package => $_GTK_PACKAGE,
-    name_corrections => \%_GTK_NAME_CORRECTIONS,
     flatten_array_ref_return_for => \@_GTK_FLATTEN_ARRAY_REF_RETURN_FOR,
     handle_sentinel_boolean_for => \@_GTK_HANDLE_SENTINEL_BOOLEAN_FOR,
     use_generic_signal_marshaller_for => \@_GTK_USE_GENERIC_SIGNAL_MARSHALLER_FOR);
@@ -1089,6 +1081,22 @@ sub Gtk3::RecentChooserDialog::new_for_manager {
     $dialog->set_transient_for ($parent);
   }
   return $dialog;
+}
+
+{
+  no strict qw/refs/;
+
+  my %stock_name_corrections = (
+    'Gtk3::Stock::add' => 'Gtk3::stock_add',
+    'Gtk3::Stock::add_static' => 'Gtk3::stock_add_static',
+    'Gtk3::Stock::list_ids' => 'Gtk3::stock_list_ids',
+    'Gtk3::Stock::lookup' => 'Gtk3::stock_lookup',
+    'Gtk3::Stock::set_translate_func' => 'Gtk3::stock_set_translate_func',
+  );
+
+  foreach my $new (keys %stock_name_corrections) {
+    *{$new} = \&{$stock_name_corrections{$new}};
+  }
 }
 
 sub Gtk3::TextBuffer::create_tag {
