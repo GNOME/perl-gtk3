@@ -636,8 +636,8 @@ SKIP: {
 
 
 SKIP: {
-  skip 'pixbuf stuff; missing annotations', 19
-    unless Gtk3::Gdk::PIXBUF_MINOR >= 25;
+  skip 'misc. pixbuf stuff; missing annotations', 19
+    unless Gtk3::Gdk::Pixbuf::CHECK_VERSION (2, 26, 0);
 
   note('Gtk3::Gdk::Pixbuf::save, save_to_buffer, save_to_callback');
   my ($width, $height) = (10, 5);

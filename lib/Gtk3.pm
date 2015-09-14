@@ -1898,6 +1898,14 @@ sub Gtk3::Gdk::Window::new {
 
 # --- GdkPixbuf ---
 
+sub Gtk3::Gdk::Pixbuf::CHECK_VERSION {
+  my ($major, $minor, $micro) = @_;
+  return
+    (Gtk3::Gdk::PIXBUF_MAJOR () > $major) ||
+    (Gtk3::Gdk::PIXBUF_MAJOR () == $major && Gtk3::Gdk::PIXBUF_MINOR () > $minor) ||
+    (Gtk3::Gdk::PIXBUF_MAJOR () == $major && Gtk3::Gdk::PIXBUF_MINOR () == $minor && Gtk3::Gdk::PIXBUF_MICRO () >= $micro);
+}
+
 =item * C<Gtk3::Gdk::Pixbuf::get_pixels> returns a byte string.
 
 =cut
@@ -1943,13 +1951,15 @@ sub Gtk3::Gdk::Pixbuf::new_from_xpm_data {
 
 # Version check for the new annotations described in
 # <https://bugzilla.gnome.org/show_bug.cgi?id=670372>.
-my $HAVE_GDK_PIXBUF_2_31_2 = sub {
-  return (Gtk3::Gdk::PIXBUF_MAJOR () == 2 && Gtk3::Gdk::PIXBUF_MINOR () > 31) ||
-         (Gtk3::Gdk::PIXBUF_MAJOR () == 2 && Gtk3::Gdk::PIXBUF_MINOR () == 31 && Gtk3::Gdk::PIXBUF_MICRO () >= 2);
-};
-my $HAVE_GDK_PIXBUF_2_31_3 = sub {
-  return (Gtk3::Gdk::PIXBUF_MAJOR () == 2 && Gtk3::Gdk::PIXBUF_MINOR () > 31) ||
-         (Gtk3::Gdk::PIXBUF_MAJOR () == 2 && Gtk3::Gdk::PIXBUF_MINOR () == 31 && Gtk3::Gdk::PIXBUF_MICRO () >= 3);
+my $_GET_SAVE_VARIANT = sub {
+  my ($method) = @_;
+  if (Gtk3::Gdk::Pixbuf::CHECK_VERSION (2, 31, 3)) {
+    return $method . 'v';
+  } elsif (Gtk3::Gdk::Pixbuf::CHECK_VERSION (2, 31, 2)) {
+    return $method;
+  } else {
+    return $method . 'v';
+  }
 };
 
 =item * C<Gtk3::Gdk::Pixbuf::save>, C<save_to_buffer> and C<save_to_callback>
@@ -1965,16 +1975,7 @@ sub Gtk3::Gdk::Pixbuf::save {
     croak ("Usage: \$pixbuf->save (\$filename, \$type, \\\@keys, \\\@values)\n",
            " -or-: \$pixbuf->save (\$filename, \$type, \$key1 => \$value1, ...)");
   }
-  my $method;
-  if ($HAVE_GDK_PIXBUF_2_31_3->()) {
-      $method = 'savev';
-  }
-  elsif ($HAVE_GDK_PIXBUF_2_31_2->()) {
-      $method = 'save';
-  }
-  else {
-      $method = 'savev';
-  }
+  my $method = $_GET_SAVE_VARIANT->('save');
   Glib::Object::Introspection->invoke (
     $_GDK_PIXBUF_BASENAME, 'Pixbuf', $method,
     $pixbuf, $filename, $type, $keys, $values);
@@ -1987,16 +1988,7 @@ sub Gtk3::Gdk::Pixbuf::save_to_buffer {
     croak ("Usage: \$pixbuf->save_to_buffer (\$type, \\\@keys, \\\@values)\n",
            " -or-: \$pixbuf->save_to_buffer (\$type, \$key1 => \$value1, ...)");
   }
-  my $method;
-  if ($HAVE_GDK_PIXBUF_2_31_3->()) {
-      $method = 'save_to_bufferv';
-  }
-  elsif ($HAVE_GDK_PIXBUF_2_31_2->()) {
-      $method = 'save_to_buffer';
-  }
-  else {
-      $method = 'save_to_bufferv';
-  }
+  my $method = $_GET_SAVE_VARIANT->('save_to_buffer');
   my (undef, $buffer) =
     Glib::Object::Introspection->invoke (
       $_GDK_PIXBUF_BASENAME, 'Pixbuf', $method,
@@ -2011,16 +2003,7 @@ sub Gtk3::Gdk::Pixbuf::save_to_callback {
     croak ("Usage: \$pixbuf->save_to_callback (\$save_func, \$user_data, \$type, \\\@keys, \\\@values)\n",
            " -or-: \$pixbuf->save_to_callback (\$save_func, \$user_data, \$type, \$key1 => \$value1, ...)");
   }
-  my $method;
-  if ($HAVE_GDK_PIXBUF_2_31_3->()) {
-      $method = 'save_to_callbackv';
-  }
-  elsif ($HAVE_GDK_PIXBUF_2_31_2->()) {
-      $method = 'save_to_callback';
-  }
-  else {
-      $method = 'save_to_callbackv';
-  }
+  my $method = $_GET_SAVE_VARIANT->('save_to_callback');
   Glib::Object::Introspection->invoke (
     $_GDK_PIXBUF_BASENAME, 'Pixbuf', $method,
     $pixbuf, $save_func, $user_data, $type, $keys, $values);
