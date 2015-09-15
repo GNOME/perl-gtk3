@@ -7,7 +7,7 @@ use warnings;
 use utf8;
 use Encode;
 
-plan tests => 164;
+plan tests => 210;
 
 note('Gtk3::CHECK_VERSION and check_version');
 {
@@ -621,19 +621,74 @@ note('Gtk3::Gdk::Pixbuf::get_formats');
   isa_ok ($formats[0], 'Gtk3::Gdk::PixbufFormat');
 }
 
-SKIP: {
-  skip 'Gtk3::Gdk::Pixbuf::new_from_data; incorrect annotations', 2;
+{
+  my ($pixbuf_data_width, $pixbuf_data_height) = (4, 5);
+  my $pixbuf_data_bytes_per_pixel = 3;
+  my $pixbuf_data_rowstride = $pixbuf_data_bytes_per_pixel*$pixbuf_data_width;
+  my @pixbuf_data = (
+    255,0,0,    255,0,0,    0,0,0,      0,0,255,
+    255,0,0,    0,0,0,      0,0,255,    0,0,255,
+    0,0,0,      0,0,255,    0,0,255,    255,0,0,
+    0,0,255,    0,0,255,    255,0,0,    255,0,0,
+    0,0,255,    255,0,0,    255,0,0,    0,0,0,
+  );
+  my $pixbuf_data_packed = pack 'C*', @pixbuf_data;
+  my @pixbuf_data_xpm = (
+    '4 5 3 1',
+    ' 	c black',
+    '.	c red',
+    '+	c blue',
+    '.. +',
+    '. ++',
+    ' ++.',
+    '++..',
+    '+.. ');
+  my $pixbuf_data_inline =
+    'GdkP'         # Pixbuf magic (0x47646b50)
+    . "\0\0\0\124" # length: header (6*4 = 24) + pixel_data (4*5*3 = 60)
+    . "\1\1\0\1"   # pixdata type (0x01010001 = RAW | WIDTH_8 | RGB)
+    . "\0\0\0\14"  # rowstride (12)
+    . "\0\0\0\4"   # width (4)
+    . "\0\0\0\5"   # height (5)
+    . $pixbuf_data_packed;
+  sub pixbuf_ok {
+    my ($pixbuf) = @_;
+    isa_ok ($pixbuf, 'Gtk3::Gdk::Pixbuf');
+    is ($pixbuf->get_colorspace, 'rgb');
+    ok (!$pixbuf->get_has_alpha);
+    is ($pixbuf->get_width, $pixbuf_data_width);
+    is ($pixbuf->get_height, $pixbuf_data_height);
+    is ($pixbuf->get_rowstride, $pixbuf_data_rowstride);
+    is ($pixbuf->get_byte_length, $pixbuf_data_rowstride*$pixbuf_data_height);
+    is ($pixbuf->get_pixels, $pixbuf_data_packed);
+  }
 
-  note('Gtk3::Gdk::Pixbuf::new_from_data');
-  my ($width, $height) = (45, 89);
-  my ($r, $g, $b) = (255, 0, 255);
-  my $data = pack 'C*', (($r, $g, $b) x ($width*$height));
-  my $pixbuf = Gtk3::Gdk::Pixbuf->new_from_data
-    ($data, 'rgb', Glib::FALSE, 8, $width, $height, $width*3);
-  is ($pixbuf->get_byte_length, 3*$width*$height);
-  is ($pixbuf->get_pixels, $data);
+  SKIP: {
+    skip 'Gtk3::Gdk::Pixbuf::new_from_data, new_from_xpm_data, new_from_inline; missing annotations', 48
+      unless Gtk3::Gdk::Pixbuf::CHECK_VERSION (2, 26, 0);
+
+    note('Gtk3::Gdk::Pixbuf::new_from_data');
+    foreach my $data ($pixbuf_data_packed, [unpack 'C*', $pixbuf_data_packed]) {
+      my $pixbuf = Gtk3::Gdk::Pixbuf->new_from_data ($data,
+                                                     'rgb', Glib::FALSE, 8,
+                                                     $pixbuf_data_width, $pixbuf_data_height,
+                                                     $pixbuf_data_rowstride);
+      pixbuf_ok ($pixbuf);
+    }
+
+    note('Gtk3::Gdk::Pixbuf::new_from_xpm_data');
+    foreach my $data (\@pixbuf_data_xpm, [\@pixbuf_data_xpm]) {
+      my $pixbuf = Gtk3::Gdk::Pixbuf->new_from_xpm_data (@$data);
+      pixbuf_ok ($pixbuf);
+    }
+
+    note('Gtk3::Gdk::Pixbuf::new_from_inline');
+    foreach my $data ($pixbuf_data_inline, [unpack 'C*', $pixbuf_data_inline]) {
+      my $pixbuf = Gtk3::Gdk::Pixbuf->new_from_inline ($data);
+      pixbuf_ok ($pixbuf);
+    }
+  }
 }
-
 
 SKIP: {
   skip 'misc. pixbuf stuff; missing annotations', 19
