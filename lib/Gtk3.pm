@@ -1927,26 +1927,29 @@ sub Gtk3::Gdk::Pixbuf::new_from_data {
     undef, undef);
 }
 
+=item * C<Gtk3::Gdk::Pixbuf::new_from_inline> does not take a C<copy_pixels>
+argument.  It is always set to TRUE for correct memory management.
+
+=cut
+
 sub Gtk3::Gdk::Pixbuf::new_from_inline {
-  my ($class, $data, $copy_pixels) = @_;
-  $copy_pixels = Glib::TRUE unless defined $copy_pixels;
+  my ($class, $data) = @_;
   return Glib::Object::Introspection->invoke (
     $_GDK_PIXBUF_BASENAME, 'Pixbuf', 'new_from_inline',
-    $class, _unpack_unless_array_ref ($data), $copy_pixels);
+    $class, _unpack_unless_array_ref ($data), Glib::TRUE); # always copy pixels
 }
 
+=item * C<Gtk3::Gdk::Pixbuf::new_from_xpm_data> also accepts a list of XPM
+lines.
+
+=cut
+
 sub Gtk3::Gdk::Pixbuf::new_from_xpm_data {
-  my ($class, @data) = @_;
-  my $real_data;
-  {
-    local $@;
-    $real_data = (@data == 1 && eval { @{$data[0]} })
-               ? $data[0]
-               : \@data;
-  }
+  my ($class, @rest) = @_;
+  my $data = _rest_to_ref (\@rest);
   return Glib::Object::Introspection->invoke (
     $_GDK_PIXBUF_BASENAME, 'Pixbuf', 'new_from_xpm_data',
-    $class, $real_data);
+    $class, $data);
 }
 
 # Version check for the new annotations described in
