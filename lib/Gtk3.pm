@@ -1502,8 +1502,8 @@ sub Gtk3::TextBuffer::create_tag {
 }
 
 =item * The C<length> arguments of C<Gtk3::TextBuffer::insert>,
-C<insert_at_cursor>, C<insert_interactive>, C<insert_interactive_at_cursor> and
-C<set_text> are optional.
+C<insert_at_cursor>, C<insert_interactive>, C<insert_interactive_at_cursor>,
+C<insert_markup> and C<set_text> are optional.
 
 =cut
 
@@ -1529,6 +1529,12 @@ sub Gtk3::TextBuffer::insert_interactive_at_cursor {
   return Glib::Object::Introspection->invoke (
     $_GTK_BASENAME, 'TextBuffer', 'insert_interactive_at_cursor',
     @_ == 4 ? @_ : (@_[0,1], -1, $_[2])); # wants length in bytes
+}
+
+sub Gtk3::TextBuffer::insert_markup {
+  return Glib::Object::Introspection->invoke (
+    $_GTK_BASENAME, 'TextBuffer', 'insert_markup',
+    @_ == 4 ? @_ : (@_[0,1,2], -1)); # wants length in bytes
 }
 
 =item * Perl reimplementations of C<Gtk3::TextBuffer::insert_with_tags> and

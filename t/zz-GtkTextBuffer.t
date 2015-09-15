@@ -9,7 +9,7 @@ use warnings;
 use utf8;
 use Glib qw/TRUE FALSE/;
 
-plan tests => 44;
+plan tests => 45;
 
 my $table = Gtk3::TextTagTable -> new();
 
@@ -167,5 +167,16 @@ $buffer -> end_user_action();
   is($s -> get_char, '年');
   ok(not $e -> backward_find_char(sub{shift eq '%'}, undef, $s));
   is($e -> get_char, '年');
+}
+
+SKIP: {
+  skip 'insert_markup', 1
+    unless Gtk3::CHECK_VERSION (3, 16, 0);
+
+  my $table = Gtk3::TextTagTable -> new();
+  my $buffer = Gtk3::TextBuffer -> new($table);
+  my $markup = "<b>Lore ipsem dolor‽</b>\n";
+  $buffer -> insert_markup($buffer -> get_start_iter(), $markup);
+  cmp_ok ($table -> get_size(), '>', 0);
 }
 
