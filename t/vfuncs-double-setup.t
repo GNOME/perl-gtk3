@@ -22,17 +22,18 @@ use strict;
 use warnings;
 
 # Second import.
-use Gtk3 -init;
+use Gtk3;
 
 use Test::More;
 if (!eval { Glib::Object::Introspection->VERSION ('0.030') }) {
   plan skip_all => 'G:O:I 0.030 required';
-} else {
-  plan tests => 1;
 }
+if (!Gtk3::init_check ()) {
+  plan skip_all => 'Gtk3::init_check failed';
+}
+plan tests => 1;
 
-my $window = Gtk3::Window->new();
-$window->signal_connect(delete_event => sub { Gtk3->main_quit() });
-my $my_button = MyButton->new(label => "Test");
-$window->add($my_button);
+my $window = Gtk3::Window->new;
+my $my_button = MyButton->new (label => "Test");
+$window->add ($my_button); # trigger PARENT_SET
 pass;
