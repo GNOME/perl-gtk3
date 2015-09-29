@@ -2036,13 +2036,20 @@ sub Gtk3::Gdk::Pixbuf::save_to_callback {
 
 # --- Pango ---
 
-=item * C<Pango::Layout::set_text> takes no C<length> argument.
+=item * The C<length> arguments of C<Pango::Layout::set_text> and C<set_markup>
+are optional.
 
 =cut
 
 sub Pango::Layout::set_text {
   return Glib::Object::Introspection->invoke (
     $_PANGO_BASENAME, 'Layout', 'set_text',
+    @_ == 3 ? @_ : (@_[0,1], -1)); # wants length in bytes
+}
+
+sub Pango::Layout::set_markup {
+  return Glib::Object::Introspection->invoke (
+    $_PANGO_BASENAME, 'Layout', 'set_markup',
     @_ == 3 ? @_ : (@_[0,1], -1)); # wants length in bytes
 }
 

@@ -7,7 +7,7 @@ use warnings;
 use utf8;
 use Encode;
 
-plan tests => 210;
+plan tests => 212;
 
 note('Gtk3::CHECK_VERSION and check_version');
 {
@@ -769,5 +769,11 @@ note('Pango::Layout');
   is ($layout->get_text, 'Bla');
 
   $layout->set_text('Bla bla.');
+  is ($layout->get_text, 'Bla bla.');
+
+  $layout->set_markup('<b>Bla</b> bla.', 10);
+  is ($layout->get_text, 'Bla');
+
+  $layout->set_markup('<b>Bla</b> bla.');
   is ($layout->get_text, 'Bla bla.');
 }
