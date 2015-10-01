@@ -1,7 +1,20 @@
 {{$NEXT}}
 
+Overview of changes in Gtk3 0.025 [2015-10-01]
+==============================================
+
+* Added changes since release v0.023 to the NEWS file and re-release
+
 Overview of changes in Gtk3 0.024 [2015-10-01]
 ==============================================
+
+* Implement the Gtk3::Stock name corrections in a more compatible way
+* Add documentation for all overrides and customizations
+* Add Gtk3::Gdk::Pixbuf::CHECK_VERSION
+* Gtk3::Gdk::Pixbuf::new_from_inline: do not take a copy_pixels argument
+* Implement Gtk3::Gdk::Pixbuf::new_from_data in terms of new_from_inline
+* Add an override for Gtk3::TextBuffer::insert_markup
+* Fix a test failure when no display is available
 
 Overview of changes in Gtk3 0.023 [2015-08-10]
 ==============================================
