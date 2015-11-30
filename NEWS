@@ -1,5 +1,11 @@
 {{$NEXT}}
 
+Overview of changes in Gtk3 0.026 [2015-11-30]
+==============================================
+
+* Add an override for Pango::Layout::set_markup (make the length argument
+  optional)
+
 Overview of changes in Gtk3 0.025 [2015-10-01]
 ==============================================
 
