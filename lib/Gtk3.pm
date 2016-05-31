@@ -1082,7 +1082,7 @@ sub Gtk3::FileChooserDialog::new {
 
   if (@varargs % 2) {
     croak 'Usage: Gtk3::FileChooserDialog->new' .
-          ' (title, parent, action, backend, button-text =>' .
+          ' (title, parent, action, button-text =>' .
           " response-id, ...)\n";
   }
 
