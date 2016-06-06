@@ -3,9 +3,6 @@
 Overview of changes in Gtk3 0.027 [2016-06-05]
 ==============================================
 
-Overview of changes in Gtk3 0.027 [2016-06-05]
-==============================================
-
 * Gtk3::FileChooserDialog: fix typo in usage warning (RT#114506)
 
 Overview of changes in Gtk3 0.026 [2015-11-30]
