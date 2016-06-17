@@ -7,7 +7,7 @@ use warnings;
 use utf8;
 use Encode;
 
-plan tests => 212;
+plan tests => 214;
 
 note('Gtk3::CHECK_VERSION and check_version');
 {
@@ -85,6 +85,15 @@ note('Gtk3::CheckButton::new');
   ok (!defined ($button->get_label));
   $button = Gtk3::CheckButton->new ('_Test');
   is ($button->get_label, '_Test');
+}
+
+note('Gtk3::Clipboard::set_text');
+{
+  my $clipboard = Gtk3::Clipboard::get (Gtk3::Gdk::Atom::intern ('PRIMARY', Glib::FALSE));
+  $clipboard->set_text ('→←');
+  is ($clipboard->wait_for_text, '→←');
+  $clipboard->set_text ('→←', 3); # wants length in bytes
+  is ($clipboard->wait_for_text, '→');
 }
 
 note('Gtk3::ColorButton::new');

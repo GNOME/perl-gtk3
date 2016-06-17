@@ -924,6 +924,16 @@ sub Gtk3::CheckMenuItem::new {
     $_GTK_BASENAME, 'CheckMenuItem', 'new', @_);
 }
 
+=item * The C<length> argument of C<Gtk3::Clipboard::set_text> is optional.
+
+=cut
+
+sub Gtk3::Clipboard::set_text {
+  return Glib::Object::Introspection->invoke (
+    $_GTK_BASENAME, 'Clipboard', 'set_text',
+    @_ == 3 ? @_ : (@_[0,1], -1)); # wants length in bytes
+}
+
 =item * C<Gtk3::Container::get_focus_chain> returns a list of widgets, or an
 empty list.
 
