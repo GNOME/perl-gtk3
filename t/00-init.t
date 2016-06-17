@@ -17,7 +17,7 @@ unless (eval { Gtk3->import; 1 }) {
   }
 }
 
-plan tests => 2;
+plan tests => 3;
 
 diag (sprintf 'Testing against gtk+ %d.%d.%d',
       Gtk3::get_major_version (),
@@ -34,4 +34,11 @@ SKIP: {
   # Ensure that version parsing still works after the setlocale() done by
   # Gtk3::init().
   ok (defined eval 'use 5.8.0; 1');
+}
+
+# Ensure that error messages are reported at the point in the program, not in
+# Gtk3.pm.
+{
+  eval { my $b = Gtk3::LinkButton->new; };
+  like ($@, qr/00-init\.t/);
 }
