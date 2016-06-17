@@ -2258,6 +2258,9 @@ return value.
 
 =item * Gtk3::TreeStore, Gtk3::ListStore: reorder() is currently unusable.
 
+=item * Gtk3::Widget: grab_add() and grab_remove() are methods now: C<<
+$widget->grab_add >>, C<< $widget->grab_remove >>.
+
 =item * Gtk3::Gdk::Atom: The constructor new() is not provided anymore, and the
 class function intern() must now be called as C<< Gtk3::Gdk::Atom::intern
 (name, only_if_exists) >>.
