@@ -8,7 +8,7 @@ BEGIN { require './t/inc/setup.pl' }
 use strict;
 use warnings;
 
-plan tests => 15;
+plan tests => 16;
 
 ok (my $win = Gtk3::Window->new ('toplevel'));
 
@@ -43,15 +43,25 @@ is ($infobar->get_message_type, 'error', '[gs]et_message_type');
 $infobar->set_default_response (4);
 ok (1, 'set_default_response');
 
+{
+  my $infobar = Gtk3::InfoBar->new;
+  $infobar->signal_connect (response => sub {
+    is ($_[2], 'DATA', 'user data made it through');
+    Gtk3::EVENT_STOP;
+  }, 'DATA');
+  $infobar->response ('ok');
+}
+
 SKIP: {
   skip 'Need generic signal marshaller', 2
     unless check_gi_version (1, 33, 10);
 
+  my $infobar = Gtk3::InfoBar->new;
   $infobar->signal_connect (response => sub {
-    my ($infobar,$response) = @_;
+    my ($infobar, $response) = @_;
     my $expected = $infobar->{expected_response};
-    ok ($response eq $expected, "response '$expected'");
-    1;
+    is ($response, $expected, "response '$expected'");
+    Gtk3::EVENT_STOP;
   });
   $infobar->response ($infobar->{expected_response} = 5);
   $infobar->response ($infobar->{expected_response} = 'ok');

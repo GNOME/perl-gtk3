@@ -7,7 +7,7 @@ BEGIN { require './t/inc/setup.pl' };
 use strict;
 use warnings;
 
-plan tests => 15;
+plan tests => 17;
 
 my $win = Gtk3::Window->new ('toplevel');
 
@@ -49,6 +49,24 @@ $d3->get_content_area->pack_start (Gtk3::Label->new ('This is just a test.'), 0,
 $d3->get_action_area->pack_start (Gtk3::Label->new ('<- Actions'), 0, 0, 0);
 $d3->signal_connect (response => sub { is ($_[1], 44); 1; });
 $btn3->clicked;
+
+# test whether user data are passed to the callback functions
+{
+  my $d = Gtk3::Dialog->new;
+  $d->set_transient_for ($win);
+  my $b = $d->add_button ('First Button', 'ok');
+  # pass user data to the callback function
+  $d->signal_connect('response'=> sub {
+    is ($_[2], 'DATA', 'user data are passed to the callback function');
+    Gtk3::EVENT_STOP;
+  }, 'DATA');
+  Glib::Idle->add( sub {
+    $b->clicked;
+    Glib::SOURCE_REMOVE;
+  });
+  is ($d->run, 'ok');
+  $d->hide;
+}
 
 # make sure that known response types are converted to strings for the reponse
 # signal of Gtk3::Dialog and its ancestors

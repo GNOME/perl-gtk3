@@ -296,8 +296,8 @@ my $_GTK_RESPONSE_NICK_TO_ID = sub {
 
 # Converter for GtkDialog's "response" signal.
 sub Gtk3::Dialog::_gtk3_perl_response_converter {
-  my ($dialog, $id) = @_;
-  return ($dialog, $_GTK_RESPONSE_ID_TO_NICK->($id));
+  my ($dialog, $id, $data) = @_;
+  return ($dialog, $_GTK_RESPONSE_ID_TO_NICK->($id), $data);
 }
 
 =item * Values of type Gtk3::IconSize are converted to and from nick names if
