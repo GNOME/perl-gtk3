@@ -7,7 +7,7 @@ use warnings;
 use utf8;
 use Encode;
 
-plan tests => 214;
+plan tests => 215;
 
 note('Gtk3::CHECK_VERSION and check_version');
 {
@@ -318,6 +318,14 @@ note('Gtk3::Stock');
   is ($item->{stock_id}, 'gtk-ok');
   note('Gtk3::Stock::add and add_static do not work yet');
   Gtk3::Stock::set_translate_func ('perl-domain', sub {}, 42);
+}
+
+note('Gtk3::StyleContext::get');
+{
+  my $l = Gtk3::Label->new ('Test');
+  my $c = $l->get_style_context;
+  my @v = $c->get ('normal', Gtk3::STYLE_PROPERTY_COLOR, Gtk3::STYLE_PROPERTY_FONT);
+  is (scalar @v, 2, 'two items returned');
 }
 
 note('Gtk3::ToggleButton::new');

@@ -1493,6 +1493,16 @@ C<set_translate_func>.
   }
 }
 
+=item * A Perl reimplementation of C<Gtk3::StyleContext::get> is provided.
+
+=cut
+
+sub Gtk3::StyleContext::get {
+  my ($context, $state, @properties) = @_;
+  my @values = map { $context->get_property ($_, $state) } @properties;
+  return @values[0..$#values];
+}
+
 =item * A Perl reimplementation of C<Gtk3::TextBuffer::create_tag> is provided.
 
 =cut
