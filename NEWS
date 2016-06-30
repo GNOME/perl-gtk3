@@ -1,5 +1,15 @@
 {{$NEXT}}
 
+Overview of changes in Gtk3 0.028 [2016-06-30]
+==============================================
+
+* Gtk3::Dialog, Gtk3::InfoBar: correctly pass user data to 'response' handlers
+  (Maximilian Lika)
+* Test for correct error location reports
+* Gtk3::Clipboard::set_text: make length arg optional
+* Add an implementation of Gtk3::StyleContext::get
+* Mention that Gtk3::Widget::grab_add and grab_remove are methods in Gtk3
+
 Overview of changes in Gtk3 0.027 [2016-06-05]
 ==============================================
 
