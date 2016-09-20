@@ -970,7 +970,7 @@ sub Gtk3::CssProvider::load_from_data {
     $self, _unpack_unless_array_ref ($data));
 }
 
-=item * For Gtk3::Dialog and Gtk3::InfoBar, a Perl implementaion of
+=item * For Gtk3::Dialog and Gtk3::InfoBar, a Perl implementation of
 C<add_buttons> is provided.
 
 =cut
