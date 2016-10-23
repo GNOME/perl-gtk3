@@ -110,7 +110,7 @@ SKIP: {
     unless Gtk3::CHECK_VERSION (3, 2, 0);
 
   note('Gtk3::CssProvider');
-  my $css = "GtkButton {font: Cantarelll 10}";
+  my $css = "GtkButton {font: 10px Cantarelll}";
   my $expect = qr/Cantarelll/;
   my $p = Gtk3::CssProvider->new;
 
