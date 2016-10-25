@@ -1837,6 +1837,26 @@ sub Gtk3::Widget::render_icon {
     $_GTK_ICON_SIZE_NICK_TO_ID->($size), $detail);
 }
 
+=item * A Perl reimplementation of C<Gtk3::Widget::style_get> is provided.
+
+=cut
+
+sub Gtk3::Widget::style_get {
+  my ($widget, @rest) = @_;
+  my $properties = _rest_to_ref (\@rest);
+  my @values;
+  foreach my $property (@$properties) {
+    my $pspec = Gtk3::WidgetClass::find_style_property ($widget, $property);
+    croak "Cannot find type information for property '$property' on $widget"
+      unless defined $pspec;
+    my $value_wrapper = Glib::Object::Introspection::GValueWrapper->new (
+      $pspec->get_value_type, undef);
+    $widget->style_get_property ($property, $value_wrapper);
+    push @values, $value_wrapper->get_value;
+  }
+  return @values[0..$#values];
+}
+
 =item * C<Gtk3::Window::new> uses the default type = 'toplevel'.
 
 =cut

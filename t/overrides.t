@@ -7,7 +7,7 @@ use warnings;
 use utf8;
 use Encode;
 
-plan tests => 215;
+plan tests => 216;
 
 note('Gtk3::CHECK_VERSION and check_version');
 {
@@ -570,6 +570,15 @@ SKIP: {
   skip "pixbuf test; undef returned", 1
     unless defined $pixbuf;
   isa_ok ($pixbuf, "Gtk3::Gdk::Pixbuf");
+}
+
+{
+  my $widget = Gtk3::Label->new ("Test");
+  my @values = $widget->style_get (qw/cursor-aspect-ratio
+                                      cursor-color
+                                      focus-line-width
+                                      focus-padding/);
+  is (@values, 4);
 }
 
 SKIP: {
