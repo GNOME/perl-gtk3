@@ -934,6 +934,52 @@ sub Gtk3::Clipboard::set_text {
     @_ == 3 ? @_ : (@_[0,1], -1)); # wants length in bytes
 }
 
+=item * Perl reimplementations of C<Gtk3::Container::add_with_properties>,
+C<Gtk3::Container::child_get> and C<Gtk3::Container::child_set> are provided.
+
+=cut
+
+sub Gtk3::Container::add_with_properties {
+  my ($container, $widget, @rest) = @_;
+  $widget->freeze_child_notify;
+  $container->add ($widget);
+  if ($widget->get_parent) {
+    $container->child_set ($widget, @rest);
+  }
+  $widget->thaw_child_notify;
+}
+
+sub Gtk3::Container::child_get {
+  my ($container, $child, @rest) = @_;
+  my $properties = _rest_to_ref (\@rest);
+  my @values;
+  foreach my $property (@$properties) {
+    my $pspec = Gtk3::ContainerClass::find_child_property ($container, $property);
+    croak "Cannot find type information for property '$property' on $container"
+      unless defined $pspec;
+    my $value_wrapper = Glib::Object::Introspection::GValueWrapper->new (
+      $pspec->get_value_type, undef);
+    $container->child_get_property ($child, $property, $value_wrapper);
+    push @values, $value_wrapper->get_value;
+  }
+  return @values[0..$#values];
+}
+
+sub Gtk3::Container::child_set {
+  my ($container, $child, @rest) = @_;
+  my ($properties, $values) = _unpack_keys_and_values (\@rest);
+  foreach my $i (0..$#$properties) {
+    my $property = $properties->[$i];
+    my $value = $values->[$i];
+    my $pspec = Gtk3::ContainerClass::find_child_property ($container, $property);
+    croak "Cannot find type information for property '$property' on $container"
+      unless defined $pspec;
+    my $value_wrapper = Glib::Object::Introspection::GValueWrapper->new (
+      $pspec->get_value_type, $value);
+    $container->child_set_property ($child, $property, $value_wrapper);
+  }
+}
+
 =item * C<Gtk3::Container::get_focus_chain> returns a list of widgets, or an
 empty list.
 

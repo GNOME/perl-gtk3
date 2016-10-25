@@ -7,7 +7,7 @@ BEGIN { require './t/inc/setup.pl' }
 use strict;
 use warnings;
 
-plan tests => 28;
+plan tests => 31;
 
 # we'll create some containers (windows and boxes are containers) and
 # mess around with some of the methods to make sure they do things.
@@ -107,17 +107,15 @@ $vbox->set_reallocate_redraws(1);
 ok (1);
 
 #------------------------------------------------------------------------------
-# child_get()
-
-=for FIXME3
+# child_get(), child_set()
 
 is_deeply ([$vbox->child_get ($entry, qw(expand fill pack-type padding position))],
-           [1, 1, "start", 0, 4]);
+           [1, 1, "start", 0, 3]);
 
 $vbox->child_set ($entry, expand => 0, position => 2);
-$vbox->child_set_property ($entry, fill => 0);
+$vbox->child_set ($entry, fill => 0);
 
-is_deeply ([$vbox->child_get_property ($entry, qw(expand fill pack-type padding position))],
+is_deeply ([$vbox->child_get ($entry, qw(expand fill pack-type padding position))],
            [0, 0, "start", 0, 2]);
 
 my $label = Gtk3::Label->new ("Blub");
@@ -126,8 +124,6 @@ $vbox->add_with_properties ($label, pack_type => "end", position => 4);
 is_deeply ([$vbox->child_get ($label, qw(pack-type position))],
            ["end", 4]);
 $vbox->remove ($label);
-
-=cut
 
 #------------------------------------------------------------------------------
 # find_child_property()
