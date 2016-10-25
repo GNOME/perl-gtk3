@@ -7,7 +7,7 @@ BEGIN { require './t/inc/setup.pl' }
 use strict;
 use warnings;
 
-plan tests => 31;
+plan tests => 42;
 
 # we'll create some containers (windows and boxes are containers) and
 # mess around with some of the methods to make sure they do things.
@@ -128,8 +128,6 @@ $vbox->remove ($label);
 #------------------------------------------------------------------------------
 # find_child_property()
 
-=for FIXME3
-
 is (Gtk3::Container->find_child_property('Gtk3-Perl-test-no-such-property'),
     undef,
     'find_child_property() no such child property');
@@ -138,11 +136,6 @@ is (eval { Gtk3::Container::find_child_property('Not::A::Container::Class',
 						'propname'); 1 },
     undef,
     'find_child_property() Not::A::Container::Class croaks');
-
-is (eval { Gtk3::Container::find_child_property('Gtk3::Widget',
-						'propname'); 1 },
-    undef,
-    'find_child_property() Gtk3::Widget croaks');
 
 {
   my $pspec = Gtk3::Box->find_child_property('expand');
@@ -161,12 +154,8 @@ is (eval { Gtk3::Container::find_child_property('Gtk3::Widget',
 	  'find_child_property() object method "expand" is a boolean');
 }
 
-=cut
-
 #------------------------------------------------------------------------------
 # list_child_properties()
-
-=for FIXME3
 
 # as of Gtk 2.20 the base Gtk3::Container class doesn't have any child
 # properties, but don't assume that, so don't ask anything of @pspecs, just
@@ -177,11 +166,6 @@ is (eval { Gtk3::Container::list_child_properties('Not::A::Container::Class');
 	   1 },
     undef,
     'list_child_properties() Not::A::Container::Class croaks');
-
-is (eval { Gtk3::Container::list_child_properties('Gtk3::Widget');
-	   1 },
-    undef,
-    'list_child_properties() Gtk3::Widget croaks');
 
 {
   my @pspecs = Gtk3::Box->list_child_properties;
@@ -204,9 +188,9 @@ is (eval { Gtk3::Container::list_child_properties('Gtk3::Widget');
   my @pspecs = $hbox->list_child_properties;
   cmp_ok (scalar(@pspecs), '>=', 2,
 	  'list_child_properties() object method at least "expand" and "pack"');
+  isa_ok ($pspecs[0], 'Glib::ParamSpec');
+  isa_ok ($pspecs[1], 'Glib::ParamSpec');
 }
-
-=cut
 
 __END__
 

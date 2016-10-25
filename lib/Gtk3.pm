@@ -980,6 +980,22 @@ sub Gtk3::Container::child_set {
   }
 }
 
+=item * C<Gtk3::Container::find_child_property> and
+C<Gtk3::Container::list_child_properties> are forwarded to the corresponding
+functions in C<Gtk3::ContainerClass>.
+
+=cut
+
+sub Gtk3::Container::find_child_property {
+  return Gtk3::ContainerClass::find_child_property (@_);
+}
+
+sub Gtk3::Container::list_child_properties {
+  my $ref = Gtk3::ContainerClass::list_child_properties (@_);
+  return if not defined $ref;
+  return wantarray ? @$ref : $ref->[$#$ref];
+}
+
 =item * C<Gtk3::Container::get_focus_chain> returns a list of widgets, or an
 empty list.
 
@@ -1884,8 +1900,8 @@ sub Gtk3::Widget::render_icon {
 }
 
 =item * C<Gtk3::Widget::find_style_property> and
-C<Gtk3::Widget::list_style_properties> to the corresponding functions in
-C<Gtk3::WidgetClass>.
+C<Gtk3::Widget::list_style_properties> are forwarded to the corresponding
+functions in C<Gtk3::WidgetClass>.
 
 =cut
 
