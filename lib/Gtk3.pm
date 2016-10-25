@@ -1883,6 +1883,22 @@ sub Gtk3::Widget::render_icon {
     $_GTK_ICON_SIZE_NICK_TO_ID->($size), $detail);
 }
 
+=item * C<Gtk3::Widget::find_style_property> and
+C<Gtk3::Widget::list_style_properties> to the corresponding functions in
+C<Gtk3::WidgetClass>.
+
+=cut
+
+sub Gtk3::Widget::find_style_property {
+  return Gtk3::WidgetClass::find_style_property (@_);
+}
+
+sub Gtk3::Widget::list_style_properties {
+  my $ref = Gtk3::WidgetClass::list_style_properties (@_);
+  return if not defined $ref;
+  return wantarray ? @$ref : $ref->[$#$ref];
+}
+
 =item * A Perl reimplementation of C<Gtk3::Widget::style_get> is provided.
 
 =cut

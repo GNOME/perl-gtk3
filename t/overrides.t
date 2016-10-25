@@ -7,7 +7,7 @@ use warnings;
 use utf8;
 use Encode;
 
-plan tests => 216;
+plan tests => 224;
 
 note('Gtk3::CHECK_VERSION and check_version');
 {
@@ -579,6 +579,25 @@ SKIP: {
                                       focus-line-width
                                       focus-padding/);
   is (@values, 4);
+
+  { my @pspecs = $widget->list_style_properties;
+    cmp_ok (scalar(@pspecs), '>', 0);
+    isa_ok ($pspecs[0], 'Glib::ParamSpec');
+  }
+  { my @pspecs = Gtk3::Label->list_style_properties;
+    cmp_ok (scalar(@pspecs), '>', 0);
+    isa_ok ($pspecs[0], 'Glib::ParamSpec');
+  }
+
+  is ($widget->find_style_property('no-such-style-property-of-this-name'),
+      undef,
+      "find_style_property() no such name, on object");
+  is (Gtk3::Label->find_style_property('no-such-style-property-of-this-name'),
+      undef,
+      "find_style_property() no such name, on class");
+
+  isa_ok ($widget->find_style_property('interior-focus'), 'Glib::ParamSpec');
+  isa_ok (Gtk3::Label->find_style_property('interior-focus'), 'Glib::ParamSpec');
 }
 
 SKIP: {
