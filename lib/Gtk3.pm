@@ -2178,9 +2178,11 @@ sub _unpack_keys_and_values {
     @keys = @{$keys_and_values->[0]};
     @values = @{$keys_and_values->[1]};
   } elsif (@$keys_and_values % 2 == 0) {
-    my %keys_to_vals = @$keys_and_values;
-    @keys = keys %keys_to_vals;
-    @values = values %keys_to_vals;
+    # To preserve the order of the key-value pairs, avoid creating an
+    # intermediate hash.
+    my @range = 0 .. (@$keys_and_values/2-1);
+    @keys = @$keys_and_values[map { 2*$_ } @range];
+    @values = @$keys_and_values[map { 2*$_+1 } @range];
   } else {
     return ();
   }
