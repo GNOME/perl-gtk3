@@ -1,5 +1,17 @@
 {{$NEXT}}
 
+Overview of changes in Gtk3 0.030 [2016-11-23]
+==============================================
+
+* Fix a test failure due to old CSS syntax
+* When marshalling key-value pairs, preserve their order
+* Add an override for Gtk3::Widget::style_get
+* Add overrides for the child property methods of Gtk3::Container
+* Add overrides for Gtk3::Widget::find_style_property and
+  list_style_properties
+* Add overrides for Gtk3::Container::find_child_property and
+  list_child_properties
+
 Overview of changes in Gtk3 0.029 [2016-09-27]
 ==============================================
 
