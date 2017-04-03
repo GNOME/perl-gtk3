@@ -397,8 +397,11 @@ SKIP: {
   skip 'misc. stuff; missing annotations', 4
     unless Gtk3::CHECK_VERSION(3, 2, 0);
 
-  my $event = Gtk3::Gdk::Event->new ('button-press');
+  # First, clear all pending events.
+  Gtk3::main_iteration while Gtk3::events_pending;
 
+  # Then add our own.
+  my $event = Gtk3::Gdk::Event->new ('button-press');
   $event->put;
   ok (Gtk3::Gdk::events_pending);
   isa_ok (Gtk3::Gdk::Event::get (), 'Gtk3::Gdk::EventButton');
