@@ -1,5 +1,10 @@
 {{$NEXT}}
 
+Overview of changes in Gtk3 0.031 [2017-04-20]
+==============================================
+
+* Fix a test failure in t/zz-GdkEvent.t
+
 Overview of changes in Gtk3 0.030 [2016-11-23]
 ==============================================
 
