@@ -7,7 +7,7 @@ use warnings;
 use utf8;
 use Encode;
 
-plan tests => 224;
+plan tests => 230;
 
 note('Gtk3::CHECK_VERSION and check_version');
 {
@@ -598,6 +598,27 @@ SKIP: {
 
   isa_ok ($widget->find_style_property('interior-focus'), 'Glib::ParamSpec');
   isa_ok (Gtk3::Label->find_style_property('interior-focus'), 'Glib::ParamSpec');
+}
+
+{
+  my $widget = Gtk3::Label->new ("Test");
+
+  $widget->set_events ([qw/enter-notify-mask leave-notify-mask/]);
+  ok ($widget->get_events >= [qw/enter-notify-mask leave-notify-mask/],
+      '$widget->set_events|get_events');
+
+  $widget->add_events ([qw/button-press-mask/]);
+  ok ($widget->get_events >= [qw/button-press-mask enter-notify-mask leave-notify-mask/],
+      '$widget->add_events|get_events');
+
+  $widget->set_events (0);
+  ok ($widget->get_events == 0, '$widget->set_events|get_events with numeric 0');
+  ok ($widget->get_events == [], '$widget->set_events|get_events with numeric 0');
+
+  $widget->add_events (24);
+  ok ($widget->get_events == 24, '$widget->add_events|get_events with numeric 24');
+  ok ($widget->get_events == [qw/pointer-motion-hint-mask button-motion-mask/],
+      '$widget->add_events|get_events with numeric 24');
 }
 
 SKIP: {

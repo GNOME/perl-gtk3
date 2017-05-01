@@ -1892,6 +1892,45 @@ sub Gtk3::VBox::new {
     $_GTK_BASENAME, 'VBox', 'new', $class, $homogeneous, $spacing);
 }
 
+=item * C<Gtk3::Widget::add_events> and C<Gtk3::Widget::set_events> also accept
+strings, array references and C<Gtk3::Gdk::EventMask> objects for the C<events>
+parameter.
+
+=cut
+
+sub Gtk3::Widget::add_events {
+  my ($widget, $events) = @_;
+  eval {
+    $events = Glib::Object::Introspection->convert_sv_to_flags (
+      'Gtk3::Gdk::EventMask', $events);
+  };
+  return Glib::Object::Introspection->invoke (
+    $_GTK_BASENAME, 'Widget', 'add_events', $widget, $events);
+}
+
+sub Gtk3::Widget::set_events {
+  my ($widget, $events) = @_;
+  eval {
+    $events = Glib::Object::Introspection->convert_sv_to_flags (
+      'Gtk3::Gdk::EventMask', $events);
+  };
+  return Glib::Object::Introspection->invoke (
+    $_GTK_BASENAME, 'Widget', 'set_events', $widget, $events);
+}
+
+=item * C<Gtk3::Widget::get_events> returns a C<Gtk3::Gdk::EventMask> object
+that can also be compared to numeric values with C<< == >> and C<< >= >>.
+
+=cut
+
+sub Gtk3::Widget::get_events {
+  my ($widget) = @_;
+  my $events = Glib::Object::Introspection->invoke (
+    $_GTK_BASENAME, 'Widget', 'get_events', $widget);
+  return Glib::Object::Introspection->convert_flags_to_sv (
+    'Gtk3::Gdk::EventMask', $events);
+}
+
 sub Gtk3::Widget::render_icon {
   my ($widget, $stock_id, $size, $detail) = @_;
   Glib::Object::Introspection->invoke (
@@ -2304,6 +2343,43 @@ sub _rest_to_ref {
     return $rest;
   }
 }
+
+package Gtk3::Gdk::EventMask;
+
+use overload
+  '==' => \&eq,
+  '>=' => \&ge;
+use Scalar::Util qw/looks_like_number/;
+
+my $_convert_one = sub {
+  return Glib::Object::Introspection->convert_flags_to_sv (
+    'Gtk3::Gdk::EventMask', $_[0]);
+};
+
+my $_convert_two = sub {
+  my ($a, $b) = @_;
+  if (looks_like_number ($a)) {
+    $a = $_convert_one->($a);
+  }
+  if (looks_like_number ($b)) {
+    $b = $_convert_one->($b);
+  }
+  return ($a, $b);
+};
+
+sub eq {
+  my ($a, $b, $swap) = @_;
+  ($a, $b) = $_convert_two->($a, $b);
+  return Glib::Flags::eq ($a, $b, $swap);
+}
+
+sub ge {
+  my ($a, $b, $swap) = @_;
+  ($a, $b) = $_convert_two->($a, $b);
+  return Glib::Flags::ge ($a, $b, $swap);
+}
+
+package Gtk3;
 
 1;
 
