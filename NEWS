@@ -1,5 +1,7 @@
 {{$NEXT}}
 
+* Add overrides for Gtk3::Widget::add_events, set_events, get_events
+
 Overview of changes in Gtk3 0.031 [2017-04-20]
 ==============================================
 
