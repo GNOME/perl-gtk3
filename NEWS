@@ -1,5 +1,10 @@
 {{$NEXT}}
 
+Overview of changes in Gtk3 0.033 [2017-11-05]
+==============================================
+
+* dist.ini: bump version on prereq Glib::Object::Introspection to 0.043
+
 Overview of changes in Gtk3 0.032 [2017-05-30]
 ==============================================
 
