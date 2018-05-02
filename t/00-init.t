@@ -17,12 +17,7 @@ unless (eval { Gtk3->import; 1 }) {
   }
 }
 
-plan tests => 3;
-
-diag (sprintf 'Testing against gtk+ %d.%d.%d',
-      Gtk3::get_major_version (),
-      Gtk3::get_minor_version (),
-      Gtk3::get_micro_version ());
+plan tests => 16;
 
 SKIP: {
   @ARGV = qw(--help --name gtk2perl --urgs tree);
@@ -42,3 +37,27 @@ SKIP: {
   eval { my $b = Gtk3::LinkButton->new; };
   like ($@, qr/00-init\.t/);
 }
+
+my @run_version = Gtk3->get_version_info;
+my @compile_version = Gtk3->GET_VERSION_INFO;
+
+diag 'Testing Gtk3 ', $Gtk3::VERSION;
+diag '   Running against gtk+ ', join '.', @run_version;
+diag '  Compiled against gtk+ ', join '.', @compile_version;
+
+is (@run_version, 3, 'version info is three items long' );
+is (Gtk3->check_version(0,0,0), 'GTK+ version too new (major mismatch)',
+    'check_version fail 1');
+is (Gtk3->check_version(3,0,0), undef, 'check_version pass');
+is (Gtk3->check_version(50,0,0), 'GTK+ version too old (major mismatch)',
+    'check_version fail 2');
+ok (defined (Gtk3::get_major_version()), 'major_version');
+ok (defined (Gtk3::get_minor_version()), 'minor_version');
+ok (defined (Gtk3::get_micro_version()), 'micro_version');
+
+is (@compile_version, 3, 'version info is three items long');
+ok (Gtk3->CHECK_VERSION(3,0,0), 'CHECK_VERSION pass');
+ok (!Gtk3->CHECK_VERSION(50,0,0), 'CHECK_VERSION fail');
+is (Gtk3->MAJOR_VERSION, $compile_version[0], 'MAJOR_VERSION');
+is (Gtk3->MINOR_VERSION, $compile_version[1], 'MINOR_VERSION');
+is (Gtk3->MICRO_VERSION, $compile_version[2], 'MICRO_VERSION');
