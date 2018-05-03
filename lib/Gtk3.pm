@@ -1577,6 +1577,21 @@ sub Gtk3::StyleContext::get {
   return @values[0..$#values];
 }
 
+=item * An override for C<Gtk3::TargetEntry::new> is provided that
+automatically handles the conversion of the C<flags> argument.
+
+=cut
+
+sub Gtk3::TargetEntry::new {
+  my ($class, $target, $flags, $info) = @_;
+  if ($flags !~ /^\d+$/) {
+    $flags = Glib::Object::Introspection->convert_sv_to_flags (
+      "Gtk3::TargetFlags", $flags)
+  }
+  return Glib::Object::Introspection->invoke (
+    $_GTK_BASENAME, 'TargetEntry', 'new', $class, $target, $flags, $info);
+}
+
 =item * A Perl reimplementation of C<Gtk3::TextBuffer::create_tag> is provided.
 
 =cut

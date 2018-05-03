@@ -7,7 +7,7 @@ use warnings;
 use utf8;
 use Encode;
 
-plan tests => 230;
+plan tests => 233;
 
 note('Gtk3::CHECK_VERSION and check_version');
 {
@@ -326,6 +326,30 @@ note('Gtk3::StyleContext::get');
   my $c = $l->get_style_context;
   my @v = $c->get ('normal', Gtk3::STYLE_PROPERTY_COLOR, Gtk3::STYLE_PROPERTY_FONT);
   is (scalar @v, 2, 'two items returned');
+}
+
+note('Gtk3::TargetEntry');
+{
+  my $output;
+  open local *STDERR, '>', \$output;
+  my $target_entry = Gtk3::TargetEntry->new(
+    'Glib::Scalar',
+    Glib::Object::Introspection->convert_sv_to_flags (
+      "Gtk3::TargetFlags", qw/same-widget/),
+    0);
+  is($output, undef, 'convert_sv_to_flags');
+
+  $target_entry = Gtk3::TargetEntry->new(
+    'Glib::Scalar',
+    ${Gtk3::TargetFlags->new (qw/same-widget/)},
+    0);
+  is($output, undef, 'Gtk3::TargetFlags->new');
+
+  $target_entry = Gtk3::TargetEntry->new(
+    'Glib::Scalar',
+    qw/same-widget/,
+    0);
+  is($output, undef, 'override');
 }
 
 note('Gtk3::ToggleButton::new');
