@@ -1,5 +1,12 @@
 {{$NEXT}}
 
+Overview of changes in Gtk3 0.034 [2018-05-21]
+==============================================
+
+* Add helper functions Gtk3->get_version_info, Gtk3->GET_VERSION_INFO
+  (Bugzilla #795778)
+* Add override for Gtk3::TargetEntry (Bugzilla #795780)
+
 Overview of changes in Gtk3 0.033 [2017-11-05]
 ==============================================
 
