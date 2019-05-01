@@ -1,5 +1,10 @@
 {{$NEXT}}
 
+Overview of changes in Gtk3 0.035 [2019-05-01]
+==============================================
+
+* Load GdkPixdata introspection data if gdk-pixbuf >= 2.38.0 (RT #127071)
+
 Overview of changes in Gtk3 0.034 [2018-05-21]
 ==============================================
 
