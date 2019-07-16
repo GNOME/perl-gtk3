@@ -2121,30 +2121,19 @@ sub Gtk3::Gdk::Pixbuf::get_pixels {
 }
 
 =item * C<Gtk3::Gdk::Pixbuf::new_from_data> is reimplemented in terms of
-C<new_from_inline> for correct memory management.  No C<destroy_fn> and
+C<new_from_bytes> for correct memory management.  No C<destroy_fn> and
 C<destroy_fn_data> arguments are needed.
 
 =cut
 
 sub Gtk3::Gdk::Pixbuf::new_from_data {
   my ($class, $data, $colorspace, $has_alpha, $bits_per_sample, $width, $height, $rowstride) = @_;
-  die 'Only RGB is currently supported' unless $colorspace eq 'rgb';
-  die 'Only 8 bits per pixel are currently supported' unless $bits_per_sample == 8;
-  my $length = Gtk3::Gdk::PIXDATA_HEADER_LENGTH () +
-               $rowstride*$height;
-  my $type = Gtk3::Gdk::PixdataType->new ([qw/sample_width_8 encoding_raw/]);
-  $type |= $has_alpha ? 'color_type_rgba' : 'color_type_rgb';
-  my @header_numbers = (0x47646b50,
-                        $length,
-                        $$type, # FIXME: This kind of breaks encapsulation.
-                        $rowstride,
-                        $width,
-                        $height);
-  # Convert to 8 bit unsigned chars, padding to 32 bit little-endian first.
-  my @header = map { unpack ("C*", pack ("N", $_)) } @header_numbers;
-  my $inline_data = _unpack_unless_array_ref ($data);
-  unshift @$inline_data, @header;
-  return Gtk3::Gdk::Pixbuf->new_from_inline ($inline_data);
+  my $packed_data = ref($data) eq 'ARRAY' ? pack 'C*', @$data : $data;
+  return Gtk3::Gdk::Pixbuf->new_from_bytes(
+      Glib::Bytes->new($packed_data),
+      $colorspace, $has_alpha,
+      $bits_per_sample, $width,
+      $height, $rowstride);
 }
 
 =item * C<Gtk3::Gdk::Pixbuf::new_from_inline> does not take a C<copy_pixels>
