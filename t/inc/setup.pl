@@ -21,4 +21,7 @@ sub on_unthreaded_freebsd {
   return 0;
 }
 
+use File::Temp qw{tempdir};
+$ENV{HOME} = tempdir(CLEANUP => 1);
+
 1;
