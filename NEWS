@@ -1,5 +1,12 @@
 {{$NEXT}}
 
+Overview of changes in Gtk3 0.036 [2019-08-27]
+==============================================
+
+* Use a temporary, writable directory as $HOME while running tests
+  (GNOME/perl-gtk3!1)
+* Avoid using deprecated gdk_pixbuf_new_from_inline() (GNOME/perl-gtk3!2)
+
 Overview of changes in Gtk3 0.035 [2019-05-01]
 ==============================================
 
