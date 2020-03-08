@@ -1735,18 +1735,25 @@ sub Gtk3::TreeModelFilter::get {
   return Gtk3::TreeModel::get (@_);
 }
 
-=item * A redirect is added from C<Gtk3::TreeModelSort::new_with_model> to
+=item * Prior to gtk+ 3.24.14, a redirect is added from
+C<Gtk3::TreeModelSort::new_with_model> to
 <Gtk3::TreeModel::sort_new_with_model> so that Gtk3::TreeModelSort objects can
 be constructed normally.
 
 =cut
 
 # Not needed anymore once <https://bugzilla.gnome.org/show_bug.cgi?id=646742>
-# is fixed.
+# is fixed.  This never happened, but in gtk+ 3.24.14, the return type
+# annotation was changed: <https://gitlab.gnome.org/GNOME/gtk/-/merge_requests/1134>.
 sub Gtk3::TreeModelSort::new_with_model {
-  my ($class, $child_model) = @_;
-  Glib::Object::Introspection->invoke (
-    $_GTK_BASENAME, 'TreeModel', 'sort_new_with_model', $child_model);
+  if (Gtk3::CHECK_VERSION (3, 24, 14)) {
+    Glib::Object::Introspection->invoke (
+      $_GTK_BASENAME, 'TreeModelSort', 'new_with_model', @_);
+  } else {
+    my ($class, $child_model) = @_;
+    Glib::Object::Introspection->invoke (
+      $_GTK_BASENAME, 'TreeModel', 'sort_new_with_model', $child_model);
+  }
 }
 
 =item * Gtk3::TreeModelSort has a C<get> method that calls
