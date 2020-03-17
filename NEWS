@@ -1,5 +1,12 @@
 {{$NEXT}}
 
+Overview of changes in Gtk3 0.037 [2020-03-16]
+==============================================
+
+* Adapt the Gtk3::TreeModelSort::new_with_model overload to work
+  with gtk+ 3.24.14 (Based on a patch by Alberts Muktupāvels.)
+  https://gitlab.gnome.org/GNOME/perl-gtk3/issues/5
+
 Overview of changes in Gtk3 0.036 [2019-08-27]
 ==============================================
 
