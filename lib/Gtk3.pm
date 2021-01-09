@@ -1430,6 +1430,39 @@ sub Gtk3::MessageDialog::new {
   return $dialog;
 }
 
+=item * A Perl reimplementation of C<Gtk3::MessageDialog::new_with_markup> is provided.
+
+=cut
+
+sub Gtk3::MessageDialog::new_with_markup {
+  my ($class, $parent, $flags, $type, $buttons, $format, @args) = @_;
+  my $dialog = Gtk3::MessageDialog::new ($class, $parent, $flags, $type, $buttons, undef);
+  if (defined $format) {
+    my $markup = sprintf $format, @args;
+    $dialog->set_markup ($markup);
+  }
+  return $dialog;
+}
+
+=item * A Perl reimplementation of C<Gtk3::MessageDialog::format_secondary_text> and
+C<Gtk3::MessageDialog::format_secondary_markup> is provided
+
+=cut
+
+sub Gtk3::MessageDialog::format_secondary_text {
+  my ($dialog, $format, @args) = @_;
+
+  my $text = sprintf $format, @args;
+  $dialog->set ('secondary-text' => $text, 'secondary-use-markup' => 0);
+}
+
+sub Gtk3::MessageDialog::format_secondary_markup {
+  my ($dialog, $format, @args) = @_;
+
+  my $text = sprintf $format, @args;
+  $dialog->set ('secondary-text' => $text, 'secondary-use-markup' => 1);
+}
+
 =item * The group handling in the constructors and accessors of
 Gtk3::RadioAction, Gtk3::RadioButton, Gtk3::RadioMenuItem and
 Gtk3::RadioToolButton is amended to work correctly when given array refs of
