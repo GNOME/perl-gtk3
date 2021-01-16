@@ -1132,6 +1132,9 @@ sub Gtk3::Dialog::new {
     my $dialog = Gtk3::Dialog->new;
     defined $title and $dialog->set_title ($title);
     defined $parent and $dialog->set_transient_for ($parent);
+    if (! eval { $flags->isa ('Gtk3::DialogFlags'); }) {
+      $flags = Gtk3::DialogFlags->new ($flags);
+    }
     $flags & 'modal' and $dialog->set_modal (Glib::TRUE);
     $flags & 'destroy-with-parent' and $dialog->set_destroy_with_parent (Glib::TRUE);
     $dialog->add_buttons (@rest);
@@ -1420,6 +1423,9 @@ sub Gtk3::MessageDialog::new {
   }
   if (defined $parent) {
     $dialog->set_transient_for ($parent);
+  }
+  if (! eval { $flags->isa ('Gtk3::DialogFlags'); }) {
+    $flags = Gtk3::DialogFlags->new ($flags);
   }
   if ($flags & 'modal') {
     $dialog->set_modal (Glib::TRUE);

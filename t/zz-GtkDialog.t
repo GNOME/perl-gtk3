@@ -7,7 +7,7 @@ BEGIN { require './t/inc/setup.pl' };
 use strict;
 use warnings;
 
-plan tests => 17;
+plan tests => 49;
 
 my $win = Gtk3::Window->new ('toplevel');
 
@@ -101,4 +101,27 @@ SKIP: {
   ok (defined Gtk3::alternative_dialog_button_order ($screen));
   ok (defined Gtk3::alternative_dialog_button_order (undef));
   ok (defined Gtk3::alternative_dialog_button_order);
+}
+
+{
+  my @expectations = (
+    [[], Glib::FALSE, Glib::FALSE],
+    [['modal'], Glib::TRUE, Glib::FALSE],
+    [['destroy-with-parent'], Glib::FALSE, Glib::TRUE],
+    [['modal', 'destroy-with-parent'], Glib::TRUE, Glib::TRUE],
+    [Gtk3::DialogFlags->new ([]), Glib::FALSE, Glib::FALSE],
+    [Gtk3::DialogFlags->new (['modal']), Glib::TRUE, Glib::FALSE],
+    [Gtk3::DialogFlags->new (['destroy-with-parent']), Glib::FALSE, Glib::TRUE],
+    [Gtk3::DialogFlags->new (['modal', 'destroy-with-parent']), Glib::TRUE, Glib::TRUE],
+  );
+  foreach my $e (@expectations) {
+    my $d = Gtk3::Dialog->new ('Test Dialog', $win, $e->[0], 'gtk-ok', 1);
+    is ($d->get_modal, $e->[1]);
+    is ($d->get_destroy_with_parent, $e->[2]);
+  }
+  foreach my $e (@expectations) {
+    my $d = Gtk3::MessageDialog->new ($win, $e->[0], 'info', 'ok');
+    is ($d->get_modal, $e->[1]);
+    is ($d->get_destroy_with_parent, $e->[2]);
+  }
 }
