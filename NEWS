@@ -1,5 +1,12 @@
 {{$NEXT}}
 
+Overview of changes in Gtk3 0.038 [2021-01-19]
+==============================================
+
+* Correctly handle flags argument in Gtk3::Dialog::new and
+  Gtk3::MessageDialog::new
+* Reimplement varargs Gtk3::MessageDialog methods
+
 Overview of changes in Gtk3 0.037 [2020-03-16]
 ==============================================
 
