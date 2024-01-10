@@ -6,8 +6,9 @@
 
   <name xml:lang="en">Gtk3</name>
   <shortdesc xml:lang="en">Perl interface to the 3.x series of the Gimp Toolkit library</shortdesc>
-  <homepage rdf:resource="http://gtk2-perl.sourceforge.net/" />
-  <mailing-list rdf:resource="http://mail.gnome.org/mailman/listinfo/gtk-perl-list" />
+  <homepage rdf:resource="https://gtk2-perl.sourceforge.net/" />
+  <developer-forum rdf:resource="https://discourse.gnome.org/tag/perl" />
+  <bug-database rdf:resource="https://gitlab.gnome.org/GNOME/perl-gtk3/-/issues/" />
 
   <maintainer>
     <foaf:Person>
