@@ -33,7 +33,7 @@ HOW TO CONTACT US
 -----------------
 
 Homepage:               http://gtk2-perl.sourceforge.net/
-Mailing list:           gtk-perl-list [at] gnome.org
+Support forum:          https://discourse.gnome.org/tags/c/platform/language-bindings/11/perl
 Mailing list archives:  https://mail.gnome.org/archives/gtk-perl-list/
 IRC:                    irc://irc.gnome.org/#gtk-perl
 E-mail bug submission via CPAN's RT:
@@ -43,13 +43,13 @@ Web bug submission via GNOME's bugtracker:
 
 Please do not contact any of the maintainers directly unless they ask you to.
 The first point of contact for questions/problems/issues should always be the
-mailing list.
+support forum.
 
 
 BUG REPORTS
 -----------
 
-For help with problems, please contact the mailing list (above).  If you
+For help with problems, please contact the support forum (above).  If you
 already know you have a bug, please file it with one of the bug trackers
 below.  With any problems and/or bug reports, it's always helpful for the
 developers to have the following information:
@@ -79,11 +79,10 @@ PATCH SUBMISSION GUIDELINES
 ---------------------------
 
 You can send us patches by...
-- E-mailing it to the mailing list (above); please use a pastebin service of
-  some kind for longer patchfiles (over say 20k in size).
+- Creating a Merge Request in GNOME GitLab.
 - Those with gnome.org Git ID's can push trivial patches to git directly; if
-  you're not sure what a trivial patch is, please ask first on the mailing
-  list prior to pushing your commit.
+  you're not sure what a trivial patch is, please ask first in the support
+  forum prior to pushing your commit.
 
 OBTAINING SOURCE FROM THE GNOME.ORG GIT REPO
 --------------------------------------------
